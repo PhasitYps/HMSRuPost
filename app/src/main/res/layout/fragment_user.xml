@@ -48,6 +48,7 @@
                 app:cardUseCompatPadding="false">
 
                 <TextView
+                    android:id="@+id/selectLoginTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="15dp"
@@ -56,7 +57,9 @@
                     android:text="เลือกล็อกอิน"
                     android:textColor="@color/white"
                     android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:background="?selectableItemBackground"
+                    />
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>

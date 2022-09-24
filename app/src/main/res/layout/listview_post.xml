@@ -162,12 +162,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="5dp"
                         android:orientation="horizontal">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="190dp"
                             app:cardCornerRadius="15dp"
                             app:cardElevation="0dp"
                             app:cardPreventCornerOverlap="false"

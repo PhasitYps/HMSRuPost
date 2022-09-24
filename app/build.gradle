@@ -58,8 +58,8 @@ dependencies {
 
     //huawei api
     implementation 'com.huawei.hms:maps:6.5.0.301'
-    //implementation 'com.huawei.agconnect:agconnect-core:1.7.1.300'
-    //implementation 'com.huawei.agconnect:agconnect-auth:1.7.1.300'
-    //implementation 'com.huawei.hms:maps:6.5.0.301'
+    implementation 'com.huawei.agconnect:agconnect-core:1.7.1.300'
+    implementation 'com.huawei.agconnect:agconnect-auth:1.7.1.300'
+    implementation 'com.huawei.hms:hwid:6.7.0.300'
 
 }
