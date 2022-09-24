@@ -12,9 +12,8 @@ import com.huawei.hms.maps.MapsInitializer
 import com.phasitapp.rupost.dialog.BottomSheetMenu
 import com.phasitapp.rupost.fragments.HomeFragment
 import com.phasitapp.rupost.fragments.NotifyFragment
-import com.phasitapp.rupost.fragments.MapFragment
+import com.phasitapp.rupost.fragments.BookMarkFragment
 import com.phasitapp.rupost.fragments.UserFragment
-import com.phasitapp.rupost.utils.MapUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             changeMenu("home")
         }
         menuMapRL.setOnClickListener {
-            changeMenu("map")
+            changeMenu("bookmark")
         }
         menuNotifyRL.setOnClickListener {
             changeMenu("notify")
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     private fun addFragment(){
         supportFragmentManager.beginTransaction().apply {
             add(R.id.fragment_container, HomeFragment(), "home")
-            add(R.id.fragment_container, MapFragment(), "map")
+            add(R.id.fragment_container, BookMarkFragment(), "bookmark")
             add(R.id.fragment_container, NotifyFragment(), "notify")
             add(R.id.fragment_container, UserFragment(), "user")
             commitNow()
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         when (menu) {
             "home" -> {
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home_filled)
-                menuMapIV.setBackgroundResource(R.drawable.ic_map)
+                menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user)
 
@@ -136,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { show(it) }
-                    fm.findFragmentByTag("map")?.let { hide(it) }
+                    fm.findFragmentByTag("bookmark")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -145,9 +144,9 @@ class MainActivity : AppCompatActivity() {
                 Log.i("dsadawd", "HomeFragment: " + fm.findFragmentByTag("home"))
 
             }
-            "map" -> {
+            "bookmark" -> {
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
-                menuMapIV.setBackgroundResource(R.drawable.ic_map_filled)
+                menuMapIV.setBackgroundResource(R.drawable.ic_bookmark_filled)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user)
 
@@ -162,7 +161,7 @@ class MainActivity : AppCompatActivity() {
 
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("map")?.let { show(it) }
+                    fm.findFragmentByTag("bookmark")?.let { show(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -172,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             }
             "notify" -> {
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
-                menuMapIV.setBackgroundResource(R.drawable.ic_map)
+                menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification_filled)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user)
 
@@ -185,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("map")?.let { hide(it) }
+                    fm.findFragmentByTag("bookmark")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { show(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -194,7 +193,7 @@ class MainActivity : AppCompatActivity() {
             }
             "user" -> {
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
-                menuMapIV.setBackgroundResource(R.drawable.ic_map)
+                menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user_filled)
 
@@ -208,7 +207,7 @@ class MainActivity : AppCompatActivity() {
 
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("map")?.let { hide(it) }
+                    fm.findFragmentByTag("bookmark")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { show(it) }
                     commit()
