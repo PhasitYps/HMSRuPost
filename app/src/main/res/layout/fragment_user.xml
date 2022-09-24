@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="เลือกล็อกอินเพื่อเป็นสมาชิกสามารถเเบ่งปันเหตุการณ์เรื่องราวต่างๆในพื้นที่ รวมถึงการตั้งคำถามเพื่อขอความช่วยเหลือในการเดินทางเเละเเสดงความคิดเห็นต่างๆได้" />
+                android:text="ลงชื่อเข้าใช้เพื่อเป็นสมาชิกสามารถเเบ่งปันเหตุการณ์เรื่องราวต่างๆในพื้นที่ รวมถึงการตั้งคำถามเพื่อขอความช่วยเหลือในการเดินทางเเละเเสดงความคิดเห็นต่างๆได้" />
 
             <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
                 android:id="@+id/huaweiBTN"
@@ -59,18 +59,16 @@
                     android:id="@+id/googleLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:background="?selectableItemBackground"
-                    android:paddingVertical="10dp"
-                    >
+                    android:paddingVertical="10dp">
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_google"
                         android:layout_marginEnd="10dp"
-                        />
+                        android:src="@drawable/ic_google" />
 
                     <TextView
                         android:layout_width="wrap_content"

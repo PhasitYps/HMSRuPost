@@ -11,21 +11,15 @@ import android.view.Window
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.Scopes
-import com.google.android.gms.common.api.Scope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.CollectionReference
 import com.huawei.hms.common.ApiException
 import com.huawei.hms.support.account.AccountAuthManager
 import com.huawei.hms.support.account.request.AccountAuthParams
 import com.huawei.hms.support.account.request.AccountAuthParamsHelper
 import com.huawei.hms.support.account.result.AuthAccount
-import com.huawei.hms.support.account.service.AccountAuthService
 import com.huawei.hms.support.api.entity.common.CommonConstant
 import com.phasitapp.rupost.R
-import com.phasitapp.rupost.dialog.BottomSheetMenu
-import kotlinx.android.synthetic.main.bottom_sheet_menu.*
 import kotlinx.android.synthetic.main.fragment_user.*
 
 
@@ -36,7 +30,6 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signOut()
         init()
         initDialogLoad()
         event()
@@ -53,13 +46,15 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         googleSignInClient.signOut().addOnCompleteListener {
             if(it.isSuccessful){
-                auth.signOut()
+                authGoogle.signOut()
             }
         }
     }
 
     private fun init(){
-        auth = FirebaseAuth.getInstance()
+        authGoogle = FirebaseAuth.getInstance()
+        authHuawei = AccountAuthManager()
+
     }
 
     private fun event(){
@@ -73,7 +68,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         }
     }
 
-    private var mAuthService: AccountAuthService? = null
+    private var authHuawei: AccountAuthManager? = null
     private val REQUEST_CODE_SIGN_IN = 1000
     private fun silentSignInByHwId() {
         dialog_load?.show()
@@ -84,7 +79,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             .setEmail()
             .createParams()
         // Use AccountAuthParams to build AccountAuthService.
-        mAuthService = AccountAuthManager.getService(requireActivity(), mAuthParam)
+        val mAuthService = AccountAuthManager.getService(requireActivity(), mAuthParam)
 
         // Sign in with a HUAWEI ID silently.
         val task = mAuthService!!.silentSignIn()
@@ -108,13 +103,15 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         Log.i(TAG, "display name:" + authAccount.displayName)
         Log.i(TAG, "photo uri string:" + authAccount.avatarUriString)
         Log.i(TAG, "photo uri:" + authAccount.avatarUri)
-        Log.i(TAG, "email:" + authAccount.getEmail())
-        Log.i(TAG, "openid:" + authAccount.getOpenId())
-        Log.i(TAG, "unionid:" + authAccount.getUnionId())
+        Log.i(TAG, "email:" + authAccount.email)
+        Log.i(TAG, "openid:" + authAccount.openId)
+        Log.i(TAG, "unionid:" + authAccount.unionId)
+        Log.i(TAG, "uid:" + authAccount.uid)
+
 
     }
 
-    private lateinit var auth: FirebaseAuth
+    private lateinit var authGoogle: FirebaseAuth
     private lateinit var mGoogleApiClient: GoogleSignInClient
     private val RC_SIGN_IN = 1002
     private fun signInGoogle() {
@@ -133,10 +130,10 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
 
-        auth.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task ->
+        authGoogle.signInWithCredential(credential).addOnCompleteListener(requireActivity()) { task ->
             if (task.isSuccessful) {
                 Log.d("test", "signInWithCredential:success")
-                val user = auth.currentUser
+                val user = authGoogle.currentUser
                 val email = user?.email
                 val name = user?.displayName
                 val phoneNumber = user?.phoneNumber
