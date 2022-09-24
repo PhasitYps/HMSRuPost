@@ -7,8 +7,8 @@
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/drawable/bg_radius_top_white.xml" value="0.1" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/drawable/selector_text_state.xml" value="0.1345" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_main.xml" value="0.2" />
-        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_map.xml" value="0.10416666666666667" />
-        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_post.xml" value="0.1" />
+        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_map.xml" value="0.264" />
+        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_post.xml" value="0.264" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/bottom_sheet_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/custom_listview_bottomsheet_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/dialog_loading.xml" value="0.25416666666666665" />
@@ -21,7 +21,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

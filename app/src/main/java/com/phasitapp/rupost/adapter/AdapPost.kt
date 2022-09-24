@@ -34,7 +34,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         if(lat != null && long != null){
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat.toDouble(), long.toDouble()), 14f))
             map?.addMarker(MarkerOptions().position(LatLng(lat.toDouble(), long.toDouble())))
-            map?.mapType = HuaweiMap.MAP_TYPE_SATELLITE
+            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
 
             holder.mapView.tag = LatLng(lat.toDouble(), long.toDouble())
         }
