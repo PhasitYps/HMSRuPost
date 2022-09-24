@@ -76,8 +76,8 @@ tools:context=".CameraActivity">
 
         <LinearLayout
             android:id="@+id/mini_map"
-            android:layout_width="74dp"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="80dp"
             android:layout_weight="0.5"
             android:background="#3CF1EBF1"
             android:gravity="center"
