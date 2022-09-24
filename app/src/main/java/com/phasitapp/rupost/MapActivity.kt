@@ -51,7 +51,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(huaweiMap: HuaweiMap) {
         Log.d(TAG, "onMapReady: ")
         hMap = huaweiMap
-        hMap?.isMyLocationEnabled = true
+        //hMap?.isMyLocationEnabled = true
         hMap?.uiSettings?.isCompassEnabled = false
         hMap?.mapType = HuaweiMap.MAP_TYPE_NORMAL
         huaweiMap.setOnMapClickListener {

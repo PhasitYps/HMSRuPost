@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.core.app.ActivityCompat
+import com.phasitapp.rupost.helper.Prefs
 
 object Utils {
 
@@ -24,5 +25,10 @@ object Utils {
             }
         }
         return true
+    }
+
+    fun hasUserCurrent(context: Context): Boolean{
+        val prefs = Prefs(context)
+        return prefs.strOpenId != ""
     }
 }

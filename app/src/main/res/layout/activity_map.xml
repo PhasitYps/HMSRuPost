@@ -7,110 +7,118 @@
     android:layout_height="match_parent"
     tools:context=".MapActivity">
 
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mapfragment_mapfragmentdemo"
-        class="com.huawei.hms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        map:cameraTargetLat="48.893478"
-        map:cameraTargetLng="2.334595"
-        map:cameraZoom="10" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorWhiteDark"
-            />
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             >
-            <LinearLayout
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorWhiteDark"
+                />
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingVertical="8dp"
                 >
-
-                <ImageView
-                    android:id="@+id/backIV"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_arrow_left"
-                    android:layout_marginStart="15dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    />
-
                 <LinearLayout
-                    android:id="@+id/filterLL"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:background="@drawable/bg_border_rounded"
                     android:gravity="center"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:layout_marginEnd="15dp"
+                    android:paddingVertical="8dp"
                     >
-                    <TextView
+
+                    <ImageView
+                        android:id="@+id/backIV"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_arrow_left"
+                        android:layout_marginStart="15dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        />
+
+                    <LinearLayout
+                        android:id="@+id/filterDayLL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="วันนี้"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="5dp"
-                        />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_arrow_bottom"
-                        />
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_border_rounded"
+                        android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:layout_marginEnd="15dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="วันนี้"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="5dp"
+                            />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_bottom"
+                            />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        </androidx.cardview.widget.CardView>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scrollbarSize="1dp">
-
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:layout_weight="1"
+                android:scrollbarSize="1dp">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/categoryCG"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:singleSelection="true">
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
 
-                </com.google.android.material.chip.ChipGroup>
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/categoryCG"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true">
+
+                    </com.google.android.material.chip.ChipGroup>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-        </HorizontalScrollView>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/mapfragment_mapfragmentdemo"
+            class="com.huawei.hms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            map:cameraTargetLat="48.893478"
+            map:cameraTargetLng="2.334595"
+            map:cameraZoom="10" />
+
     </LinearLayout>
+
+
 
 </RelativeLayout>

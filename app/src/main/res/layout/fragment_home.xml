@@ -29,7 +29,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="15dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="5dp"
                     android:background="?attr/selectableItemBackground"
                     android:orientation="horizontal">
 
@@ -54,8 +55,8 @@
                             android:textColor="@color/black"
                             android:textSize="20dp"
                             android:textStyle="bold" />
-                    </LinearLayout>
 
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -85,9 +86,99 @@
 
                 </HorizontalScrollView>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:paddingVertical="5dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_border_rounded"
+                        android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:layout_marginEnd="15dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="เเฮชเเท็ก"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="5dp"
+                            />
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:src="@drawable/ic_arrow_bottom"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_border_rounded"
+                        android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:layout_marginEnd="15dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ยอดนิยม"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="5dp"
+                            />
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:src="@drawable/ic_arrow_bottom"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/filterDayLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_border_rounded"
+                        android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:layout_marginEnd="15dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="วันนี้"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="5dp"
+                            />
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:src="@drawable/ic_arrow_bottom"
+                            />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
