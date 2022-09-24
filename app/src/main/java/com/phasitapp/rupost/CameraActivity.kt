@@ -1,0 +1,297 @@
+package com.phasitapp.rupost
+
+import android.Manifest
+import android.content.ContentValues
+import android.content.pm.PackageManager
+import android.location.Location
+import android.os.AsyncTask
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.ImageCapture
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import android.widget.Toast
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.Preview
+import androidx.camera.core.CameraSelector
+import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.camera.core.ImageCaptureException
+import androidx.databinding.DataBindingUtil.setContentView
+import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.net.URL
+import java.util.*
+
+class CameraActivity : AppCompatActivity() {
+    var latitude: String?= null
+    var longitude: String?= null
+    val API = "b0400551b9c2882592551bfdf9978798"
+    val TAG = "Work Task"
+
+    private var gpsManage: GPSManage? = null
+    private var imageCapture: ImageCapture? = null
+
+    private lateinit var cameraExecutor: ExecutorService
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_camera)
+        supportActionBar?.hide()
+
+        // Request camera permissions
+        if (allPermissionsGranted()) {
+            startCamera()
+
+        } else {
+            ActivityCompat.requestPermissions(
+                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            )
+        }
+
+        gpsManage = GPSManage(this)
+        gpsManage!!.requestGPS()
+        gpsManage!!.setMyEvent(object : GPSManage.MyEvent{
+            override fun onLocationChanged(currentLocation: Location) {
+                android.util.Log.i(TAG, "location: $currentLocation")
+                latitude = String.format("%.5f", currentLocation.latitude)
+                longitude = String.format("%.5f", currentLocation.longitude)
+                findViewById<TextView>(R.id.latitude).text = latitude
+                findViewById<TextView>(R.id.longitude).text = longitude
+
+                weatherTask().execute()
+            }
+
+            override fun onDissAccessGPS() {
+
+            }
+
+        })
+
+        // Set up the listeners for take photo and video capture buttons
+        event()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun event() {
+        imageCaptureIV.setOnClickListener {
+            takePhoto()
+        }
+    }
+
+    private fun takePhoto() {
+        Log.d(TAG, "It's work")//Ford
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        // Create time stamped name and MediaStore entry.
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(contentResolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            .build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                }
+
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val msg = "Photo capture succeeded: ${output.savedUri}"
+                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, msg)
+                }
+            }
+        )
+    }
+
+    private fun startCamera() {
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+        cameraProviderFuture.addListener({
+            // Used to bind the lifecycle of cameras to the lifecycle owner
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+            // Preview
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(viewFinder.surfaceProvider)
+                }
+
+            imageCapture = ImageCapture.Builder().build()
+
+            // Select back camera as a default
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                // Unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // Bind use cases to camera
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+
+            } catch (exc: Exception) {
+                Log.e(TAG, "Use case binding failed", exc)
+            }
+
+        }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+    companion object {
+    private const val TAG = "CameraXApp"
+    private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+    private const val REQUEST_CODE_PERMISSIONS = 10
+    private val REQUIRED_PERMISSIONS =
+        mutableListOf(
+            Manifest.permission.CAMERA
+        ).apply {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
+}
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1001){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED ){
+                gpsManage?.requestGPS()
+            }else{
+                gpsManage?.requestGPS()
+            }
+        }
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                startCamera()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+        }
+    }
+
+    inner class weatherTask() : AsyncTask<String, Void, String>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+            android.util.Log.i(TAG, "onPreExecute")
+        }
+
+        override fun doInBackground(vararg params: String?): String? {
+
+            android.util.Log.i(TAG, "doInBackground")
+            var response:String?
+            try{
+                response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API").readText(
+                    Charsets.UTF_8
+                )
+                android.util.Log.i(TAG, "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API")
+            }catch (e: Exception){
+                android.util.Log.i(TAG, "doInBackground: $e")
+                response = null
+            }
+            return response
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+
+            android.util.Log.i(TAG, "onPostExecute")
+
+            try {
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+                val wind = jsonObj.getJSONObject("wind")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+
+                val updatedAt: Long = jsonObj.getLong("dt")
+                val updatedAtText = "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
+                    Date(updatedAt*1000)
+                )
+                val temp = String.format("%.0f°C", main.getDouble("temp"))
+                val tempMin = "Min Temp: %.0f°C".format(main.getDouble("temp_min"))
+                val tempMax = "Max Temp: %.0f°C".format(main.getDouble("temp_max"))
+                val pressure = main.getString("pressure")
+                val humidity = main.getString("humidity")
+
+                val sunrise:Long = sys.getLong("sunrise")
+                val sunset:Long = sys.getLong("sunset")
+                val windSpeed = wind.getString("speed")
+                val weatherDescription = weather.getString("description")
+                val address = jsonObj.getString("name")
+                val icon = weather.getString("icon")
+                //val address = jsonObj.getString("name")+", "+sys.getString("country")
+
+                findViewById<TextView>(R.id.temp).text = temp
+                findViewById<TextView>(R.id.status).text = weatherDescription
+                findViewById<TextView>(R.id.address).text = address
+
+                when(icon){
+                    "01d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_1)
+                    "01n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_1)
+                    "02d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_2)
+                    "02n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_2)
+                    "03d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_3)
+                    "03n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_3)
+                    "04d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_4)
+                    "04n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_4)
+                    "09d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_9)
+                    "09n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_9)
+                    "10d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_10)
+                    "10n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_10)
+                    "11d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_11)
+                    "11n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_11)
+                    "13d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_13)
+                    "13n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_13)
+                    "50d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_50)
+                    "50n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_50)
+                }
+
+            }
+            catch (e: java.lang.Exception) {
+            }
+        }
+    }
+}
