@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">RuPost</string>
+    <string name="web_client_id">951929194784-e1bnnsf6n2mdo8vi3dqtnvnh4nkkmn1m.apps.googleusercontent.com</string>
     <string name="hms_map_api_key">DAEDAIIRgTrqegv5cQLCqf+eSa8zu6Tb21uuAr6Y741zyJmaFud2N+2V5yyFUSFFZ71nZ9svK8Xv74dRKpK2YPfNgyl9tfKEux22xQ==</string>
 </resources>

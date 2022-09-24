@@ -37,31 +37,50 @@
                 android:layout_marginTop="10dp"
                 android:text="เลือกล็อกอินเพื่อเป็นสมาชิกสามารถเเบ่งปันเหตุการณ์เรื่องราวต่างๆในพื้นที่ รวมถึงการตั้งคำถามเพื่อขอความช่วยเหลือในการเดินทางเเละเเสดงความคิดเห็นต่างๆได้" />
 
-            <androidx.cardview.widget.CardView
+            <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
+                android:id="@+id/huaweiBTN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:cardBackgroundColor="@color/colorBlueDark"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="0dp"
-                app:cardPreventCornerOverlap="false"
-                app:cardUseCompatPadding="false">
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                app:hwid_corner_radius="30dp"
+                />
 
-                <TextView
-                    android:id="@+id/selectLoginTV"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/bg_border_rounded"
+                >
+
+                <LinearLayout
+                    android:id="@+id/googleLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="10dp"
                     android:gravity="center"
-                    android:text="เลือกล็อกอิน"
-                    android:textColor="@color/white"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
+                    android:orientation="horizontal"
                     android:background="?selectableItemBackground"
-                    />
+                    android:paddingVertical="10dp"
+                    >
 
-            </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_google" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="ลงชื่อเข้าใช้ด้วย Google"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
         </LinearLayout>
 
 
