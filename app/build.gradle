@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android-extensions'
-    id 'com.huawei.agconnect'
     id 'com.google.gms.google-services'
+    id 'com.huawei.agconnect'
 }
 
 
@@ -57,8 +57,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //huawei api
-    implementation 'com.huawei.agconnect:agconnect-core:1.7.1.300'
-    implementation 'com.huawei.agconnect:agconnect-auth:1.7.1.300'
     implementation 'com.huawei.hms:maps:6.5.0.301'
+    //implementation 'com.huawei.agconnect:agconnect-core:1.7.1.300'
+    //implementation 'com.huawei.agconnect:agconnect-auth:1.7.1.300'
+    //implementation 'com.huawei.hms:maps:6.5.0.301'
 
 }

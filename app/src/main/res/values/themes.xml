@@ -38,4 +38,8 @@
     </style>
 
 
+    <style name="CustomStyleChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_choice_state</item>
+    </style>
+
 </resources>

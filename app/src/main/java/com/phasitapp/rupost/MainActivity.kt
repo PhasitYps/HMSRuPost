@@ -8,11 +8,13 @@ import android.view.MotionEvent
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.huawei.hms.maps.MapsInitializer
 import com.phasitapp.rupost.dialog.BottomSheetMenu
 import com.phasitapp.rupost.fragments.HomeFragment
 import com.phasitapp.rupost.fragments.NotifyFragment
 import com.phasitapp.rupost.fragments.MapFragment
 import com.phasitapp.rupost.fragments.UserFragment
+import com.phasitapp.rupost.utils.MapUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -20,7 +22,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MapsInitializer.initialize(this)
         setContentView(R.layout.activity_main)
+        Log.d("sadasdas", "MainActivity onCreate: ")
+
 
         addFragment()
         changeMenu("home")
@@ -127,9 +132,11 @@ class MainActivity : AppCompatActivity() {
 //                menuNotifyTV.setTextColor(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
 //                menuUserTV.setTextColor(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
 
+                //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
+
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { show(it) }
-                    fm.findFragmentByTag("search")?.let { hide(it) }
+                    fm.findFragmentByTag("map")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -150,10 +157,12 @@ class MainActivity : AppCompatActivity() {
                 menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
                 menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
 
+                //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MapFragment()).commit()
+
 
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("search")?.let { show(it) }
+                    fm.findFragmentByTag("map")?.let { show(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -172,9 +181,11 @@ class MainActivity : AppCompatActivity() {
                 menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
                 menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
 
+                //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, NotifyFragment()).commit()
+
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("search")?.let { hide(it) }
+                    fm.findFragmentByTag("map")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { show(it) }
                     fm.findFragmentByTag("user")?.let { hide(it) }
                     commit()
@@ -193,9 +204,11 @@ class MainActivity : AppCompatActivity() {
                 menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
                 menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
 
+                //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, UserFragment()).commit()
+
                 supportFragmentManager.beginTransaction().apply {
                     fm.findFragmentByTag("home")?.let { hide(it) }
-                    fm.findFragmentByTag("search")?.let { hide(it) }
+                    fm.findFragmentByTag("map")?.let { hide(it) }
                     fm.findFragmentByTag("notify")?.let { hide(it) }
                     fm.findFragmentByTag("user")?.let { show(it) }
                     commit()
@@ -211,7 +224,7 @@ class MainActivity : AppCompatActivity() {
         menuPostList.add(BottomSheetMenu.ModelMenuBottomSheet("เเบ่งปัน", "เเบ่งปันเหตุการณ์ต่างๆ เช่น รถติด อุบัติเหตุ น้ำท่วม ให้เพื่อนๆชาว RuPost ได้รับรู้ถึงสถานการณ์ปัจจุบันที่นั่นเพื่อช่วยให้เพื่อนๆ เลือกเส้นทางที่สะดวกรวดเร็วในการเดินทางได้", R.drawable.ic_share))
         menuPostList.add(BottomSheetMenu.ModelMenuBottomSheet("อีเว้นท์", "บอกเทศกาลในท้องถิ่น เพื่อเชิญชวนให้เพื่อนๆที่ต้องการเดินทางมาได้รับรู้ถึง สถานการณ์ปัจจุบันที่นั่นว่ามันน่าสนใจเเค่ไหน", R.drawable.ic_star))
 
-        BottomSheetMenu(this, menuPostList, object: BottomSheetMenu.SelectListener {
+        BottomSheetMenu(this, menuPostList, "สร้างโพสต์", object: BottomSheetMenu.SelectListener {
             override fun onMyClick(m: BottomSheetMenu.ModelMenuBottomSheet, position: Int) {
                 when(position){
                     0 -> {

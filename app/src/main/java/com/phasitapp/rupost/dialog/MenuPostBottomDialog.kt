@@ -15,6 +15,7 @@ import com.phasitapp.rupost.R
 class BottomSheetMenu(
     private val activity: Activity,
     private val modelMenu: ArrayList<ModelMenuBottomSheet>,
+    private val title: String,
     val itemClick: BottomSheetMenu.SelectListener
 ) {
 
@@ -28,6 +29,9 @@ class BottomSheetMenu(
         bottomSheetDialog.setContentView(bottomSheetView)
 
         var dataRCV = bottomSheetDialog.findViewById<RecyclerView>(R.id.dataRCV)
+        var titleTV = bottomSheetView.findViewById<TextView>(R.id.titleTV)
+
+        titleTV.text = title
 
         /*val bottomSheetBehavior: BottomSheetBehavior<*> = BottomSheetBehavior.from(bottomSheetView.parent as View)
         val bottomSheetCallback: BottomSheetCallback = object : BottomSheetCallback() {

@@ -3,18 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.MapFragment">
 
-    <com.huawei.hms.maps.MapView
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mapView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        map:cameraTargetLat="51"
-        map:cameraTargetLng="10"
-        map:cameraZoom="8.5"
-        map:mapType="normal"
-        map:uiCompass="true"
-        map:uiZoomControls="true" />
+        >
+        <com.huawei.hms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </FrameLayout>
 
 </RelativeLayout>

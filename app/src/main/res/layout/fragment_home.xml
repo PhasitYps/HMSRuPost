@@ -18,27 +18,81 @@
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="false"
             app:cardElevation="5dp"
-            android:visibility="gone"
+            android:visibility="visible"
             >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="15dp"
+                android:orientation="vertical"
                 >
-
-                <TextView
+                <LinearLayout
+                    android:id="@+id/mapLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RuPost"
-                    android:textColor="@color/black"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    />
+                    android:orientation="horizontal"
+                    android:layout_margin="15dp"
+                    android:background="?attr/selectableItemBackground"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_border_rounded"
+                        android:padding="8dp"
+                        >
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_map"
+                            android:layout_marginEnd="10dp"
+                            app:tint="@color/black"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="มุมมองเเผนที่"
+                            android:textColor="@color/black"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scrollbarSize="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        >
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/categoryCG"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true">
+
+                        </com.google.android.material.chip.ChipGroup>
+
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
 
 
             </LinearLayout>
+
 
         </androidx.cardview.widget.CardView>
 
