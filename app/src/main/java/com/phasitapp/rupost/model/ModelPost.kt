@@ -3,6 +3,8 @@ package com.phasitapp.rupost.model
 class ModelPost (
     var id: String? = null,
     var uid: String? = null,
+    var username: String? = null,
+    var profile: String? = null,
     var category: String? = null,
     var targetGroup: String? = null,
     var title: String? = null,

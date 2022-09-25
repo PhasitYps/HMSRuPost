@@ -179,7 +179,6 @@
 
         </androidx.cardview.widget.CardView>
 
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -189,6 +188,15 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 >
+
+                <ProgressBar
+                    android:id="@+id/loadPostPB"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/postRCV"
                     android:layout_width="match_parent"
@@ -202,6 +210,30 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bgNotPostLL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        >
+
+        <ImageView
+            android:id="@+id/notFoundIV"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:src="@drawable/gif_not_data"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ไม่มีโพสต์"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            />
     </LinearLayout>
 
 </RelativeLayout>

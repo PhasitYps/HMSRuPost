@@ -27,6 +27,8 @@ class RepositoryPost(private var activity: Activity) {
 
     fun post(model: ModelPost, l:(result: String)->Unit){
         val uid = prefs.strUid
+        val profile = prefs.strPhotoUri
+        val username = prefs.strUsername
         val postRef = firestore.collection(KEY_POST)
         val imageList = model.images
 
@@ -41,6 +43,8 @@ class RepositoryPost(private var activity: Activity) {
         post[KEY_ADDRESS] = model.address
         post[KEY_CREATEDATE] = model.createDate
         post[KEY_UPDATEDATE] = model.updateDate
+        post[KEY_PROFILE] = profile
+        post[KEY_USERNAME] = username
         post[KEY_VIEWER] = 0
 
         postRef.add(post).addOnSuccessListener {
@@ -85,6 +89,37 @@ class RepositoryPost(private var activity: Activity) {
     fun readByUid(uid: String, l:(result:String, post: ArrayList<ModelPost>)->Unit){
         val list = ArrayList<ModelPost>()
         firestore.collection(KEY_POST).whereEqualTo(KEY_UID, uid).get().addOnSuccessListener { documents->
+            documents.forEach { document->
+
+                Log.i("fwafawf", "address: " + document[KEY_ADDRESS])
+                Log.i("fwafawf", "category: " + document[KEY_CATEGORY])
+                Log.i("fwafawf", "createDate: " + document[KEY_CREATEDATE])
+                Log.i("fwafawf", "desciption: " + document[KEY_DESCIPTION])
+                Log.i("fwafawf", "lat: " + document[KEY_LATITUDE])
+                Log.i("fwafawf", "long: " + document[KEY_LONGITUDE])
+                Log.i("fwafawf", "target: " + document[KEY_TARGET_GROUP])
+                Log.i("fwafawf", "title: " + document[KEY_TITLE])
+                Log.i("fwafawf", "uid: " + document[KEY_UID])
+                Log.i("fwafawf", "updateDate: " + document[KEY_UPDATEDATE])
+                Log.i("fwafawf", "viewer: " + document[KEY_VIEWER])
+
+                val model = document.toObject(ModelPost::class.java)
+                Log.i("fwafawf", "imagelist: " + model.images.size)
+                Log.i("fwafawf", "id: " + model.id)
+                list.add(model)
+            }
+            l(RESULT_SUCCESS, list)
+
+        }.addOnFailureListener {
+            Toast.makeText(activity, "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+            Log.i("fwafawf", "e: ${it.message}" )
+            l(RESULT_FAIL, list)
+        }
+    }
+
+    fun read(l:(result:String, post: ArrayList<ModelPost>)->Unit){
+        val list = ArrayList<ModelPost>()
+        firestore.collection(KEY_POST).get().addOnSuccessListener { documents->
             documents.forEach { document->
 
                 Log.i("fwafawf", "address: " + document[KEY_ADDRESS])

@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         event()
         setAnimaleWhenClickIcon()
+
         //addPostTest()
 
     }
@@ -40,11 +41,12 @@ class MainActivity : AppCompatActivity() {
     private fun addPostTest(){
 
         val imageDir = File(filesDir, FOLDER_IMAGES)
-        val filename = File(imageDir, "4465.jpg")
+        val image1 = File(imageDir, "4464.jpg")
+        val image2 = File(imageDir, "4465.jpg")
 
 
         val repositoryPost = RepositoryPost(this)
-        val imageList = arrayListOf(filename.path)
+
         val model1 = ModelPost(
             uid = "1664106197257",
             title = "เหตุน้ำท่วม",
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            images = imageList
+            images = arrayListOf(image1.path)
         )
         val model2 = ModelPost(
             uid = "1664106197257",
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            images = imageList
+            images = arrayListOf(image2.path, image1.path)
         )
 
         val model3 = ModelPost(
@@ -86,9 +88,29 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            images = imageList
+            images = arrayListOf(image2.path)
         )
 
+        repositoryPost.post(model1) { result ->
+            when (result) {
+                RepositoryPost.RESULT_SUCCESS -> {
+                    Toast.makeText(this, "Add Post Success", Toast.LENGTH_SHORT).show()
+                }
+                RepositoryPost.RESULT_FAIL -> {
+                    Toast.makeText(this, "Add Post Fail", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        repositoryPost.post(model2) { result ->
+            when (result) {
+                RepositoryPost.RESULT_SUCCESS -> {
+                    Toast.makeText(this, "Add Post Success", Toast.LENGTH_SHORT).show()
+                }
+                RepositoryPost.RESULT_FAIL -> {
+                    Toast.makeText(this, "Add Post Fail", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         repositoryPost.post(model3) { result ->
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {

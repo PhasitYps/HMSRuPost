@@ -36,6 +36,7 @@
                     android:layout_marginEnd="10dp"
                     >
                     <ImageView
+                        android:id="@+id/profileIV"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/image_profile"
@@ -49,6 +50,7 @@
                     >
 
                     <TextView
+                        android:id="@+id/usernameTV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="username"
@@ -57,6 +59,7 @@
                         />
 
                     <TextView
+                        android:id="@+id/createDateTV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="createDate"
@@ -162,7 +165,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
@@ -181,43 +184,33 @@
 
                         </androidx.cardview.widget.CardView>
 
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="190dp"
+                            app:cardCornerRadius="15dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="false"
+                            app:cardUseCompatPadding="false"
+                            android:visibility="gone"
+                            >
+
+                            <ImageView
+                                android:id="@+id/imageView"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                />
+
+                        </androidx.cardview.widget.CardView>
+
                     </LinearLayout>
 
                 </RelativeLayout>
 
-                <androidx.cardview.widget.CardView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/imageRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="15dp"
-                    app:cardUseCompatPadding="false"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardElevation="0dp"
-                    android:layout_marginTop="2dp"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:src="@drawable/image_post2"
-                        android:scaleType="centerCrop"
-                        />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="15dp"
-                    app:cardUseCompatPadding="false"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardElevation="0dp"
-                    android:layout_marginTop="2dp"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:src="@drawable/image_post2"
-                        android:scaleType="centerCrop"
-                        />
-                </androidx.cardview.widget.CardView>
+                    />
 
             </LinearLayout>
 
@@ -230,6 +223,7 @@
                 >
 
                 <TextView
+                    android:id="@+id/titleTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Title"
@@ -239,6 +233,7 @@
                     />
 
                 <TextView
+                    android:id="@+id/descriptionTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Used with to map a View from a removed or hidden Fragment to a View from a shown or added Fragment."

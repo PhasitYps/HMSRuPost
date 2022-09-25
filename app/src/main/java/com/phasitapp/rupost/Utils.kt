@@ -7,6 +7,8 @@ import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.core.app.ActivityCompat
 import com.phasitapp.rupost.helper.Prefs
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Utils {
 
@@ -30,5 +32,11 @@ object Utils {
     fun hasUserCurrent(context: Context): Boolean{
         val prefs = Prefs(context)
         return prefs.strOpenId != ""
+    }
+
+    fun formatDate(format:String, date: Date): String{
+        val formatdate = SimpleDateFormat(format)
+        val formatStr = formatdate.format(date)
+        return formatStr
     }
 }

@@ -29,6 +29,7 @@ import com.phasitapp.rupost.MapActivity
 import com.phasitapp.rupost.R
 import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryPost
 import com.phasitapp.rupost.utils.MapUtils
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -41,10 +42,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("sadasdas", "HomeFragment onViewCreated: ")
 
-        addChipCategoryView()
+
+        init()
         event()
-        setData()
-        setAdap()
     }
 
     private val categoryDisplayList = ArrayList<ModelCategory>()
@@ -99,6 +99,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     }
 
+    private fun init(){
+        bgNotPostLL.visibility = View.GONE
+        addChipCategoryView()
+
+        setData()
+        setAdap()
+    }
+
 
     private fun event(){
 
@@ -109,13 +117,30 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun setData(){
+        postList.clear()
+        val repositoryPost = RepositoryPost(requireActivity())
+        repositoryPost.read(){ result, post ->
+            loadPostPB.visibility = View.GONE
+            when(result){
+                RepositoryPost.RESULT_SUCCESS->{
 
-        postList.add(ModelPost(latitude = "18.321361304849493", longitude = "99.39492037868074"))
-        postList.add(ModelPost(latitude = "18.318336341259233", longitude = "99.40210869880752"))
-        postList.add(ModelPost(latitude = "18.31712430395693", longitude = "99.39866474282977"))
-        postList.add(ModelPost(latitude = "18.31712430395693", longitude = "99.39866474282977"))
-        postList.add(ModelPost(latitude = "18.31712430395693", longitude = "99.39866474282977"))
-        postList.add(ModelPost(latitude = "18.31712430395693", longitude = "99.39866474282977"))
+                    postList.addAll(post)
+                    postRCV.adapter?.notifyDataSetChanged()
+
+                    if(postList.size != 0){
+                        bgNotPostLL.visibility = View.GONE
+                    }else{
+                        bgNotPostLL.visibility = View.VISIBLE
+                        Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
+                    }
+                }
+                RepositoryPost.RESULT_FAIL->{
+                    bgNotPostLL.visibility = View.VISIBLE
+                    Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
+                }
+            }
+
+        }
     }
 
     private fun setAdap(){

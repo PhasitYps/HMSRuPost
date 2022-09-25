@@ -20,6 +20,7 @@ const val KEY_ADDRESS = "address"
 const val KEY_IMAGES = "images"
 const val KEY_CREATEDATE = "createDate"
 const val KEY_UPDATEDATE = "updateDate"
+const val KEY_PROFILE = "profile"
 
 const val KEY_INFORMATION = "information"
 const val KEY_USERCOUNT = "userCount"
