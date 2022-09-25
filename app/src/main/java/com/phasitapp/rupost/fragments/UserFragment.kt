@@ -9,20 +9,23 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.Window
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.huawei.hms.common.ApiException
 import com.huawei.hms.support.account.AccountAuthManager
 import com.huawei.hms.support.account.request.AccountAuthParams
 import com.huawei.hms.support.account.request.AccountAuthParamsHelper
 import com.huawei.hms.support.account.result.AuthAccount
+import com.huawei.hms.support.account.service.AccountAuthService
 import com.huawei.hms.support.api.entity.common.CommonConstant
-import com.phasitapp.rupost.KEY_OPENID
-import com.phasitapp.rupost.KEY_USERS
-import com.phasitapp.rupost.R
-import com.phasitapp.rupost.Utils
+import com.phasitapp.rupost.*
 import com.phasitapp.rupost.Utils.hasUserCurrent
+import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.helper.Prefs
+import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_user.*
 
 
@@ -42,10 +45,33 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
     }
 
+
     private fun init() {
         pref = Prefs(requireContext())
         updateUI()
-        Log.i(TAG, "strOpenId: " + pref!!.strOpenId)
+
+    }
+
+    private val postList = ArrayList<ModelPost>()
+    private fun addDataPost(){
+
+        firestore.collection(KEY_POST).whereEqualTo(KEY_UID, pref!!.strUid).orderBy(KEY_CREATEDATE).get().addOnSuccessListener {
+            it.forEach {
+                val model = it.toObject(ModelPost::class.java)
+                postList.add(model)
+            }
+
+            setAdap()
+        }.addOnFailureListener {
+            Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+            Log.i("sadasdas", "e: ${it.message}" )
+        }
+    }
+    private fun setAdap(){
+        val adapter = AdapPost(requireActivity() , postList)
+        val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        dataRCV.adapter = adapter
+        dataRCV.layoutManager = layoutManager
     }
 
     private fun event() {
@@ -57,16 +83,17 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
 
     private val REQUEST_CODE_SIGN_IN = 1000
+    private var mAuthService: AccountAuthService? = null
     private fun silentSignInByHwId() {
         dialog_load?.show()
         // 1. Use AccountAuthParams to specify the user information to be obtained after user authorization, including the user ID (OpenID and UnionID), email address, and profile (nickname and picture).
         // 2. By default, DEFAULT_AUTH_REQUEST_PARAM specifies two items to be obtained, that is, the user ID and profile.
         // 3. If your app needs to obtain the user's email address, call setEmail().
-        var mAuthParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+        val mAuthParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
             .setEmail()
             .createParams()
         // Use AccountAuthParams to build AccountAuthService.
-        val mAuthService = AccountAuthManager.getService(requireActivity(), mAuthParam)
+        mAuthService = AccountAuthManager.getService(requireActivity(), mAuthParam)
 
         // Sign in with a HUAWEI ID silently.
         mAuthService!!.silentSignIn().addOnSuccessListener { authAccount ->
@@ -90,36 +117,49 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         Log.i(TAG, "openid:" + authAccount.openId)
         Log.i(TAG, "unionid:" + authAccount.unionId)
 
-        val model = ModelUser(
-            openId = authAccount.openId,
-            unionId = authAccount.unionId,
-            username = "สมาชิกหมายเลข 00000001",
-            email = authAccount.email,
-            photoUri = authAccount.avatarUriString,
-            displayName = authAccount.displayName,
-            createDate = System.currentTimeMillis(),
-            updateDate = System.currentTimeMillis()
-        )
 
-        firestore.collection(KEY_USERS).whereEqualTo(KEY_OPENID, authAccount.openId)
-            .addSnapshotListener { querySnapshot, error ->
-                when (querySnapshot!!.size()) {
-                    0 -> {
+        //check user
+        userRef.whereEqualTo(KEY_OPENID, authAccount.openId).get().addOnSuccessListener { querySnapshot->
+
+            if(!querySnapshot.isEmpty){
+                val m = querySnapshot!!.first().toObject(ModelUser::class.java)
+                setUserCurrent(m!!)
+                updateUI()
+            }else{
+                userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
+                    if(it.exists()){
+                        var usercount = it.get(KEY_USERCOUNT).toString().toInt()
+
+                        val model = ModelUser(
+                            uid = System.currentTimeMillis().toString(),
+                            openId = authAccount.openId,
+                            unionId = authAccount.unionId,
+                            username = "สมาชิกหมายเลข $usercount",
+                            email = authAccount.email,
+                            photoUri = authAccount.avatarUriString,
+                            displayName = authAccount.displayName,
+                            createDate = System.currentTimeMillis(),
+                            updateDate = System.currentTimeMillis()
+                        )
+
+                        userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
                         createUser(model)
                     }
-                    1 -> {
-                        setUserCurrent(model)
-                        updateUI()
-                    }
                 }
-                dialog_load?.dismiss()
             }
+            dialog_load?.dismiss()
+
+        }.addOnFailureListener {
+            Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+            dialog_load!!.dismiss()
+        }
 
     }
 
     private fun createUser(model: ModelUser) {
         dialog_load!!.show()
-        firestore.collection(KEY_USERS).add(model).addOnCompleteListener {
+
+        userRef.document(model.uid!!).set(model).addOnCompleteListener {
             if(it.isSuccessful){
                 setUserCurrent(model)
                 updateUI()
@@ -136,22 +176,52 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             false -> {
                 bgLoginRL.visibility = View.VISIBLE
                 bgProfileRL.visibility = View.GONE
+                loadPostPB.visibility = View.GONE
             }
             true->{
                 bgLoginRL.visibility = View.GONE
                 bgProfileRL.visibility = View.VISIBLE
+                loadPostPB.visibility = View.VISIBLE
 
                 //set deatail user
+                bgDetailLL.visibility = View.VISIBLE
+
+                userRef.document(pref!!.strUid!!).get().addOnSuccessListener {
+                    loadPostPB.visibility = View.GONE
+                    val model = it.toObject(ModelUser::class.java)!!
+
+                    Log.i("sadafwgeaggaw", "username: " + model.username)
+                    Log.i("sadafwgeaggaw", "description: " + model.description)
+
+                    Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop().into(imageUrlUserIV)
+                    usernameTV.text = model.username
+                    descriptionTV.text = model.description
+
+                    addDataPost()
+
+                }.addOnFailureListener {
+                    Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+
             }
 
         }
     }
 
-    private fun setUserCurrent(model: ModelUser){
-        pref!!.strEmail = model.email
-        pref!!.strUsername = model.username
-        pref!!.strOpenId = model.openId
-        pref!!.strPhotoUri = model.photoUri
+    private fun setUserCurrent(model: ModelUser?){
+        if(model != null){
+            pref!!.strEmail = model.email
+            pref!!.strUsername = model.username
+            pref!!.strOpenId = model.openId
+            pref!!.strPhotoUri = model.photoUri
+            pref!!.strUid = model.uid
+        }else{
+            pref!!.strEmail = ""
+            pref!!.strUsername = ""
+            pref!!.strOpenId = ""
+            pref!!.strPhotoUri = ""
+            pref!!.strUid = ""
+        }
     }
 
     private var dialog_load: Dialog? = null

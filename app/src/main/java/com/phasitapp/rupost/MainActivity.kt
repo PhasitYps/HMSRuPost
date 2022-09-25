@@ -8,12 +8,16 @@ import android.view.MotionEvent
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.huawei.hms.maps.MapsInitializer
 import com.phasitapp.rupost.dialog.BottomSheetMenu
 import com.phasitapp.rupost.fragments.HomeFragment
 import com.phasitapp.rupost.fragments.NotifyFragment
 import com.phasitapp.rupost.fragments.BookMarkFragment
 import com.phasitapp.rupost.fragments.UserFragment
+import com.phasitapp.rupost.model.ModelPost
+import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,14 +27,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         MapsInitializer.initialize(this)
         setContentView(R.layout.activity_main)
-        Log.d("sadasdas", "MainActivity onCreate: ")
 
-
-        addFragment()
+        //addFragment()
         changeMenu("home")
 
         event()
         setAnimaleWhenClickIcon()
+
+        //Firebase.firestore.collection(KEY_POST).add(ModelPost(latitude="", longitude = ""))
+
     }
 
     private fun event() {
@@ -53,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setAnimaleWhenClickIcon(){
+    private fun setAnimaleWhenClickIcon() {
 
         val animateIcon = { icon: ImageView, motionEvent: MotionEvent ->
             when (motionEvent.action) {
@@ -98,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var fragmentCurrent = ""
-    private fun addFragment(){
+    private fun addFragment() {
         supportFragmentManager.beginTransaction().apply {
             add(R.id.fragment_container, HomeFragment(), "home")
             add(R.id.fragment_container, BookMarkFragment(), "bookmark")
@@ -108,12 +113,20 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     private fun changeMenu(menu: String) {
         fragmentCurrent = menu
         val fm = supportFragmentManager
 
         when (menu) {
             "home" -> {
+
+                if (fm.findFragmentByTag("home") == null) {
+                    supportFragmentManager.beginTransaction().apply {
+                        add(R.id.fragment_container, HomeFragment(), "home")
+                        commitNow()
+                    }
+                }
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home_filled)
                 menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
@@ -121,9 +134,24 @@ class MainActivity : AppCompatActivity() {
 
                 //set color image
                 menuHomeIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
-                menuMapIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuMapIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuNotifyIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuUserIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
 
                 //set color text
 //                menuHomeTV.setTextColor(themeColor(androidx.appcompat.R.attr.colorAccent))
@@ -145,16 +173,38 @@ class MainActivity : AppCompatActivity() {
 
             }
             "bookmark" -> {
+                if (fm.findFragmentByTag("bookmark") == null) {
+                    supportFragmentManager.beginTransaction().apply {
+                        add(R.id.fragment_container, BookMarkFragment(), "bookmark")
+                        commitNow()
+                    }
+                }
+
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
                 menuMapIV.setBackgroundResource(R.drawable.ic_bookmark_filled)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user)
 
 
-                menuHomeIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuHomeIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
                 menuMapIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
-                menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuNotifyIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuUserIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
 
                 //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MapFragment()).commit()
 
@@ -170,15 +220,38 @@ class MainActivity : AppCompatActivity() {
 
             }
             "notify" -> {
+
+                if (fm.findFragmentByTag("notify") == null) {
+                    supportFragmentManager.beginTransaction().apply {
+                        add(R.id.fragment_container, NotifyFragment(), "notify")
+                        commitNow()
+                    }
+                }
+
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
                 menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification_filled)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user)
 
-                menuHomeIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuMapIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuHomeIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuMapIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
                 menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
-                menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuUserIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
 
                 //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, NotifyFragment()).commit()
 
@@ -192,15 +265,38 @@ class MainActivity : AppCompatActivity() {
 
             }
             "user" -> {
+
+                if (fm.findFragmentByTag("user") == null) {
+                    supportFragmentManager.beginTransaction().apply {
+                        add(R.id.fragment_container, UserFragment(), "user")
+                        commitNow()
+                    }
+                }
+
                 menuHomeIV.setBackgroundResource(R.drawable.ic_home)
                 menuMapIV.setBackgroundResource(R.drawable.ic_bookmark)
                 menuNotifyIV.setBackgroundResource(R.drawable.ic_notification)
                 menuUserIV.setBackgroundResource(R.drawable.ic_user_filled)
 
 
-                menuHomeIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuMapIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
-                menuNotifyIV.background.setTint(ContextCompat.getColor(this, R.color.colorWhiteDarkDark))
+                menuHomeIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuMapIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
+                menuNotifyIV.background.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.colorWhiteDarkDark
+                    )
+                )
                 menuUserIV.background.setTint(ContextCompat.getColor(this, R.color.colorBlack))
 
                 //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, UserFragment()).commit()
@@ -217,15 +313,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val CATEGORY = "category"
-    private fun showMenuPostBottomDialog(){
+    private fun showMenuPostBottomDialog() {
         val menuPostList = ArrayList<BottomSheetMenu.ModelMenuBottomSheet>()
-        menuPostList.add(BottomSheetMenu.ModelMenuBottomSheet("คำถาม", "ตั้งคำถาม เกี่ยวกับปัญหาการเดินทางที่คุณต้องการให้ชาว rupost ช่วยเหลือ", R.drawable.ic_question_mark))
-        menuPostList.add(BottomSheetMenu.ModelMenuBottomSheet("เเบ่งปัน", "เเบ่งปันเหตุการณ์ต่างๆ เช่น รถติด อุบัติเหตุ น้ำท่วม ให้เพื่อนๆชาว RuPost ได้รับรู้ถึงสถานการณ์ปัจจุบันที่นั่นเพื่อช่วยให้เพื่อนๆ เลือกเส้นทางที่สะดวกรวดเร็วในการเดินทางได้", R.drawable.ic_share))
-        menuPostList.add(BottomSheetMenu.ModelMenuBottomSheet("อีเว้นท์", "บอกเทศกาลในท้องถิ่น เพื่อเชิญชวนให้เพื่อนๆที่ต้องการเดินทางมาได้รับรู้ถึง สถานการณ์ปัจจุบันที่นั่นว่ามันน่าสนใจเเค่ไหน", R.drawable.ic_star))
+        menuPostList.add(
+            BottomSheetMenu.ModelMenuBottomSheet(
+                "คำถาม",
+                "ตั้งคำถาม เกี่ยวกับปัญหาการเดินทางที่คุณต้องการให้ชาว rupost ช่วยเหลือ",
+                R.drawable.ic_question_mark
+            )
+        )
+        menuPostList.add(
+            BottomSheetMenu.ModelMenuBottomSheet(
+                "เเบ่งปัน",
+                "เเบ่งปันเหตุการณ์ต่างๆ เช่น รถติด อุบัติเหตุ น้ำท่วม ให้เพื่อนๆชาว RuPost ได้รับรู้ถึงสถานการณ์ปัจจุบันที่นั่นเพื่อช่วยให้เพื่อนๆ เลือกเส้นทางที่สะดวกรวดเร็วในการเดินทางได้",
+                R.drawable.ic_share
+            )
+        )
+        menuPostList.add(
+            BottomSheetMenu.ModelMenuBottomSheet(
+                "อีเว้นท์",
+                "บอกเทศกาลในท้องถิ่น เพื่อเชิญชวนให้เพื่อนๆที่ต้องการเดินทางมาได้รับรู้ถึง สถานการณ์ปัจจุบันที่นั่นว่ามันน่าสนใจเเค่ไหน",
+                R.drawable.ic_star
+            )
+        )
 
-        BottomSheetMenu(this, menuPostList, "สร้างโพสต์", object: BottomSheetMenu.SelectListener {
+        BottomSheetMenu(this, menuPostList, "สร้างโพสต์", object : BottomSheetMenu.SelectListener {
             override fun onMyClick(m: BottomSheetMenu.ModelMenuBottomSheet, position: Int) {
-                when(position){
+                when (position) {
                     0 -> {
                         val intent = Intent(this@MainActivity, PostActivity::class.java)
                         intent.putExtra(CATEGORY, "คำถาม")

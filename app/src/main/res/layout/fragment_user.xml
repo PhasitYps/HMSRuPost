@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/colorWhiteBlue"
     tools:context=".fragments.HomeFragment">
 
     <RelativeLayout
@@ -97,80 +98,218 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:visibility="gone"
-                    >
-
-                    <RelativeLayout
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/bg_circle_white"
-                        >
-
-                        <ImageView
-                            android:id="@+id/imageUrlUserIV"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginBottom="2dp"
-                            android:src="@drawable/ic_user_filled" />
-
-                    </RelativeLayout>
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="50dp"
+                            app:cardElevation="2dp"
+                            app:cardPreventCornerOverlap="true"
+                            app:cardUseCompatPadding="true">
+
+                            <RelativeLayout
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/bg_circle_white">
+
+                                <ImageView
+                                    android:id="@+id/imageUrlUserIV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="2dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginEnd="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:src="@drawable/ic_user_filled" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="15dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="โพสต์"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="ผู้ติดตาม"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="กำลังติดตาม"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/bgDetailLL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:paddingHorizontal="15dp"
                         >
 
                         <TextView
                             android:id="@+id/usernameTV"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="usernameTV"
-                            android:textSize="20dp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorBlack"
-                            />
+                            android:text="username"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/emailTV"
-                            android:layout_width="match_parent"
+                            android:id="@+id/descriptionTV"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="useremailTV"
-                            />
+                            android:text="คำอธิบาย" />
 
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/signoutIV"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_signout"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:layout_marginRight="10dp"
-                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/colorWhiteDark"
+                            app:cardCornerRadius="30dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="true"
+                            app:cardUseCompatPadding="true">
+
+                            <TextView
+                                android:id="@+id/detailMoreTV"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackground"
+                                android:gravity="center"
+                                android:paddingVertical="15dp"
+                                android:text="รายละเอียด"
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/colorWhiteDark"
+                            app:cardCornerRadius="30dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="true"
+                            app:cardUseCompatPadding="true">
+
+                            <TextView
+                                android:id="@+id/editTV"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackground"
+                                android:gravity="center"
+                                android:paddingVertical="15dp"
+                                android:text="เเก้ไข"
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <ProgressBar
+                android:id="@+id/loadPostPB"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dataRCV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
 
         </LinearLayout>
 

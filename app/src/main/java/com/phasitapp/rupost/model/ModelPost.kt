@@ -2,12 +2,17 @@ package com.phasitapp.rupost.model
 
 class ModelPost (
     var id: String? = null,
+    var uid: String? = null,
     var category: String? = null,
+    var targetGroup: String? = null,
     var title: String? = null,
-    var content: String? = null,
-    var imagePath: String? = null,
+    var desciption: String? = null,
     var latitude: String? = null,
     var longitude: String? = null,
-    var createDate: Long? = null,
-    var updateDate: Long? = null
+    var address: String? = null,
+    var viewer: Int? = 0,
+
+    var createDate: String? = null,
+    var updateDate: String? = null,
+    var imageList: List<String>? = null
 )
