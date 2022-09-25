@@ -25,7 +25,6 @@ import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_user.*
 
 
@@ -53,18 +52,34 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     }
 
     private val postList = ArrayList<ModelPost>()
-    private fun addDataPost(){
+    private fun setDataPost(){
 
-        firestore.collection(KEY_POST).whereEqualTo(KEY_UID, pref!!.strUid).orderBy(KEY_CREATEDATE).get().addOnSuccessListener {
-            it.forEach {
-                val model = it.toObject(ModelPost::class.java)
+        firestore.collection(KEY_POST).whereEqualTo(KEY_UID, pref!!.strUid).get().addOnSuccessListener { documents->
+            documents.forEach { document->
+
+                Log.i("fwafawf", "address: " + document[KEY_ADDRESS])
+                Log.i("fwafawf", "category: " + document[KEY_CATEGORY])
+                Log.i("fwafawf", "createDate: " + document[KEY_CREATEDATE])
+                Log.i("fwafawf", "desciption: " + document[KEY_DESCIPTION])
+                Log.i("fwafawf", "lat: " + document[KEY_LATITUDE])
+                Log.i("fwafawf", "long: " + document[KEY_LONGITUDE])
+                Log.i("fwafawf", "target: " + document[KEY_TARGET_GROUP])
+                Log.i("fwafawf", "title: " + document[KEY_TITLE])
+                Log.i("fwafawf", "uid: " + document[KEY_UID])
+                Log.i("fwafawf", "updateDate: " + document[KEY_UPDATEDATE])
+                Log.i("fwafawf", "viewer: " + document[KEY_VIEWER])
+
+                val model = document.toObject(ModelPost::class.java)
+                Log.i("fwafawf", "imagelist: " + model.images.size)
+                Log.i("fwafawf", "id: " + model.id)
                 postList.add(model)
-            }
 
+            }
             setAdap()
+
         }.addOnFailureListener {
             Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
-            Log.i("sadasdas", "e: ${it.message}" )
+            Log.i("fwafawf", "e: ${it.message}" )
         }
     }
     private fun setAdap(){
@@ -197,7 +212,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                     usernameTV.text = model.username
                     descriptionTV.text = model.description
 
-                    addDataPost()
+                    setDataPost()
 
                 }.addOnFailureListener {
                     Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()

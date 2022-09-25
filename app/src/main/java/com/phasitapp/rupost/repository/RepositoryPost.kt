@@ -3,7 +3,6 @@ package com.phasitapp.rupost.repository
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -24,7 +23,7 @@ class RepositoryPost(private var activity: Activity) {
     fun post(model: ModelPost){
         val uid = prefs.strUid
         val postRef = firestore.collection(KEY_POST)
-        val imageList = model.imageList
+        val imageList = model.images
 
         val post: MutableMap<String, Any?> = HashMap()
         post[KEY_UID] = uid
@@ -72,10 +71,6 @@ class RepositoryPost(private var activity: Activity) {
             Toast.makeText(activity, "e: ${it.message}", Toast.LENGTH_SHORT).show()
             Log.i(TAG, "post: ${it.message}")
         }
-    }
-
-    fun read(){
-
     }
 
     private fun convertFileToByteArray(file: File): ByteArray{

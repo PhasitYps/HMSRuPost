@@ -8,8 +8,6 @@ import android.view.MotionEvent
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.huawei.hms.maps.MapsInitializer
 import com.phasitapp.rupost.dialog.BottomSheetMenu
 import com.phasitapp.rupost.fragments.HomeFragment
@@ -18,7 +16,6 @@ import com.phasitapp.rupost.fragments.BookMarkFragment
 import com.phasitapp.rupost.fragments.UserFragment
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
-import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -59,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            imageList = imageList
+            images = imageList
         )
         val model2 = ModelPost(
             uid = "1664106197257",
@@ -73,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            imageList = imageList
+            images = imageList
         )
         repositoryPost.post(model2)
     }
