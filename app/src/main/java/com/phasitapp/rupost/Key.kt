@@ -23,3 +23,5 @@ const val KEY_UPDATEDATE = "updateDate"
 
 const val KEY_INFORMATION = "information"
 const val KEY_USERCOUNT = "userCount"
+
+const val FOLDER_IMAGES = "images"

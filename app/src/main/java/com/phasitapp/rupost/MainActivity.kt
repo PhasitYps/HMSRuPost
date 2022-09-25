@@ -17,8 +17,10 @@ import com.phasitapp.rupost.fragments.NotifyFragment
 import com.phasitapp.rupost.fragments.BookMarkFragment
 import com.phasitapp.rupost.fragments.UserFragment
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,9 +35,47 @@ class MainActivity : AppCompatActivity() {
 
         event()
         setAnimaleWhenClickIcon()
+        //addPostTest()
 
-        //Firebase.firestore.collection(KEY_POST).add(ModelPost(latitude="", longitude = ""))
+    }
 
+    private fun addPostTest(){
+
+        val imageDir = File(filesDir, FOLDER_IMAGES)
+        val filename = File(imageDir, "4464.jpg")
+
+
+        val repositoryPost = RepositoryPost(this)
+        val imageList = arrayListOf(filename.path, filename.path)
+        val model1 = ModelPost(
+            uid = "1664106197257",
+            title = "เหตุน้ำท่วม",
+            category = "เเบ่งปัน",
+            targetGroup = "สาธารณะ",
+            desciption = "มีน้ำท่วมถนนในซอย เอกประจิม 2 ถึงข้อเท้า",
+            latitude = "13.966143430294952",
+            longitude = "100.589037936369",
+            address = "ซ. เอกประจิม 2/2 ตำบล หลักหก อำเภอเมืองปทุมธานี ปทุมธานี 12000",
+            viewer = 0,
+            createDate = "${System.currentTimeMillis()}",
+            updateDate = "${System.currentTimeMillis()}",
+            imageList = imageList
+        )
+        val model2 = ModelPost(
+            uid = "1664106197257",
+            title = "เหตุน้ำท่วม",
+            category = "เเบ่งปัน",
+            targetGroup = "สาธารณะ",
+            desciption = "มีน้ำท่วมถนนในซอย เอกประจิม 1 ครับระวังกันด้วยนะครับ",
+            latitude = "13.965370321057081",
+            longitude = "100.58946797134053",
+            address = "999 ซ. เอกประจิม 2/1 ตำบล หลักหก อำเภอเมืองปทุมธานี ปทุมธานี 12000",
+            viewer = 0,
+            createDate = "${System.currentTimeMillis()}",
+            updateDate = "${System.currentTimeMillis()}",
+            imageList = imageList
+        )
+        repositoryPost.post(model2)
     }
 
     private fun event() {
