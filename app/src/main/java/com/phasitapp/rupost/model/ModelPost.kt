@@ -14,5 +14,5 @@ class ModelPost (
 
     var createDate: String? = null,
     var updateDate: String? = null,
-    var imageList: List<String>? = null
+    var imageList: List<String> = ArrayList()
 )
