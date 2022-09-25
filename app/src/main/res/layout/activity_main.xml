@@ -57,10 +57,10 @@
                     android:id="@+id/menuHomeTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="home"
+                    android:text="หน้าหลัก"
                     android:textColor="@color/black"
                     android:textSize="12dp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -85,17 +85,17 @@
                     android:id="@+id/menuMapIV"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:background="@drawable/ic_search"
+                    android:background="@drawable/ic_bookmark"
                     />
 
                 <TextView
                     android:id="@+id/menuSearchTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="home"
+                    android:text="บันทึก"
                     android:textColor="@color/black"
                     android:textSize="12dp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -163,10 +163,10 @@
                     android:id="@+id/menuNotifyTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="home"
+                    android:text="เเจ้งเตือน"
                     android:textColor="@color/black"
                     android:textSize="12dp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -199,8 +199,8 @@
                     android:id="@+id/menuUserTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user"
-                    android:visibility="gone"
+                    android:text="โปรไฟล์"
+                    android:visibility="visible"
                     android:textColor="@color/black"
                     android:textSize="12dp"
                     />
