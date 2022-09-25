@@ -1,7 +1,6 @@
 package com.phasitapp.rupost
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,7 +8,6 @@ import android.location.Location
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,9 +19,10 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.camera.core.*
-import androidx.databinding.DataBindingUtil.setContentView
+import com.huawei.hms.maps.*
+import com.huawei.hms.maps.model.LatLng
+import com.huawei.hms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_camera.*
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -65,8 +64,8 @@ class CameraActivity : AppCompatActivity() {
                 android.util.Log.i(TAG, "location: $currentLocation")
                 latitude = String.format("%.5f", currentLocation.latitude)
                 longitude = String.format("%.5f", currentLocation.longitude)
-                findViewById<TextView>(R.id.latitude).text = latitude
-                findViewById<TextView>(R.id.longitude).text = longitude
+                findViewById<TextView>(R.id.latitude).text = "" + latitude
+                findViewById<TextView>(R.id.longitude).text = "" + longitude
 
                 weatherTask().execute()
             }
@@ -76,6 +75,18 @@ class CameraActivity : AppCompatActivity() {
             }
 
         })
+
+        val lat = latitude!!.toDouble()
+        val long = longitude!!.toDouble()
+
+        val map = HuaweiMapCamera().huaweiMap
+        if (lat != null && long !=null){
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14f))
+            map?.addMarker(MarkerOptions().position(LatLng(lat, long)))
+            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
+
+            HuaweiMapCamera().mapView.tag = LatLng(lat, long)
+        }
 
         // Set up the listeners for take photo and video capture buttons
         event()
@@ -308,4 +319,32 @@ class CameraActivity : AppCompatActivity() {
             }
         }
     }
+
+    inner class HuaweiMapCamera() : OnMapReadyCallback {
+        var huaweiMap: HuaweiMap? = null
+
+        val mapView = findViewById<MapView>(R.id.mapView)
+
+        init {
+            Log.i(TAG, "init")
+            mapView.onCreate(null)
+            mapView.getMapAsync(this)
+        }
+
+        override fun onMapReady(map: HuaweiMap?) {
+            huaweiMap = map
+            huaweiMap?.uiSettings?.isMapToolbarEnabled = false
+            huaweiMap?.uiSettings?.isCompassEnabled = false
+            huaweiMap?.uiSettings?.isZoomControlsEnabled = false
+            huaweiMap?.uiSettings?.setAllGesturesEnabled(false)
+
+            val latLng = mapView.tag as LatLng
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+            map?.addMarker(MarkerOptions().position(latLng))
+
+            Log.i(TAG, "This is MapReady")
+        }
+
+    }
+
 }

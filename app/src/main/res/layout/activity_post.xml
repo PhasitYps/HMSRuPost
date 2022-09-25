@@ -1,9 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/Top_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/ic_baseline_close_24"
+                app:tint="#1D1C1A"
+                >
+            </ImageView>
+
+
+            <Button
+                android:id="@+id/outlinedButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="16dp"
+                android:text="Post"
+                android:textColor="#1D1C1A"
+                app:strokeColor="#1D1C1A"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Top_Layout"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlinedTextField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/text_show_input"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextAppearance="?attr/textAppearanceSubtitle1"
+            app:hintTextColor="#1D1C1A"
+            android:textColorHint="#1D1C1A">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="#1D1C1A"
+                android:textSize="22sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/TakePicture_Btn"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            android:text="Camera"
+            android:textColor="#1D1C1A"
+            app:iconTint="#1D1C1A"
+            app:icon="@drawable/ic_baseline_photo_camera_24"
+            app:iconGravity="top"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            />
+        <Button
+            android:id="@+id/Gallary_Btn"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            android:text="Gallary"
+            android:textColor="#1D1C1A"
+            app:iconTint="#1D1C1A"
+            app:icon="@drawable/ic_baseline_image_24"
+            app:iconGravity="top"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
