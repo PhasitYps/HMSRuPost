@@ -25,6 +25,7 @@ import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
+import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.fragment_user.*
 
 
@@ -41,9 +42,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         init()
         initDialogLoad()
         event()
-
     }
-
 
     private fun init() {
         pref = Prefs(requireContext())
@@ -52,39 +51,26 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     }
 
     private val postList = ArrayList<ModelPost>()
-    private fun setDataPost(){
+    private fun setDataPost() {
+        postList.clear()
+        val repositoryPost = RepositoryPost(requireActivity())
+        repositoryPost.readByUid(pref!!.strUid!!) { result, post ->
+            when (result) {
+                RepositoryPost.RESULT_SUCCESS -> {
+                    postList.addAll(post)
+                    setAdap()
+                }
+                RepositoryPost.RESULT_FAIL -> {
 
-        firestore.collection(KEY_POST).whereEqualTo(KEY_UID, pref!!.strUid).get().addOnSuccessListener { documents->
-            documents.forEach { document->
-
-                Log.i("fwafawf", "address: " + document[KEY_ADDRESS])
-                Log.i("fwafawf", "category: " + document[KEY_CATEGORY])
-                Log.i("fwafawf", "createDate: " + document[KEY_CREATEDATE])
-                Log.i("fwafawf", "desciption: " + document[KEY_DESCIPTION])
-                Log.i("fwafawf", "lat: " + document[KEY_LATITUDE])
-                Log.i("fwafawf", "long: " + document[KEY_LONGITUDE])
-                Log.i("fwafawf", "target: " + document[KEY_TARGET_GROUP])
-                Log.i("fwafawf", "title: " + document[KEY_TITLE])
-                Log.i("fwafawf", "uid: " + document[KEY_UID])
-                Log.i("fwafawf", "updateDate: " + document[KEY_UPDATEDATE])
-                Log.i("fwafawf", "viewer: " + document[KEY_VIEWER])
-
-                val model = document.toObject(ModelPost::class.java)
-                Log.i("fwafawf", "imagelist: " + model.images.size)
-                Log.i("fwafawf", "id: " + model.id)
-                postList.add(model)
-
+                }
             }
-            setAdap()
-
-        }.addOnFailureListener {
-            Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
-            Log.i("fwafawf", "e: ${it.message}" )
         }
     }
-    private fun setAdap(){
-        val adapter = AdapPost(requireActivity() , postList)
-        val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+
+    private fun setAdap() {
+        val adapter = AdapPost(requireActivity(), postList)
+        val layoutManager =
+            LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         dataRCV.adapter = adapter
         dataRCV.layoutManager = layoutManager
     }
@@ -134,37 +120,38 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
 
         //check user
-        userRef.whereEqualTo(KEY_OPENID, authAccount.openId).get().addOnSuccessListener { querySnapshot->
+        userRef.whereEqualTo(KEY_OPENID, authAccount.openId).get()
+            .addOnSuccessListener { querySnapshot ->
 
-            if(!querySnapshot.isEmpty){
-                val m = querySnapshot!!.first().toObject(ModelUser::class.java)
-                setUserCurrent(m!!)
-                updateUI()
-            }else{
-                userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
-                    if(it.exists()){
-                        var usercount = it.get(KEY_USERCOUNT).toString().toInt()
+                if (!querySnapshot.isEmpty) {
+                    val m = querySnapshot!!.first().toObject(ModelUser::class.java)
+                    setUserCurrent(m!!)
+                    updateUI()
+                } else {
+                    userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
+                        if (it.exists()) {
+                            var usercount = it.get(KEY_USERCOUNT).toString().toInt()
 
-                        val model = ModelUser(
-                            uid = System.currentTimeMillis().toString(),
-                            openId = authAccount.openId,
-                            unionId = authAccount.unionId,
-                            username = "สมาชิกหมายเลข $usercount",
-                            email = authAccount.email,
-                            photoUri = authAccount.avatarUriString,
-                            displayName = authAccount.displayName,
-                            createDate = System.currentTimeMillis(),
-                            updateDate = System.currentTimeMillis()
-                        )
+                            val model = ModelUser(
+                                uid = System.currentTimeMillis().toString(),
+                                openId = authAccount.openId,
+                                unionId = authAccount.unionId,
+                                username = "สมาชิกหมายเลข $usercount",
+                                email = authAccount.email,
+                                photoUri = authAccount.avatarUriString,
+                                displayName = authAccount.displayName,
+                                createDate = System.currentTimeMillis(),
+                                updateDate = System.currentTimeMillis()
+                            )
 
-                        userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
-                        createUser(model)
+                            userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
+                            createUser(model)
+                        }
                     }
                 }
-            }
-            dialog_load?.dismiss()
+                dialog_load?.dismiss()
 
-        }.addOnFailureListener {
+            }.addOnFailureListener {
             Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
             dialog_load!!.dismiss()
         }
@@ -175,11 +162,15 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         dialog_load!!.show()
 
         userRef.document(model.uid!!).set(model).addOnCompleteListener {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 setUserCurrent(model)
                 updateUI()
-            }else{
-                Toast.makeText(requireActivity(), "สร้างชื่อผู้ใช้เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireActivity(),
+                    "สร้างชื่อผู้ใช้เกิดข้อผิดพลาด",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             dialog_load!!.dismiss()
         }
@@ -187,13 +178,13 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
     private fun updateUI() {
 
-        when(hasUserCurrent(requireContext())){
+        when (hasUserCurrent(requireContext())) {
             false -> {
                 bgLoginRL.visibility = View.VISIBLE
                 bgProfileRL.visibility = View.GONE
                 loadPostPB.visibility = View.GONE
             }
-            true->{
+            true -> {
                 bgLoginRL.visibility = View.GONE
                 bgProfileRL.visibility = View.VISIBLE
                 loadPostPB.visibility = View.VISIBLE
@@ -208,14 +199,19 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                     Log.i("sadafwgeaggaw", "username: " + model.username)
                     Log.i("sadafwgeaggaw", "description: " + model.description)
 
-                    Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop().into(imageUrlUserIV)
+                    Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
+                        .into(imageUrlUserIV)
                     usernameTV.text = model.username
                     descriptionTV.text = model.description
 
                     setDataPost()
 
                 }.addOnFailureListener {
-                    Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        "exception: ${it.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
             }
@@ -223,14 +219,14 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         }
     }
 
-    private fun setUserCurrent(model: ModelUser?){
-        if(model != null){
+    private fun setUserCurrent(model: ModelUser?) {
+        if (model != null) {
             pref!!.strEmail = model.email
             pref!!.strUsername = model.username
             pref!!.strOpenId = model.openId
             pref!!.strPhotoUri = model.photoUri
             pref!!.strUid = model.uid
-        }else{
+        } else {
             pref!!.strEmail = ""
             pref!!.strUsername = ""
             pref!!.strOpenId = ""

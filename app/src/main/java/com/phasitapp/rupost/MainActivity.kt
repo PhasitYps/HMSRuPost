@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.huawei.hms.maps.MapsInitializer
@@ -39,11 +40,11 @@ class MainActivity : AppCompatActivity() {
     private fun addPostTest(){
 
         val imageDir = File(filesDir, FOLDER_IMAGES)
-        val filename = File(imageDir, "4464.jpg")
+        val filename = File(imageDir, "4465.jpg")
 
 
         val repositoryPost = RepositoryPost(this)
-        val imageList = arrayListOf(filename.path, filename.path)
+        val imageList = arrayListOf(filename.path)
         val model1 = ModelPost(
             uid = "1664106197257",
             title = "เหตุน้ำท่วม",
@@ -72,7 +73,32 @@ class MainActivity : AppCompatActivity() {
             updateDate = "${System.currentTimeMillis()}",
             images = imageList
         )
-        repositoryPost.post(model2)
+
+        val model3 = ModelPost(
+            uid = "1664106197257",
+            title = "เหตุน้ำท่วม",
+            category = "เเบ่งปัน",
+            targetGroup = "สาธารณะ",
+            desciption = "หน้ามอรังสิตมีน้ำท่วมสูงมากๆ ช่วยด้วย!",
+            latitude = "13.965158008078607",
+            longitude = "100.58834249685813",
+            address = "ตำบล หลักหก อำเภอเมืองปทุมธานี ปทุมธานี 12000",
+            viewer = 0,
+            createDate = "${System.currentTimeMillis()}",
+            updateDate = "${System.currentTimeMillis()}",
+            images = imageList
+        )
+
+        repositoryPost.post(model3) { result ->
+            when (result) {
+                RepositoryPost.RESULT_SUCCESS -> {
+                    Toast.makeText(this, "Add Post Success", Toast.LENGTH_SHORT).show()
+                }
+                RepositoryPost.RESULT_FAIL -> {
+                    Toast.makeText(this, "Add Post Fail", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun event() {
