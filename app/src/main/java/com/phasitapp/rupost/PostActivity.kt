@@ -13,5 +13,10 @@ class PostActivity : AppCompatActivity() {
         Camera_btn.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
         }
+
+        Close_btn.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
     }
 }

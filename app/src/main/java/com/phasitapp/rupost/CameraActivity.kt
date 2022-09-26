@@ -133,6 +133,7 @@ class CameraActivity : AppCompatActivity() {
                     intent.putExtra("name_image", name_image)
                     android.util.Log.i(TAG, "Go to Confirm Image Activity")
                     startActivity(intent)
+                    finish()
                 } else {
                     android.util.Log.i(TAG, "Failed to save photo")
                 }

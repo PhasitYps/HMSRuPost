@@ -32,10 +32,13 @@
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/Close_btn"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_baseline_close_24"
-                        app:tint="#1D1C1A">
+                        app:tint="#1D1C1A"
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless">
                     </ImageView>
 
                 </LinearLayout>

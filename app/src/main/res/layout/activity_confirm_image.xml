@@ -31,6 +31,7 @@
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/Cancel_btn"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_baseline_close_24"
@@ -66,8 +67,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/Top_Layout"
-        app:srcCompat="@drawable/image_test_confirm" />
+        android:layout_below="@id/Top_Layout" />
 
 </RelativeLayout>
 
