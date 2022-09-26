@@ -10,5 +10,4 @@
     <string name="button_takephoto">button takephoto</string>
     <string name="title_activity_post_test">PostActivity_TEST</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="text_show_input">กำลังเกิดอะไรขึ้น?</string>
 </resources>
