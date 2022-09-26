@@ -1,7 +1,5 @@
 package com.phasitapp.rupost
 
-import android.app.ActionBar
-import android.app.Dialog
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.drawable.Drawable
@@ -10,11 +8,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
-import androidx.annotation.NonNull
+import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import com.bumptech.glide.Glide
@@ -27,16 +23,15 @@ import com.huawei.hms.maps.HuaweiMap
 import com.huawei.hms.maps.OnMapReadyCallback
 import com.huawei.hms.maps.SupportMapFragment
 import com.huawei.hms.maps.model.*
-import com.huawei.hms.maps.model.animation.Animation
 import com.phasitapp.rupost.Utils.getViewBitmap
 import com.phasitapp.rupost.dialog.DetailPostBottomDialog
 import com.phasitapp.rupost.dialog.LayersMapDialog
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryPost
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.android.synthetic.main.dialog_themes_map.*
 import kotlinx.android.synthetic.main.fragment_home.categoryCG
 import java.io.ByteArrayOutputStream
 
@@ -49,6 +44,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var hMap: HuaweiMap? = null
     private lateinit var gpsManage: GPSManage
     private lateinit var prefs : Prefs
+
+    private val postList = ArrayList<ModelPost>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +65,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         gpsManage.setMyEvent(object : GPSManage.MyEvent{
             override fun onLocationChanged(currentLocation: Location) {
                 val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
-                val option = MarkerOptions().position(latLng)
+                val markerOption = MarkerOptions().position(latLng)
 
                 currentMarker?.remove()
-                setIconMarker(option, prefs.strPhotoUri!!)
+                setIconMarker(prefs.strPhotoUri!!){ bitmapIcon->
+                    markerOption.icon(BitmapDescriptorFactory.fromBitmap(bitmapIcon))
+                    currentMarker = hMap?.addMarker(markerOption)
+                }
                 hMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
 
             }
@@ -87,7 +87,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         gpsManage?.close()
     }
 
-    private fun setIconMarker(options: MarkerOptions, image: String) {
+    private fun setIconMarker(image: String, l:(bitmapIcon: Bitmap?)->Unit) {
         val view: View = LayoutInflater.from(this).inflate(R.layout.map_marker_image, null)
         view.layout(0, 0, 240, 240);
         val imageCIV = view.findViewById(R.id.imageCIV) as CircleImageView
@@ -98,10 +98,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             .into(object : CustomTarget<Bitmap?>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
                     imageCIV.setImageBitmap(resource)
-                    val bitmap = getViewBitmap(view)
-                    options.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    val bitmapView = getViewBitmap(view)
+                    l(bitmapView)
 
-                    currentMarker = hMap?.addMarker(options)
                 }
                 override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
             })
@@ -214,7 +213,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         dialog.show()
     }
 
-
     private fun event(){
 
         backIV.setOnClickListener {
@@ -239,31 +237,71 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(huaweiMap: HuaweiMap) {
         Log.d(TAG, "onMapReady: ")
+        postList.clear()
         hMap = huaweiMap
         //hMap?.isMyLocationEnabled = true
         hMap!!.uiSettings?.isCompassEnabled = false
 
+        val latLngList = ArrayList<LatLng>()
+
         if(intent.getStringExtra(KEY_EVENT) == "post"){
+            //when click from map post
             val model = intent.getSerializableExtra("modelPost") as ModelPost
-
-            val lat = model.latitude
-            val long = model.longitude
-            val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
-            val marker = MarkerOptions().position(latLng)
-
-            hMap!!.addMarker(marker)
-            hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-
+            postList.add(model)
             showDetailPostBottomSheetDialog(model)
 
+            postList.forEach { model->
+
+                val lat = model.latitude
+                val long = model.longitude
+                val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
+                latLngList.add(latLng)
+
+                if(model.images.isNotEmpty()){
+                    setIconMarker(model.images[0]){ bitmap->
+                        val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                        marker.tag = model
+                    }
+                }
+            }
+            moveCameraMulti(hMap!!, latLngList)
+
+        }else{
+            //when click from map view
+            val repositoryPost = RepositoryPost(this)
+            repositoryPost.read { result, posts ->
+                if(result == RepositoryPost.RESULT_SUCCESS){
+                    postList.addAll(posts)
+                    postList.forEach { model->
+
+                        val lat = model.latitude
+                        val long = model.longitude
+                        val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
+                        latLngList.add(latLng)
+
+                        if(model.images.isNotEmpty()){
+                            setIconMarker(model.images[0]){ bitmap->
+                                val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                marker.tag = model
+                            }
+                        }
+                    }
+                    moveCameraMulti(hMap!!, latLngList)
+                }
+            }
         }
 
-        hMap!!.setOnMarkerClickListener {
 
-            it.startAnimation()
-            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(it.position, 15f), object : HuaweiMap.CancelableCallback{
+
+        hMap!!.setOnMarkerClickListener { marker->
+
+            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 18f), object : HuaweiMap.CancelableCallback{
                 override fun onFinish() {
                     Log.i("fewvdawdwf", "animateCamera onFinish")
+                    val model = marker.tag as ModelPost
+                    if(model != null){
+                        showDetailPostBottomSheetDialog(model)
+                    }
 
                 }
                 override fun onCancel() {
@@ -279,6 +317,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showDetailPostBottomSheetDialog(model: ModelPost){
         val dialog = DetailPostBottomDialog(this, model)
         dialog.show()
+    }
+
+    fun moveCameraMulti(mMap: HuaweiMap, list: ArrayList<LatLng>) {
+        val bc = LatLngBounds.Builder()
+        if (list.size != 0) {
+            for (i in list.indices) {
+                val item = list[i]
+                bc.include(item)
+            }
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 150))
+        } else {
+
+        }
     }
 
     private val categoryDisplayList = ArrayList<ModelCategory>()

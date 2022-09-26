@@ -277,7 +277,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                 matrix.postTranslate((-x * mDimension).toFloat(), (-y * mDimension).toFloat())
 
                 // Generate a Bitmap image.
-                val googleUrl = "https://mts3.google.com/vt/lyrs=y@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
+                val googleUrl = "https://mts3.google.com/vt/lyrs=s@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
                 val bitmap = Picasso.get().load(googleUrl).get()
                 val stream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)

@@ -32,32 +32,26 @@ class LayersMapDialog(private val activity: Activity): Dialog(activity) {
         goolgeHybridCv.setOnClickListener {
             //hMap!!.mapType = GoogleMap.MAP_TYPE_NORMAL
             l?.let { it1 -> it1(MAP_TYPE_GOOGLE_HYBRID) }
-            dismiss()
         }
         googleTerrainCV.setOnClickListener {
             //hMap!!.mapType = GoogleMap.MAP_TYPE_HYBRID
             l?.let { it1 -> it1(MAP_TYPE_GOOGLE_TERRAIN) }
-            dismiss()
         }
 
         googleSatelliteCV.setOnClickListener {
             l?.let { it1 -> it1(MAP_TYPE_GOOGLE_SATELLITE) }
-            dismiss()
         }
 
         huaweiNormalCv.setOnClickListener {
             l?.let { it1 -> it1(MAP_TYPE_HUAWEI_NORMAL) }
-            dismiss()
         }
 
         huaweiTerrainCV.setOnClickListener {
             l?.let { it1 -> it1(MAP_TYPE_HUAWEI_TERRAIN) }
-            dismiss()
         }
 
         huaweiSatelliteCV.setOnClickListener {
             l?.let { it1 -> it1(MAP_TYPE_HUAWEI_SATELLITE) }
-            dismiss()
         }
 
     }
