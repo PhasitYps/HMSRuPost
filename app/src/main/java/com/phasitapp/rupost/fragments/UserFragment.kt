@@ -44,6 +44,11 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         event()
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "UserFragment onPause")
+    }
+
     private fun init() {
         pref = Prefs(requireContext())
         updateUI()

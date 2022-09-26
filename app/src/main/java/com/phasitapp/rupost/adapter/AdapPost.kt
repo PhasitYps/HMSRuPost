@@ -81,7 +81,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.titleTV.text = if(dataList[position].title != null) dataList[position].title else ""
         holder.desciptionTV.text = if (dataList[position].desciption != null) dataList[position].desciption else ""
 
-        holder.setImageMapStatic(holder.imageView, lat!!, long!!)
+        //holder.setImageMapStatic(holder.imageView, lat!!, long!!)
 
         val adapter = AdapImagePost(activity, dataList[position].images)
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)

@@ -34,8 +34,13 @@ class MainActivity : AppCompatActivity() {
         event()
         setAnimaleWhenClickIcon()
 
+
         //addPostTest()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun addPostTest(){
@@ -48,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         val repositoryPost = RepositoryPost(this)
 
         val model1 = ModelPost(
-            uid = "1664106197257",
             title = "เหตุน้ำท่วม",
             category = "เเบ่งปัน",
             targetGroup = "สาธารณะ",
@@ -62,7 +66,6 @@ class MainActivity : AppCompatActivity() {
             images = arrayListOf(image1.path)
         )
         val model2 = ModelPost(
-            uid = "1664106197257",
             title = "เหตุน้ำท่วม",
             category = "เเบ่งปัน",
             targetGroup = "สาธารณะ",
@@ -76,8 +79,9 @@ class MainActivity : AppCompatActivity() {
             images = arrayListOf(image2.path, image1.path)
         )
 
+
+        val imageFile1 = File(imageDir, "4465.jpg")
         val model3 = ModelPost(
-            uid = "1664106197257",
             title = "เหตุน้ำท่วม",
             category = "เเบ่งปัน",
             targetGroup = "สาธารณะ",
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             viewer = 0,
             createDate = "${System.currentTimeMillis()}",
             updateDate = "${System.currentTimeMillis()}",
-            images = arrayListOf(image2.path)
+            images = arrayListOf(imageFile1.path)
         )
 
         repositoryPost.post(model1) { result ->
@@ -101,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         repositoryPost.post(model2) { result ->
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {

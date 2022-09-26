@@ -84,5 +84,8 @@ dependencies {
     //helper
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
+    //viewpaper2
+    implementation 'androidx.viewpager2:viewpager2:<latest_version>'
+
 
 }
