@@ -1,5 +1,7 @@
 package com.phasitapp.rupost.model
 
+import java.io.Serializable
+
 class ModelPost (
     var id: String? = null,
     var uid: String? = null,
@@ -17,4 +19,4 @@ class ModelPost (
     var createDate: String? = null,
     var updateDate: String? = null,
     var images: List<String> = ArrayList()
-)
+): Serializable

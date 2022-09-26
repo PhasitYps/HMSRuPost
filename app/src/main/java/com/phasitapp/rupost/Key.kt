@@ -24,5 +24,6 @@ const val KEY_PROFILE = "profile"
 
 const val KEY_INFORMATION = "information"
 const val KEY_USERCOUNT = "userCount"
+const val KEY_EVENT = "event"
 
 const val FOLDER_IMAGES = "images"

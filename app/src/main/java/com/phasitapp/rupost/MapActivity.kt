@@ -1,10 +1,11 @@
 package com.phasitapp.rupost
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import com.bumptech.glide.Glide
@@ -13,11 +14,15 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.chip.Chip
 import com.huawei.hms.maps.*
-import com.huawei.hms.maps.model.MarkerOptions
-import com.phasitapp.rupost.fragments.HomeFragment
+import com.huawei.hms.maps.model.*
+import com.phasitapp.rupost.dialog.DetailPostBottomDialog
+import com.phasitapp.rupost.model.ModelPost
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.categoryCG
+import java.io.ByteArrayOutputStream
+
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val TAG = "MapActivity"
@@ -52,11 +57,50 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.d(TAG, "onMapReady: ")
         hMap = huaweiMap
         //hMap?.isMyLocationEnabled = true
-        hMap?.uiSettings?.isCompassEnabled = false
-        hMap?.mapType = HuaweiMap.MAP_TYPE_NORMAL
-        huaweiMap.setOnMapClickListener {
-            huaweiMap.addMarker(MarkerOptions().position(it))
+        hMap!!.uiSettings?.isCompassEnabled = false
+        hMap!!.mapType = HuaweiMap.MAP_TYPE_NONE
+
+
+        if(intent.getStringExtra(KEY_EVENT) == "post"){
+            val model = intent.getSerializableExtra("modelPost") as ModelPost
+
+            val lat = model.latitude
+            val long = model.longitude
+            val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
+            val marker = MarkerOptions().position(latLng)
+
+            hMap!!.addMarker(marker)
+            hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+            showDetailPostBottomSheetDialog(model)
+
         }
+
+        val mTileSize = 256
+        val mScale = 1
+        val mDimension = mScale * mTileSize
+        val mTileProvider = TileProvider { x, y, zoom ->
+            Log.i("sadafwgeaggaw", "x: $x, y:$y, z:$zoom")
+            val matrix = Matrix()
+            val scale: Float = Math.pow(2.0, zoom.toDouble()).toFloat() * mScale
+            matrix.postScale(scale, scale)
+            matrix.postTranslate((-x * mDimension).toFloat(), (-y * mDimension).toFloat())
+
+            // Generate a Bitmap image.
+            val googleUrl = "https://mts3.google.com/vt/lyrs=y@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
+            val bitmap = Picasso.get().load(googleUrl).get()
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            Tile(mDimension, mDimension, stream.toByteArray())
+
+        }
+        val options = TileOverlayOptions().tileProvider(mTileProvider).transparency(0f)
+        hMap!!.addTileOverlay(options)
+    }
+
+    private fun showDetailPostBottomSheetDialog(model: ModelPost){
+        val dialog = DetailPostBottomDialog(this, model)
+        dialog.show()
     }
 
     private val categoryDisplayList = ArrayList<ModelCategory>()
