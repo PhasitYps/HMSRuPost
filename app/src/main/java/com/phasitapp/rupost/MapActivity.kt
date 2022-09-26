@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -46,6 +47,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var prefs : Prefs
 
     private val postList = ArrayList<ModelPost>()
+    private val latLngList = ArrayList<LatLng>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,8 +106,27 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
             })
-
     }
+
+    private fun setIconMarker(resIdRes: Int, l:(bitmapIcon: Bitmap?)->Unit) {
+        val view: View = LayoutInflater.from(this).inflate(R.layout.map_marker_image, null)
+        view.layout(0, 0, 240, 240);
+        val imageCIV = view.findViewById(R.id.imageCIV) as CircleImageView
+
+        Glide.with(this)
+            .asBitmap()
+            .load(resIdRes)
+            .into(object : CustomTarget<Bitmap?>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                    imageCIV.setImageBitmap(resource)
+                    val bitmapView = getViewBitmap(view)
+                    l(bitmapView)
+
+                }
+                override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
+            })
+    }
+
 
     private var mTileOverlay: TileOverlay? = null
     private fun showLayersMapDialog(){
@@ -242,8 +263,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         //hMap?.isMyLocationEnabled = true
         hMap!!.uiSettings?.isCompassEnabled = false
 
-        val latLngList = ArrayList<LatLng>()
-
         if(intent.getStringExtra(KEY_EVENT) == "post"){
             //when click from map post
             val model = intent.getSerializableExtra("modelPost") as ModelPost
@@ -262,6 +281,28 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
                         marker.tag = model
                     }
+                }else{
+                    when(model.category){
+                        "คำถาม"->{
+                            setIconMarker(R.drawable.ic_question_mark){ bitmap->
+                                val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                marker.tag = model
+                            }
+                        }
+                        "เเบ่งปัน"->{
+                            setIconMarker(R.drawable.ic_share){ bitmap->
+                                val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                marker.tag = model
+                            }
+                        }
+                        "อีเว้นท์"->{
+                            setIconMarker(R.drawable.ic_star){ bitmap->
+                                val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                marker.tag = model
+                            }
+                        }
+                    }
+
                 }
             }
             moveCameraMulti(hMap!!, latLngList)
@@ -284,6 +325,27 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                 val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
                                 marker.tag = model
                             }
+                        }else{
+                            when(model.category){
+                                "คำถาม"->{
+                                    setIconMarker(R.drawable.ic_question_mark){ bitmap->
+                                        val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                        marker.tag = model
+                                    }
+                                }
+                                "เเบ่งปัน"->{
+                                    setIconMarker(R.drawable.ic_share){ bitmap->
+                                        val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                        marker.tag = model
+                                    }
+                                }
+                                "อีเว้นท์"->{
+                                    setIconMarker(R.drawable.ic_star){ bitmap->
+                                        val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                        marker.tag = model
+                                    }
+                                }
+                            }
                         }
                     }
                     moveCameraMulti(hMap!!, latLngList)
@@ -295,7 +357,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         hMap!!.setOnMarkerClickListener { marker->
 
-            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 18f), object : HuaweiMap.CancelableCallback{
+            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 18f), 2000, object : HuaweiMap.CancelableCallback{
                 override fun onFinish() {
                     Log.i("fewvdawdwf", "animateCamera onFinish")
                     val model = marker.tag as ModelPost
@@ -326,15 +388,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 val item = list[i]
                 bc.include(item)
             }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 150))
-        } else {
-
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 150), 2000, null)
         }
     }
 
     private val categoryDisplayList = ArrayList<ModelCategory>()
+    private var indexSelect = 0
     private fun addChipCategoryView() {
-        var indexSelect = 0
 
         categoryCG?.removeAllViews()
         categoryDisplayList.clear()
@@ -374,6 +434,88 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             chip.setOnClickListener {
                 Log.i("dsafawfa", "This Tag: $i")
+                if(indexSelect == i){
+                    moveCameraMulti(hMap!!, latLngList)
+                }else{
+                    indexSelect = i
+                    latLngList.clear()
+                    hMap!!.clear()
+
+                    if(i == 0){
+                        postList.forEach { model->
+                            val lat = model.latitude
+                            val long = model.longitude
+                            val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
+                            latLngList.add(latLng)
+
+                            if(model.images.isNotEmpty()){
+                                setIconMarker(model.images[0]){ bitmap->
+                                    val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                    marker.tag = model
+                                }
+                            }else{
+                                when(model.category){
+                                    "คำถาม"->{
+                                        setIconMarker(R.drawable.ic_question_mark){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                    "เเบ่งปัน"->{
+                                        setIconMarker(R.drawable.ic_share){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                    "อีเว้นท์"->{
+                                        setIconMarker(R.drawable.ic_star){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                }
+                            }//else end
+                        }
+                        moveCameraMulti(hMap!!, latLngList)
+                    }else{
+                        val postFilter = postList.filter { it.category ==  categoryDisplayList[i].title}
+                        postFilter.forEach { model->
+                            val lat = model.latitude
+                            val long = model.longitude
+                            val latLng = LatLng(lat!!.toDouble(), long!!.toDouble())
+                            latLngList.add(latLng)
+
+                            if(model.images.isNotEmpty()){
+                                setIconMarker(model.images[0]){ bitmap->
+                                    val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                    marker.tag = model
+                                }
+                            }else{
+                                when(model.category){
+                                    "คำถาม"->{
+                                        setIconMarker(R.drawable.ic_question_mark){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                    "เเบ่งปัน"->{
+                                        setIconMarker(R.drawable.ic_share){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                    "อีเว้นท์"->{
+                                        setIconMarker(R.drawable.ic_star){ bitmap->
+                                            val marker = hMap!!.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(bitmap)))
+                                            marker.tag = model
+                                        }
+                                    }
+                                }
+                            }//else end
+                        }
+                        moveCameraMulti(hMap!!, latLngList)
+                    }
+                }
             }
 
             if (i == 0){
