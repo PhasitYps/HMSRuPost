@@ -45,6 +45,10 @@ class CameraActivity : AppCompatActivity() {
     private var gpsManage: GPSManage? = null
     private var imageCapture: ImageCapture? = null
 
+    var lat: Double? = null
+    var long: Double? = null
+
+
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +76,9 @@ class CameraActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.latitude).text = "" + latitude
                 findViewById<TextView>(R.id.longitude).text = "" + longitude
 
+                lat = currentLocation.latitude
+                long = currentLocation.longitude
+
                 weatherTask().execute()
             }
 
@@ -81,17 +88,15 @@ class CameraActivity : AppCompatActivity() {
 
         })
 
-//        val lat = latitude!!.toDouble()
-//        val long = longitude!!.toDouble()
-//
-//        val map = HuaweiMapCamera().huaweiMap
-//        if (lat != null && long !=null){
-//            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14f))
-//            map?.addMarker(MarkerOptions().position(LatLng(lat, long)))
-//            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
-//
-//            HuaweiMapCamera().mapView.tag = LatLng(lat, long)
-//        }
+
+        val map = HuaweiMapCamera().huaweiMap
+        if (lat != null && long !=null){
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat!!, long!!), 14f))
+            map?.addMarker(MarkerOptions().position(LatLng(lat!!, long!!)))
+            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
+
+            HuaweiMapCamera().mapView.tag = LatLng(lat!!, long!!)
+        }
 
         // Set up the listeners for take photo and video capture buttons
         event()
