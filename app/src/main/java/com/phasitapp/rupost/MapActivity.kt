@@ -1,7 +1,6 @@
 package com.phasitapp.rupost
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -23,7 +22,7 @@ import com.huawei.hms.maps.HuaweiMap
 import com.huawei.hms.maps.OnMapReadyCallback
 import com.huawei.hms.maps.SupportMapFragment
 import com.huawei.hms.maps.model.*
-import com.phasitapp.rupost.Utils.getViewBitmap
+import com.phasitapp.rupost.Utils.convertViewToBitmap
 import com.phasitapp.rupost.dialog.BottomSheetMenuFilter
 import com.phasitapp.rupost.dialog.DetailPostBottomDialog
 import com.phasitapp.rupost.dialog.LayersMapDialog
@@ -376,7 +375,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     transition: Transition<in Bitmap?>?
                 ) {
                     imageCIV.setImageBitmap(resource)
-                    val bitmapView = getViewBitmap(view)
+                    val bitmapView = convertViewToBitmap(view)
                     l(bitmapView)
 
                 }
@@ -400,7 +399,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         transition: Transition<in Bitmap?>?
                     ) {
                         imageCIV.setImageBitmap(resource)
-                        val bitmapView = getViewBitmap(view)
+                        val bitmapView = convertViewToBitmap(view)
                         l(bitmapView)
 
                     }

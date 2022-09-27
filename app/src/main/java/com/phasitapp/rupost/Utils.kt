@@ -43,7 +43,7 @@ object Utils {
         return formatStr
     }
 
-    fun getViewBitmap(view: View): Bitmap? {
+    fun convertViewToBitmap(view: View): Bitmap? {
         //Get the dimensions of the view so we can re-layout the view at its current size
         //and create a bitmap of the same size
         val width = view.width

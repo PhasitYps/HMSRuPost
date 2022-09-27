@@ -62,7 +62,7 @@ class GPSManage(private var activity: Activity) {
 
 
             } else {
-                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, locationListener)
+                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
                 /*if (isNetwork) {
 
                     locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5f, locationListener)
@@ -75,7 +75,7 @@ class GPSManage(private var activity: Activity) {
                     }
                 }*/
                 if (isGPS) {
-                    locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10f, locationListener)
+                    locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
                     val loc = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
                     if (loc != null) {

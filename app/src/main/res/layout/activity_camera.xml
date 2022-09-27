@@ -1,187 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".CameraActivity">
-
-<androidx.camera.view.PreviewView
-    android:id="@+id/viewFinder"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    tools:context=".CameraActivity">
 
-    <LinearLayout
-        android:id="@+id/Layout0"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="40dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/temp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#FFF"
-                android:textSize="20sp"
-                tools:text="Temp"></TextView>
-
-            <TextView
-                android:id="@+id/status_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="#FFF"
-                android:textSize="14sp"
-                tools:text="status"></TextView>
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/status_image"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/icon_weather"
-            android:src="@drawable/day_2"></ImageView>
-
-    </LinearLayout>
-
-<LinearLayout
-    android:id="@+id/Layout1"
-    android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:layout_above="@id/Layout2"
-    android:orientation="vertical">
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        >
 
-        <Space
-            android:layout_width="10dp"
-            android:layout_height="wrap_content">
-        </Space>
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
         <LinearLayout
-            android:id="@+id/mini_map"
-            android:layout_width="50dp"
+            android:id="@+id/Layout0"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_weight="0.5"
-            android:background="#3CF1EBF1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <com.huawei.hms.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="false"
-                />
-        </LinearLayout>
-
-        <Space
-            android:layout_width="10dp"
-            android:layout_height="wrap_content">
-        </Space>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5"
-            android:background="#3CF1EBF1"
-            android:orientation="vertical"
-            android:weightSum="3"
-            android:padding="8dp">
+            android:layout_marginTop="40dp"
+            android:gravity="end"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/temp_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"
+                    android:textSize="20dp"
+                    tools:text="Temp" />
+
+                <TextView
+                    android:id="@+id/status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textColor="#FFF"
+                    tools:text="status" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/status_image"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/icon_weather"
+                android:src="@drawable/day_2" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/createDateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="20dp"
+            tools:text="currentDate"
+            android:textColor="@color/white"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bgCurrentLocationLL"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_above="@id/Layout2"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 >
 
-                <TextView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/location"
-                    android:textColor="#FFF"
-                    android:textSize="14sp">
-                </TextView>
+                <com.huawei.hms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    />
 
-                <TextView
-                    android:id="@+id/address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFF"
-                    android:textSize="14sp"
-                    tools:text="(Data Location)">
-                </TextView>
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageMapIV"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    />
+
+            </RelativeLayout>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#3CF1EBF1"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:weightSum="3">
 
-                <TextView
-                    android:layout_width="70dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/latitude"
-                    android:textColor="#FFF"
-                    android:textSize="14sp">
-                </TextView>
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/latitude"
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:text="@string/location"
+                        android:textColor="#FFF"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/addressTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="12dp"
+                        tools:text="(Data Location)" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFF"
-                    android:textSize="14sp"
-                    tools:text="(Data Latitude)">
-                </TextView>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                    android:layout_weight="1">
 
-                <TextView
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/longitude"
-                    android:textColor="#FFF"
-                    android:textSize="14sp">
-                </TextView>
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/latitude"
+                        android:textColor="#FFF"
+                        android:textSize="12dp" />
 
-                <TextView
-                    android:id="@+id/longitude"
+                    <TextView
+                        android:id="@+id/latitudeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="12dp"
+                        tools:text="(Data Latitude)" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/data_longitude"
-                    android:textColor="#FFF"
-                    android:textSize="14sp">
-                </TextView>
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/longitude"
+                        android:textColor="#FFF"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/longitudeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="@string/data_longitude"
+                        android:textColor="#FFF"
+                        android:textSize="12dp" />
+                </LinearLayout>
             </LinearLayout>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <Space android:layout_width="10dp"
-            android:layout_height="wrap_content">
-        </Space>
-    </LinearLayout>
-    <Space android:layout_height="10dp"
-        android:layout_width="wrap_content"
-        >
-    </Space>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="10dp" />
 
-</LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/Layout2"
@@ -189,7 +205,9 @@ tools:context=".CameraActivity">
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp"
+        >
 
         <ImageView
             android:id="@+id/imageCaptureIV"
