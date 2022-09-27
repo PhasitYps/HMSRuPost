@@ -49,32 +49,40 @@
                         android:layout_weight="1"
                         />
 
-                    <LinearLayout
-                        android:id="@+id/filterDayLL"
+                    <RelativeLayout
+                        android:id="@+id/filterDayRL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:background="@drawable/bg_border_rounded"
-                        android:gravity="center"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:layout_marginEnd="15dp"
                         >
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="วันนี้"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:layout_marginEnd="5dp"
-                            />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_arrow_bottom"
-                            />
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:layout_marginEnd="15dp"
+                            android:background="?attr/selectableItemBackground"
+                            >
+                            <TextView
+                                android:id="@+id/filterDayTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="7 วันล่าสุด"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="5dp"
+                                />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_bottom"
+                                />
 
-                    </LinearLayout>
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -107,15 +115,53 @@
             </HorizontalScrollView>
         </LinearLayout>
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/mapfragment_mapfragmentdemo"
-            class="com.huawei.hms.maps.SupportMapFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            map:cameraTargetLat="48.893478"
-            map:cameraTargetLng="2.334595"
-            map:cameraZoom="10" />
+            >
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mapfragment_mapfragmentdemo"
+                class="com.huawei.hms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                map:cameraTargetLat="48.893478"
+                map:cameraTargetLng="2.334595"
+                map:cameraZoom="10" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentRight="true"
+                >
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/currentLocationFab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/ic_my_location_24dp"
+                    app:fab_colorNormal="@color/colorWhite"
+                    app:fab_colorPressed="@color/colorBlack"
+                    app:fab_size="normal" />
+
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/layerFab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/ic_layers_24dp"
+                    app:fab_colorNormal="@color/colorWhite"
+                    app:fab_colorPressed="@color/colorBlack"
+                    app:fab_size="mini" />
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

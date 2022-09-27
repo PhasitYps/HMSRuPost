@@ -104,6 +104,7 @@ class RepositoryPost(private var activity: Activity) {
                 Log.i("fwafawf", "viewer: " + document[KEY_VIEWER])
 
                 val model = document.toObject(ModelPost::class.java)
+                model.id = document.id
                 Log.i("fwafawf", "imagelist: " + model.images.size)
                 Log.i("fwafawf", "id: " + model.id)
                 list.add(model)
@@ -135,6 +136,7 @@ class RepositoryPost(private var activity: Activity) {
                 Log.i("fwafawf", "viewer: " + document[KEY_VIEWER])
 
                 val model = document.toObject(ModelPost::class.java)
+                model.id = document.id
                 Log.i("fwafawf", "imagelist: " + model.images.size)
                 Log.i("fwafawf", "id: " + model.id)
                 list.add(model)
@@ -146,6 +148,10 @@ class RepositoryPost(private var activity: Activity) {
             Log.i("fwafawf", "e: ${it.message}" )
             l(RESULT_FAIL, list)
         }
+    }
+
+    fun like(postId: String){
+
     }
 
     private fun convertFileToByteArray(file: File): ByteArray{

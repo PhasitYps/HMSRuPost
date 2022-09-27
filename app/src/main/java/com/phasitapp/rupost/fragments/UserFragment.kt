@@ -44,6 +44,11 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         event()
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "UserFragment onPause")
+    }
+
     private fun init() {
         pref = Prefs(requireContext())
         updateUI()
@@ -202,7 +207,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                     Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
                         .into(imageUrlUserIV)
                     usernameTV.text = model.username
-                    descriptionTV.text = model.description
+                    menunameTV.text = model.description
 
                     setDataPost()
 

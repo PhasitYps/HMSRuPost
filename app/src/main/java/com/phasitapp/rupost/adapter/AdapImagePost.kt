@@ -16,6 +16,7 @@ import com.huawei.hms.maps.OnMapReadyCallback
 import com.huawei.hms.maps.model.LatLng
 import com.huawei.hms.maps.model.MarkerOptions
 import com.phasitapp.rupost.R
+import com.phasitapp.rupost.dialog.ImageViewPageDialog
 import com.phasitapp.rupost.model.ModelPost
 
 class AdapImagePost(private var activity: Activity, private val dataList: List<String>) :
@@ -33,6 +34,14 @@ class AdapImagePost(private var activity: Activity, private val dataList: List<S
         Log.i(TAG, "onBindViewHolder")
         val image = dataList[position]
         Glide.with(activity).load(image).into(holder.imageIV)
+        holder.imageIV.setOnClickListener {
+            showImageDialog()
+        }
+    }
+
+    private fun showImageDialog(){
+        val dialog = ImageViewPageDialog(activity, dataList)
+        dialog.show()
     }
 
     override fun getItemCount(): Int {

@@ -1,6 +1,9 @@
 package com.phasitapp.rupost.adapter
 
 import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -8,27 +11,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.huawei.hms.maps.*
+import com.huawei.hms.maps.CameraUpdateFactory
+import com.huawei.hms.maps.HuaweiMap
+import com.huawei.hms.maps.MapView
+import com.huawei.hms.maps.OnMapReadyCallback
 import com.huawei.hms.maps.model.LatLng
 import com.huawei.hms.maps.model.MarkerOptions
-import com.phasitapp.rupost.R
-import com.phasitapp.rupost.Utils
+import com.huawei.hms.maps.model.Tile
+import com.huawei.hms.maps.model.TileOverlayOptions
+import com.huawei.hms.maps.model.TileProvider
+import com.phasitapp.rupost.*
+import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
-import com.squareup.picasso.Callback
+import com.phasitapp.rupost.repository.RepositoryPost
 import com.squareup.picasso.Picasso
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AdapPost(private var activity: Activity, private val dataList: ArrayList<ModelPost>) :
     RecyclerView.Adapter<AdapPost.ViewHolder>() {
 
     private val TAG = "AdapPost"
+    private val prefs = Prefs(activity)
+    private val repositoryPost = RepositoryPost(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
@@ -40,7 +50,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         Log.i(TAG, "onBindViewHolder")
 
         setDetail(holder, position)
-        event(holder)
+        event(holder, position)
         setAnimateIcon(holder)
     }
 
@@ -50,8 +60,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         holder.huaweiMap?.clear()
         holder.huaweiMap?.mapType = HuaweiMap.MAP_TYPE_NONE
-
-
 
     }
 
@@ -81,8 +89,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.titleTV.text = if(dataList[position].title != null) dataList[position].title else ""
         holder.desciptionTV.text = if (dataList[position].desciption != null) dataList[position].desciption else ""
 
-        holder.setImageMapStatic(holder.imageView, lat!!, long!!)
-
+        //set adap image post
         val adapter = AdapImagePost(activity, dataList[position].images)
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         holder.imageRCV.adapter = adapter
@@ -90,19 +97,29 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
     }
 
-    private fun event(holder: ViewHolder) {
+    private fun event(holder: ViewHolder, position: Int) {
 
         holder.likeIV.setOnClickListener {
-
+            Log.i("sadafwgeaggaw", "likeIV click")
+            if(prefs.strUid != ""){
+                repositoryPost.like(dataList[position].id!!)
+            }
         }
         holder.commentIV.setOnClickListener {
-
+            Log.i("sadafwgeaggaw", "commentIV click")
         }
         holder.shareIV.setOnClickListener {
 
         }
         holder.bookmarkIV.setOnClickListener {
 
+        }
+
+        holder.viewMap.setOnClickListener {
+            val intent = Intent(activity, MapActivity::class.java)
+            intent.putExtra(KEY_EVENT, "post")
+            intent.putExtra("modelPost", dataList[position])
+            activity.startActivity(intent)
         }
     }
 
@@ -220,10 +237,10 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val imageRCV = itemView.findViewById<RecyclerView>(R.id.imageRCV)
         val profileIV = itemView.findViewById<ImageView>(R.id.profileIV)
         val titleTV = itemView.findViewById<TextView>(R.id.titleTV)
-        val desciptionTV = itemView.findViewById<TextView>(R.id.descriptionTV)
+        val desciptionTV = itemView.findViewById<TextView>(R.id.menunameTV)
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
-        val imageView = itemView.findViewById<ImageView>(R.id.imageView)
+        val viewMap = itemView.findViewById<View>(R.id.viewMap)
 
         init {
             Log.i(TAG, "init")
@@ -240,42 +257,34 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             huaweiMap?.uiSettings?.setAllGesturesEnabled(false)
 
             val latLng = mapView.tag as LatLng
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
             map?.addMarker(MarkerOptions().position(latLng))
+
+            val mTileSize = 256
+            val mScale = 1
+            val mDimension = mScale * mTileSize
+            val mTileProvider = TileProvider { x, y, zoom ->
+                Log.i("sadafwgeaggaw", "x: $x, y:$y, z:$zoom")
+                val matrix = Matrix()
+                val scale: Float = Math.pow(2.0, zoom.toDouble()).toFloat() * mScale
+                matrix.postScale(scale, scale)
+                matrix.postTranslate((-x * mDimension).toFloat(), (-y * mDimension).toFloat())
+
+                // Generate a Bitmap image.
+                val googleUrl = "https://mts3.google.com/vt/lyrs=s@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
+                val bitmap = Picasso.get().load(googleUrl).get()
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                Tile(mDimension, mDimension, stream.toByteArray())
+
+            }
+            val options = TileOverlayOptions().tileProvider(mTileProvider).transparency(0f)
+            huaweiMap?.addTileOverlay(options)
 
             Log.i(TAG, "This is MapReady in RecyclerView")
 
         }
 
-        fun setImageMapStatic(imageView: ImageView, lat: String, long: String){
-
-            val key = "A1E9EE3AFE018709B6FD60390B23DD7ED013C5A4EF814FCD6F70FA6FC9EEEE0D"
-            val url = "https://mapapi.cloud.huawei.com/mapApi/v1/mapService/getStaticMap?" +
-                    "key=$key&"+
-                    "width=200&" +  // Set the height of the returned map image to 512.
-                    "height=200&" +  // Set the address information. (Latitude: 41.43206; Longitude: -81.38992)
-                    "location=41.43206%2C-81.38992&" +
-                    "zoom=14&" +
-                    "pattern=PNG&" +
-                    "logo=logoAnchor%3Abottomleft&" +  // Set the maker description information. (Latitude: 41.43206; Longitude: -81.38992)
-                    "markers=%7B41.43206%2C-81.38992%7D"
-
-
-            Picasso.get()
-                .load(url)
-                .placeholder(R.drawable.gif_dots_loading)
-                .into(imageView, object : Callback{
-                    override fun onSuccess() {}
-                    override fun onError(e: Exception) {
-                        Toast.makeText(
-                            activity,
-                            "Error to load Maps: " + e.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
-
-        }
 
     }
 

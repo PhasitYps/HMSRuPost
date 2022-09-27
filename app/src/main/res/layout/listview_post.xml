@@ -152,59 +152,56 @@
                             />
                     </LinearLayout>
 
-
-
                 </LinearLayout>
 
-                <RelativeLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="190dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="0dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="false"
+                    android:layout_marginTop="10dp"
                     >
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent"
+                        >
+                        <com.huawei.hms.maps.MapView
+                            android:id="@+id/mapView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="false"
+                            />
+
+                        <View
+                            android:id="@+id/viewMap"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
                         <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="190dp"
-                            app:cardCornerRadius="15dp"
+                            android:id="@+id/viewMapCV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             app:cardElevation="0dp"
-                            app:cardPreventCornerOverlap="false"
-                            app:cardUseCompatPadding="false">
-
-                            <com.huawei.hms.maps.MapView
-                                android:id="@+id/mapView"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:clickable="false"
-                                />
-
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="190dp"
-                            app:cardCornerRadius="15dp"
-                            app:cardElevation="0dp"
-                            app:cardPreventCornerOverlap="false"
-                            app:cardUseCompatPadding="false"
-                            android:visibility="gone"
+                            app:cardCornerRadius="30dp"
+                            app:cardBackgroundColor="@color/colorBlackAlpha"
+                            android:layout_centerInParent="true"
                             >
-
-                            <ImageView
-                                android:id="@+id/imageView"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ดูมุมมองเเผนที่"
+                                android:paddingHorizontal="15dp"
+                                android:paddingVertical="10dp"
+                                android:textColor="@color/white"
                                 />
-
                         </androidx.cardview.widget.CardView>
 
-                    </LinearLayout>
+                    </RelativeLayout>
 
-                </RelativeLayout>
+                </androidx.cardview.widget.CardView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/imageRCV"
@@ -233,7 +230,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/descriptionTV"
+                    android:id="@+id/menunameTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Used with to map a View from a removed or hidden Fragment to a View from a shown or added Fragment."
@@ -275,6 +272,7 @@
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:padding="2dp"
                             android:src="@drawable/ic_heart" />
+                        
                     </RelativeLayout>
 
                     <RelativeLayout

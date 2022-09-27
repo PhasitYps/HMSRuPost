@@ -77,7 +77,12 @@ class BottomSheetMenu(
                 holder.descriptionTV.visibility = View.VISIBLE
                 m.description
             }
-            holder.imageIV.setImageResource(m.icon)
+
+            if(m.icon != null){
+                holder.imageIV.setImageResource(m.icon)
+            }else{
+                holder.imageIV.visibility = View.GONE
+            }
 
             holder.itemCV.setOnClickListener {
                 itemClick.onMyClick(m, position)
@@ -93,7 +98,7 @@ class BottomSheetMenu(
 
             var imageIV: ImageView = itemView.findViewById(R.id.imageIV)
             var titleTV: TextView = itemView.findViewById(R.id.titleTV)
-            var descriptionTV: TextView = itemView.findViewById(R.id.descriptionTV)
+            var descriptionTV: TextView = itemView.findViewById(R.id.menunameTV)
 
 
         }
@@ -112,6 +117,6 @@ class BottomSheetMenu(
     data class ModelMenuBottomSheet(
         val title:String,
         val description:String,
-        val icon:Int
+        val icon:Int? = null
     )
 }

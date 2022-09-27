@@ -11,14 +11,8 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:background="?attr/selectableItemBackground"
+        android:padding="20dp"
         >
-
-        <ImageView
-            android:id="@+id/imageIV"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_margin="20dp"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,21 +21,11 @@
             >
 
             <TextView
-                android:id="@+id/titleTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="titleTV"
-                android:textColor="@color/colorBlack"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                />
-
-            <TextView
                 android:id="@+id/menunameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="descriptionTV"
-                android:textSize="14dp"
+                android:text="menuname"
+                android:textColor="@color/black"
                 />
 
         </LinearLayout>
