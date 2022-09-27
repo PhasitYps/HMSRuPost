@@ -86,18 +86,30 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         Glide.with(activity).load(dataList[position].profile).into(holder.profileIV)
         holder.usernameTV.text = dataList[position].username
-        holder.createDateTV.text = formatCreateDate(dataList[position].createDate.toString().toLong())
-        holder.titleTV.text = if(dataList[position].title != null) dataList[position].title else ""
-        holder.desciptionTV.text = if (dataList[position].desciption != null) dataList[position].desciption else ""
+        holder.createDateTV.text =
+            formatCreateDate(dataList[position].createDate.toString().toLong())
+        holder.titleTV.text = if (dataList[position].title != null) dataList[position].title else ""
+        holder.desciptionTV.text =
+            if (dataList[position].desciption != null) dataList[position].desciption else ""
 
-        repositoryPost.getLike(dataList[position].id!!){ userLikes ->
+        repositoryPost.getStaticLike(dataList[position].id!!) { userLikes ->
             Log.i("agehaehes", "Like: " + userLikes.size)
-            if(userLikes.size != 0){
-                holder.coundLikeTV.text = userLikes.size.toString()
+
+            holder.setLike(userLikes.size)
+
+            if (userLikes.size != 0) {
                 holder.bgLikeCountLL.visibility = View.VISIBLE
-                userLikes.filter { it.equals(prefs.strUid) }
-                holder.likeIV.tag = userLikes.isNotEmpty()
-            }else{
+                userLikes.filter { it == prefs.strUid }.apply {
+                    if (userLikes.isNotEmpty()) {
+                        holder.likeIV.tag = true
+                        Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
+                    } else {
+                        holder.likeIV.tag = false
+                        Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
+                    }
+                }
+
+            } else {
                 holder.bgLikeCountLL.visibility = View.GONE
                 holder.likeIV.tag = false
             }
@@ -109,26 +121,27 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.imageRCV.adapter = adapter
         holder.imageRCV.layoutManager = layoutManager
 
-
     }
 
     private fun event(holder: ViewHolder, position: Int) {
 
         holder.likeIV.setOnClickListener {
             Log.i("agehaehes", "likeIV click")
-            if(prefs.strUid != ""){
-                if(holder.likeIV.tag != null){
+            if (prefs.strUid != "") {
+                if (holder.likeIV.tag != null) {
                     val currnetLike = holder.likeIV.tag as Boolean
-                    when(currnetLike){
-                        true->{
+                    when (currnetLike) {
+                        true -> {
                             repositoryPost.like(dataList[position].id!!, false)
                             holder.likeIV.tag = false
                             Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
+                            holder.minusLike()
                         }
-                        false->{
+                        false -> {
                             repositoryPost.like(dataList[position].id!!, true)
                             holder.likeIV.tag = true
                             Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
+                            holder.plusLike()
                         }
                     }
                 }
@@ -225,7 +238,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
-    private fun formatCreateDate(createDate: Long): String{
+    private fun formatCreateDate(createDate: Long): String {
         val currentDate = System.currentTimeMillis()
         val pastTime = currentDate - createDate
         //259200000 = 3 day
@@ -234,19 +247,19 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         //60,000 = 1 m
         //1,000 = 1 s
         Log.i("fweewfwe", "pastTime: $pastTime")
-        if(pastTime > 259200000){
+        if (pastTime > 259200000) {
             return Utils.formatDate("dd MMM yyyy HH:mm", Date(createDate))
-        }else if(pastTime >= 86400000){
-            val day = (pastTime/86400000).toInt()
+        } else if (pastTime >= 86400000) {
+            val day = (pastTime / 86400000).toInt()
             return "$day วัน ที่เเล้ว"
-        }else if(pastTime >= 3600000){
-            val h = (pastTime/3600000).toInt()
+        } else if (pastTime >= 3600000) {
+            val h = (pastTime / 3600000).toInt()
             return "$h ชม. ที่เเล้ว"
-        }else if(pastTime >= 60000){
-            val m = (pastTime/60000).toInt()
+        } else if (pastTime >= 60000) {
+            val m = (pastTime / 60000).toInt()
             return "$m น. ที่เเล้ว"
-        }else{
-            val s = (pastTime/1000).toInt()
+        } else {
+            val s = (pastTime / 1000).toInt()
             return "$s วิ. ที่เเล้ว"
         }
     }
@@ -258,6 +271,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnMapReadyCallback {
 
         var huaweiMap: HuaweiMap? = null
+        var countLike: Int = 0
 
         val likeIV = itemView.findViewById<ImageView>(R.id.likeIV)
         val commentIV = itemView.findViewById<ImageView>(R.id.commentIV)
@@ -282,6 +296,36 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         }
 
+        fun plusLike() {
+            countLike++
+            coundLikeTV.text = "$countLike"
+            if (countLike != 0) {
+                bgLikeCountLL.visibility = View.VISIBLE
+            } else {
+                bgLikeCountLL.visibility = View.GONE
+            }
+        }
+
+        fun minusLike() {
+            countLike--
+            coundLikeTV.text = "$countLike"
+            if (countLike != 0) {
+                bgLikeCountLL.visibility = View.VISIBLE
+            } else {
+                bgLikeCountLL.visibility = View.GONE
+            }
+        }
+
+        fun setLike(count: Int) {
+            countLike = count
+            coundLikeTV.text = "$countLike"
+            if (countLike != 0) {
+                bgLikeCountLL.visibility = View.VISIBLE
+            } else {
+                bgLikeCountLL.visibility = View.GONE
+            }
+        }
+
         override fun onMapReady(map: HuaweiMap?) {
             huaweiMap = map
             huaweiMap?.uiSettings?.isMapToolbarEnabled = false
@@ -304,7 +348,8 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                 matrix.postTranslate((-x * mDimension).toFloat(), (-y * mDimension).toFloat())
 
                 // Generate a Bitmap image.
-                val googleUrl = "https://mts3.google.com/vt/lyrs=s@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
+                val googleUrl =
+                    "https://mts3.google.com/vt/lyrs=s@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
                 val bitmap = Picasso.get().load(googleUrl).get()
                 val stream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)

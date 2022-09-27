@@ -156,15 +156,15 @@ class RepositoryPost(private var activity: Activity) {
         }
     }
 
-    fun getLike(postId: String, l:(userLikes: ArrayList<String>)->Unit) {
+    fun getStaticLike(postId: String, l:(userLikes: ArrayList<String>)->Unit) {
         database.getReference(KEY_POST).child(postId).child(KEY_LIKES)
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val userLikes = ArrayList<String>()
+                    val dataList = ArrayList<String>()
                     snapshot.children.forEach {
-                        userLikes.add(it.key!!)
+                        dataList.add(it.key!!)
                     }
-                    l(userLikes)
+                    l(dataList)
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })
