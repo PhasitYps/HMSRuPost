@@ -9,7 +9,6 @@
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/drawable/ic_layers_24dp.xml" value="0.1445" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/drawable/ic_my_location_24dp.xml" value="0.146" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/drawable/selector_text_state.xml" value="0.1345" />
-        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_camera.xml" value="0.24320652173913043" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_map.xml" value="0.264" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/activity_post.xml" value="0.264" />
@@ -29,18 +28,25 @@
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/fragment_user.xml" value="0.264" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/listview_image_post.xml" value="0.253125" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/listview_paper_image.xml" value="0.2441123188405797" />
-        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/listview_post.xml" value="0.264" />
+        <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/listview_post.xml" value="0.2" />
         <entry key="..\:/ProjectsAndroidStudio/RuPost/app/src/main/res/layout/map_marker_image.xml" value="0.6" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_camera.xml" value="0.22" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_comfirm_image.xml" value="0.25" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_confirm_image.xml" value="0.21910112359550563" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_main.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_map.xml" value="0.296195652173913" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_post.xml" value="0.33" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_post_test.xml" value="0.22" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/bottom_sheet_menu.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/content_post_activity_test.xml" value="0.30434782608695654" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/custom_listview_bottomsheet_menu.xml" value="0.3625" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/dialog_loading.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_bookmark.xml" value="0.30434782608695654" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_first.xml" value="0.30434782608695654" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_home.xml" value="0.296195652173913" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_second.xml" value="0.30434782608695654" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_user.xml" value="0.3625" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/listview_image_post.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/listview_post.xml" value="0.2" />
       </map>
     </option>
