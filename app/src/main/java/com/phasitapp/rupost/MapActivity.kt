@@ -1,6 +1,7 @@
 package com.phasitapp.rupost
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -183,11 +184,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (result == RepositoryPost.RESULT_SUCCESS) {
                     postList.addAll(posts)
                     postList.setForEachMarkerAndMove()
+
+//                    hMap!!.setMarkersClustering(true)
+//                    hMap!!.uiSettings.setMarkerClusterColor(Color.RED)
                 }
             }
         }
-
-
 
         hMap!!.setOnMarkerClickListener { marker ->
 
@@ -211,6 +213,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 })
             true
         }
+
+
 
     }
 
@@ -386,22 +390,28 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         view.layout(0, 0, 240, 240);
         val imageCIV = view.findViewById(R.id.imageCIV) as CircleImageView
 
-        Glide.with(this)
-            .asBitmap()
-            .load(resIdRes)
-            .into(object : CustomTarget<Bitmap?>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap?>?
-                ) {
-                    imageCIV.setImageBitmap(resource)
-                    val bitmapView = getViewBitmap(view)
-                    l(bitmapView)
+        try{
+            Glide.with(this)
+                .asBitmap()
+                .load(resIdRes)
+                .into(object : CustomTarget<Bitmap?>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap?>?
+                    ) {
+                        imageCIV.setImageBitmap(resource)
+                        val bitmapView = getViewBitmap(view)
+                        l(bitmapView)
 
-                }
+                    }
 
-                override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
-            })
+                    override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
+                })
+
+        }catch (e: IllegalArgumentException){
+            Log.i("ffewfweg", "e: ${e.message}")
+        }
+
     }
 
     private var mTileOverlay: TileOverlay? = null
