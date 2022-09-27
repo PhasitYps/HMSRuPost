@@ -49,32 +49,40 @@
                         android:layout_weight="1"
                         />
 
-                    <LinearLayout
-                        android:id="@+id/filterDayLL"
+                    <RelativeLayout
+                        android:id="@+id/filterDayRL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:background="@drawable/bg_border_rounded"
-                        android:gravity="center"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:layout_marginEnd="15dp"
                         >
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="วันนี้"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:layout_marginEnd="5dp"
-                            />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_arrow_bottom"
-                            />
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:layout_marginEnd="15dp"
+                            android:background="?attr/selectableItemBackground"
+                            >
+                            <TextView
+                                android:id="@+id/filterDayTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="7 วันล่าสุด"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="5dp"
+                                />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_bottom"
+                                />
 
-                    </LinearLayout>
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 

@@ -244,7 +244,7 @@
                                     />
 
                                 <TextView
-                                    android:id="@+id/descriptionTV"
+                                    android:id="@+id/menunameTV"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="Used with to map a View from a removed or hidden Fragment to a View from a shown or added Fragment."

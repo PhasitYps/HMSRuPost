@@ -3,24 +3,15 @@ package com.phasitapp.rupost.dialog
 import android.app.Activity
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.huawei.hms.maps.CameraUpdateFactory
-import com.huawei.hms.maps.HuaweiMap
-import com.huawei.hms.maps.model.LatLng
-import com.huawei.hms.maps.model.MarkerOptions
 import com.phasitapp.rupost.R
 import com.phasitapp.rupost.Utils
 import com.phasitapp.rupost.adapter.AdapImagePost
-import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.model.ModelPost
 import kotlinx.android.synthetic.main.bottomsheet_detail_post.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import java.io.File
 import java.util.*
 
 class DetailPostBottomDialog(private val activity: Activity, private val modelPost: ModelPost): BottomSheetDialog(activity, R.style.SheetDialog) {
@@ -53,7 +44,7 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
         usernameTV.text =modelPost.username
         createDateTV.text = formatCreateDate(modelPost.createDate.toString().toLong())
         titleTV.text = if(modelPost.title != null) modelPost.title else ""
-        descriptionTV.text = if (modelPost.desciption != null) modelPost.desciption else ""
+        menunameTV.text = if (modelPost.desciption != null) modelPost.desciption else ""
 
         setAdap()
     }

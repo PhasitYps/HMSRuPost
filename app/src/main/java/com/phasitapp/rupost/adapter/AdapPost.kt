@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -28,13 +27,8 @@ import com.phasitapp.rupost.*
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.io.ByteArrayOutputStream
-import java.lang.Math.cos
-import java.lang.Math.sin
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -243,7 +237,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val imageRCV = itemView.findViewById<RecyclerView>(R.id.imageRCV)
         val profileIV = itemView.findViewById<ImageView>(R.id.profileIV)
         val titleTV = itemView.findViewById<TextView>(R.id.titleTV)
-        val desciptionTV = itemView.findViewById<TextView>(R.id.descriptionTV)
+        val desciptionTV = itemView.findViewById<TextView>(R.id.menunameTV)
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
         val viewMap = itemView.findViewById<View>(R.id.viewMap)

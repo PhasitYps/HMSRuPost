@@ -4,7 +4,6 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.phasitapp.rupost.R
 
-class BottomSheetMenu(
+class BottomSheetMenuFilter(
     private val activity: Activity,
     private val modelMenu: ArrayList<ModelMenuBottomSheet>,
     private val title: String,
-    val itemClick: BottomSheetMenu.SelectListener
+    val itemClick: SelectListener
 ) {
 
     init {
@@ -24,7 +23,7 @@ class BottomSheetMenu(
     }
 
     private fun showBottomSheetDialog() {
-        val bottomSheetView: View = activity.layoutInflater.inflate(R.layout.bottom_sheet_menu, null)
+        val bottomSheetView: View = activity.layoutInflater.inflate(R.layout.bottom_sheet_menu_filter, null)
         val bottomSheetDialog = BottomSheetDialog(activity, R.style.SheetDialog)
         bottomSheetDialog.setContentView(bottomSheetView)
 
@@ -62,51 +61,32 @@ class BottomSheetMenu(
     inner class DataAdapter(private val bottomSheetDialog: BottomSheetDialog) : RecyclerView.Adapter<DataAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.custom_listview_bottomsheet_menu, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.custom_listview_bottomsheet_menu_filter, parent, false)
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
             val m  = modelMenu[position]
-            holder.titleTV.text = m.title
-            holder.descriptionTV.text = if (m.description.isNullOrEmpty()) {
-                holder.descriptionTV.visibility = View.GONE
-                ""
-            } else {
-                holder.descriptionTV.visibility = View.VISIBLE
-                m.description
-            }
 
-            if(m.icon != null){
-                holder.imageIV.setImageResource(m.icon)
-            }else{
-                holder.imageIV.visibility = View.GONE
-            }
+            holder.menunameTV.text = m.menuname
 
             holder.itemCV.setOnClickListener {
                 itemClick.onMyClick(m, position)
                 bottomSheetDialog.dismiss()
             }
 
-
         }
 
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var itemCV: CardView = itemView.findViewById(R.id.itemCV)
-
-            var imageIV: ImageView = itemView.findViewById(R.id.imageIV)
-            var titleTV: TextView = itemView.findViewById(R.id.titleTV)
-            var descriptionTV: TextView = itemView.findViewById(R.id.menunameTV)
-
-
+            var menunameTV: TextView = itemView.findViewById(R.id.menunameTV)
         }
 
         override fun getItemCount(): Int {
             return modelMenu.size
         }
-
 
     }
 
@@ -115,8 +95,6 @@ class BottomSheetMenu(
     }
 
     data class ModelMenuBottomSheet(
-        val title:String,
-        val description:String,
-        val icon:Int? = null
+        var menuname:String,
     )
 }
