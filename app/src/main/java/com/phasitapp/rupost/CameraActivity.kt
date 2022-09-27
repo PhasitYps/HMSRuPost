@@ -134,6 +134,7 @@ class CameraActivity : AppCompatActivity() {
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
                     Log.i(TAG, "Photo saved successfully")
+                    image.close();
                     openConfirm()
                 } else {
                     Log.i(TAG, "Failed to save photo")
