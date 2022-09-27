@@ -15,9 +15,13 @@ import com.bumptech.glide.Glide
 import com.phasitapp.rupost.R
 import kotlinx.android.synthetic.main.dialog_image_view_page.*
 
-class ImageViewPageDialog(private var activity: Activity, private val dataList: List<String>): Dialog(activity) {
+class ImageViewPageDialog(
+    private var activity: Activity,
+    private val dataList: List<String>,
+    private val currentImage: Int
+) : Dialog(activity) {
 
-    fun setMyEvents(l:(event: String)->Unit){
+    fun setMyEvents(l: (event: String) -> Unit) {
 
     }
 
@@ -34,7 +38,7 @@ class ImageViewPageDialog(private var activity: Activity, private val dataList: 
             dismiss()
         }
 
-        statusPageTV.text = "1/${dataList.size}"
+        statusPageTV.text = "${currentImage+1}/${dataList.size}"
     }
 
     override fun onBackPressed() {
@@ -42,10 +46,10 @@ class ImageViewPageDialog(private var activity: Activity, private val dataList: 
         dismiss()
     }
 
-    private fun setAdapPager(){
+    private fun setAdapPager() {
         val adapter = AdapPagerImagePost(activity, dataList)
         dataViewPager.adapter = adapter
-        //viewPager2.setCurrentItem(indexSelect, 1000)
+        dataViewPager.setCurrentItem(currentImage, false)
         dataViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 Log.i("hhhhhhh", "position: " + position)
@@ -55,9 +59,15 @@ class ImageViewPageDialog(private var activity: Activity, private val dataList: 
         })
     }
 
-    inner class AdapPagerImagePost(private val activity: Activity, private val dataList: List<String>) : RecyclerView.Adapter<AdapPagerImagePost.ViewHolder>() {
+    inner class AdapPagerImagePost(
+        private val activity: Activity,
+        private val dataList: List<String>
+    ) : RecyclerView.Adapter<AdapPagerImagePost.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.listview_paper_image, parent, false))
+            ViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.listview_paper_image, parent, false)
+            )
 
         override fun getItemCount(): Int = dataList.size
 
@@ -68,7 +78,7 @@ class ImageViewPageDialog(private var activity: Activity, private val dataList: 
 
         }
 
-        inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             val imagePostIV = itemView.findViewById<ImageView>(R.id.imagePostIV)
 

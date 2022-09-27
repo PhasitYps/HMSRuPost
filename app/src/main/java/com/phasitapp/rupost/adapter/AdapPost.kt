@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -89,20 +90,49 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.titleTV.text = if(dataList[position].title != null) dataList[position].title else ""
         holder.desciptionTV.text = if (dataList[position].desciption != null) dataList[position].desciption else ""
 
+        repositoryPost.getLike(dataList[position].id!!){ userLikes ->
+            Log.i("agehaehes", "Like: " + userLikes.size)
+            if(userLikes.size != 0){
+                holder.coundLikeTV.text = userLikes.size.toString()
+                holder.bgLikeCountLL.visibility = View.VISIBLE
+                userLikes.filter { it.equals(prefs.strUid) }
+                holder.likeIV.tag = userLikes.isNotEmpty()
+            }else{
+                holder.bgLikeCountLL.visibility = View.GONE
+                holder.likeIV.tag = false
+            }
+        }
+
         //set adap image post
         val adapter = AdapImagePost(activity, dataList[position].images)
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         holder.imageRCV.adapter = adapter
         holder.imageRCV.layoutManager = layoutManager
 
+
     }
 
     private fun event(holder: ViewHolder, position: Int) {
 
         holder.likeIV.setOnClickListener {
-            Log.i("sadafwgeaggaw", "likeIV click")
+            Log.i("agehaehes", "likeIV click")
             if(prefs.strUid != ""){
-                repositoryPost.like(dataList[position].id!!)
+                if(holder.likeIV.tag != null){
+                    val currnetLike = holder.likeIV.tag as Boolean
+                    when(currnetLike){
+                        true->{
+                            repositoryPost.like(dataList[position].id!!, false)
+                            holder.likeIV.tag = false
+                            Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
+                        }
+                        false->{
+                            repositoryPost.like(dataList[position].id!!, true)
+                            holder.likeIV.tag = true
+                            Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
+                        }
+                    }
+                }
+
             }
         }
         holder.commentIV.setOnClickListener {
@@ -241,11 +271,14 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
         val viewMap = itemView.findViewById<View>(R.id.viewMap)
+        val coundLikeTV = itemView.findViewById<TextView>(R.id.coundLikeTV)
+        val bgLikeCountLL = itemView.findViewById<LinearLayout>(R.id.bgLikeCountLL)
 
         init {
             Log.i(TAG, "init")
             mapView.onCreate(null)
             mapView.getMapAsync(this)
+            bgLikeCountLL.visibility = View.GONE
 
         }
 
@@ -284,7 +317,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             Log.i(TAG, "This is MapReady in RecyclerView")
 
         }
-
 
     }
 

@@ -35,12 +35,12 @@ class AdapImagePost(private var activity: Activity, private val dataList: List<S
         val image = dataList[position]
         Glide.with(activity).load(image).into(holder.imageIV)
         holder.imageIV.setOnClickListener {
-            showImageDialog()
+            showImageDialog(position)
         }
     }
 
-    private fun showImageDialog(){
-        val dialog = ImageViewPageDialog(activity, dataList)
+    private fun showImageDialog(currentImage: Int){
+        val dialog = ImageViewPageDialog(activity, dataList, currentImage)
         dialog.show()
     }
 
