@@ -1,9 +1,11 @@
 package com.phasitapp.rupost
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.location.Location
 import android.os.AsyncTask
 import android.os.Build
@@ -34,11 +36,18 @@ import java.util.*
 class CameraActivity : AppCompatActivity() {
     var latitude: String?= null
     var longitude: String?= null
+    var address_image: String? = null
+    var name_image: String?= null
+
     val API = "b0400551b9c2882592551bfdf9978798"
     val TAG = "Work Task"
 
     private var gpsManage: GPSManage? = null
     private var imageCapture: ImageCapture? = null
+
+    var lat: Double? = null
+    var long: Double? = null
+
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -67,6 +76,9 @@ class CameraActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.latitude).text = "" + latitude
                 findViewById<TextView>(R.id.longitude).text = "" + longitude
 
+                lat = currentLocation.latitude
+                long = currentLocation.longitude
+
                 weatherTask().execute()
             }
 
@@ -76,16 +88,14 @@ class CameraActivity : AppCompatActivity() {
 
         })
 
-        val lat = latitude!!.toDouble()
-        val long = longitude!!.toDouble()
 
         val map = HuaweiMapCamera().huaweiMap
         if (lat != null && long !=null){
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14f))
-            map?.addMarker(MarkerOptions().position(LatLng(lat, long)))
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat!!, long!!), 14f))
+            map?.addMarker(MarkerOptions().position(LatLng(lat!!, long!!)))
             map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
 
-            HuaweiMapCamera().mapView.tag = LatLng(lat, long)
+            HuaweiMapCamera().mapView.tag = LatLng(lat!!, long!!)
         }
 
         // Set up the listeners for take photo and video capture buttons
@@ -114,11 +124,21 @@ class CameraActivity : AppCompatActivity() {
             ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 //get bitmap from image
-                val bitmap = imageProxyToBitmap(image)
+                var bitmap = imageProxyToBitmap(image)
+                bitmap = rotateBitmap(bitmap, 90f)
 
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
                     android.util.Log.i(TAG, "Photo saved successfully")
+
+                    val intent = Intent(this@CameraActivity, Confirm_ImageActivity::class.java)
+                    intent.putExtra("latitude", latitude)
+                    intent.putExtra("longitude", longitude)
+                    intent.putExtra("address", address_image)
+                    intent.putExtra("name_image", name_image)
+                    android.util.Log.i(TAG, "Go to Confirm Image Activity")
+                    startActivity(intent)
+                    finish()
                 } else {
                     android.util.Log.i(TAG, "Failed to save photo")
                 }
@@ -129,6 +149,14 @@ class CameraActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degrees)
+        return Bitmap.createBitmap(
+            source, 0, 0, source.width, source.height, matrix, true
+        )
     }
 
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
@@ -146,6 +174,7 @@ class CameraActivity : AppCompatActivity() {
                     throw IOException("Couldn't save bitmap.")
                 }
             }
+            name_image = "$filename.jpg"
             true
         } catch (e: IOException) {
             e.printStackTrace()
@@ -292,6 +321,8 @@ class CameraActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.temp).text = temp
                 findViewById<TextView>(R.id.status).text = weatherDescription
                 findViewById<TextView>(R.id.address).text = address
+
+                address_image = address
 
                 when(icon){
                     "01d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_1)

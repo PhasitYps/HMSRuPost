@@ -28,6 +28,9 @@
         android:theme="@style/Theme.RuPost"
         tools:targetApi="31">
         <activity
+            android:name=".Confirm_ImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".CameraActivity"
             android:exported="false" />
         <activity
