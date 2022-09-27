@@ -1,12 +1,14 @@
 package com.phasitapp.rupost
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.Location
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +22,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import com.huawei.hms.maps.*
 import com.huawei.hms.maps.model.LatLng
@@ -48,6 +51,7 @@ class CameraActivity : AppCompatActivity() {
     var lat: Double? = null
     var long: Double? = null
 
+    private var SELECT_IMAGE: Int? = 1
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -70,7 +74,7 @@ class CameraActivity : AppCompatActivity() {
         gpsManage!!.requestGPS()
         gpsManage!!.setMyEvent(object : GPSManage.MyEvent{
             override fun onLocationChanged(currentLocation: Location) {
-                android.util.Log.i(TAG, "location: $currentLocation")
+                Log.i(TAG, "location: $currentLocation")
                 latitude = String.format("%.5f", currentLocation.latitude)
                 longitude = String.format("%.5f", currentLocation.longitude)
                 findViewById<TextView>(R.id.latitude).text = "" + latitude
@@ -129,18 +133,10 @@ class CameraActivity : AppCompatActivity() {
 
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
-                    android.util.Log.i(TAG, "Photo saved successfully")
-
-                    val intent = Intent(this@CameraActivity, Confirm_ImageActivity::class.java)
-                    intent.putExtra("latitude", latitude)
-                    intent.putExtra("longitude", longitude)
-                    intent.putExtra("address", address_image)
-                    intent.putExtra("name_image", name_image)
-                    android.util.Log.i(TAG, "Go to Confirm Image Activity")
-                    startActivity(intent)
-                    finish()
+                    Log.i(TAG, "Photo saved successfully")
+                    openConfirm()
                 } else {
-                    android.util.Log.i(TAG, "Failed to save photo")
+                    Log.i(TAG, "Failed to save photo")
                 }
             }
 
@@ -149,6 +145,34 @@ class CameraActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    private fun openConfirm() {
+        val intent = Intent(this@CameraActivity, Confirm_ImageActivity::class.java)
+        intent.putExtra("latitude", latitude)
+        intent.putExtra("longitude", longitude)
+        intent.putExtra("address", address_image)
+        intent.putExtra("name_image", name_image)
+        Log.i(TAG, "Go to Confirm Image Activity")
+
+        startActivityForResult(intent, SELECT_IMAGE!!)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data != null) {
+            when (requestCode) {
+                SELECT_IMAGE-> if (resultCode == Activity.RESULT_OK) {
+                    val imagePath = data.getStringExtra("IMAGE_PATH")
+
+                    Log.i(TAG, "onActivityResult CameraActivity: $imagePath")
+
+                    setResult(RESULT_OK, Intent().putExtra("IMAGE_PATH", imagePath))
+                    Log.i(TAG, "Go to Post Activity")
+                    finish()
+                }
+            }
+        }
     }
 
     fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {

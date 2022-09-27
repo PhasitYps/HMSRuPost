@@ -12,14 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import kotlinx.android.synthetic.main.activity_post.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class PostActivity : AppCompatActivity() {
-    private var PERMISSION_REQUEST: Int? = 5600000
-    private var SELECT_IMAGE: Int? = 106460454
+    private var PERMISSION_REQUEST: Int? = 0
+    private var SELECT_IMAGE: Int? = 1
+    private var CAMERA_IMAGE: Int? = 2
     val TAG = "Work Task"
 
     private val imageList = arrayListOf<String>()
@@ -29,7 +31,8 @@ class PostActivity : AppCompatActivity() {
         setContentView(R.layout.activity_post)
 
         Camera_btn.setOnClickListener {
-            startActivity(Intent(this, CameraActivity::class.java))
+            val intent = Intent(this, CameraActivity::class.java)
+            startActivityForResult(intent, CAMERA_IMAGE!!)
         }
 
         Gallary_Btn.setOnClickListener {
@@ -73,8 +76,16 @@ class PostActivity : AppCompatActivity() {
                     if (isSaveSuccessfully){
                         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
                     } else {
-                        android.util.Log.i(TAG, "Failed to save photo")
+                        Log.i(TAG, "Failed to save photo")
                     }
+                }
+
+                CAMERA_IMAGE -> if (resultCode == Activity.RESULT_OK) {
+                    val imagePath = data.getStringExtra("IMAGE_PATH")
+
+                    Log.i(TAG, "onActivityResult PostActivity: $imagePath")
+                    imageList.add(imagePath!!)
+                    Log.i(TAG, imageList.toString())
                 }
             }
         }
@@ -94,7 +105,7 @@ class PostActivity : AppCompatActivity() {
                 }
             }
             imageList.add("$filename.jpg")
-            android.util.Log.i(TAG, imageList.toString())
+            Log.i(TAG, imageList.toString())
             true
         } catch (e: IOException) {
             e.printStackTrace()
