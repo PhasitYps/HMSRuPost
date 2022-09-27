@@ -3,6 +3,7 @@ package com.phasitapp.rupost.repository
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -18,6 +19,7 @@ class RepositoryPost(private var activity: Activity) {
 
     private val prefs = Prefs(activity)
     private val firestore = Firebase.firestore
+    private val database = Firebase.database
     private val storage = FirebaseStorage.getInstance()
 
     companion object {
@@ -150,8 +152,8 @@ class RepositoryPost(private var activity: Activity) {
         }
     }
 
-    fun like(postId: String){
-
+    fun like(postId: String, like: Boolean){
+        database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!).setValue(like)
     }
 
     private fun convertFileToByteArray(file: File): ByteArray{
