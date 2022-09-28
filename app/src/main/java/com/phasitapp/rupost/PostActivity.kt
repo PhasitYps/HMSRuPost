@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phasitapp.rupost.adapter.AdapImagePost
 import com.phasitapp.rupost.adapter.AdapImagePostActivity
 import kotlinx.android.synthetic.main.activity_post.*
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +50,10 @@ class PostActivity : AppCompatActivity() {
         }
 
         Close_btn.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            //startActivity(Intent(this, MainActivity::class.java))
+            for (i in imageList) {
+                deletePhotoFromInternalStorage(i)
+            }
             finish()
         }
     }
@@ -140,6 +144,13 @@ class PostActivity : AppCompatActivity() {
 
         adapImagePostActivity = AdapImagePostActivity(this, imageList)
         recyclerView.adapter = adapImagePostActivity
+    }
+
+    private fun deletePhotoFromInternalStorage(filename: String): Boolean{
+        val dir = "/data/data/com.phasitapp.rupost/files/"
+        val file = File(dir, filename)
+        Log.i(TAG, "Delete image success")
+        return file.delete()
     }
 
     companion object {
