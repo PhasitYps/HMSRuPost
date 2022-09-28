@@ -39,8 +39,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class CameraActivity : AppCompatActivity() {
-    var latitude: String?= null
-    var longitude: String?= null
+    var latitude: Double?= null
+    var longitude: Double?= null
     var address_image: String? = null
     var name_image: String?= null
 
@@ -49,10 +49,6 @@ class CameraActivity : AppCompatActivity() {
 
     private var gpsManage: GPSManage? = null
     private var imageCapture: ImageCapture? = null
-
-    var lat: Double? = null
-    var long: Double? = null
-
     private var SELECT_IMAGE: Int? = 1
 
     private lateinit var cameraExecutor: ExecutorService
@@ -72,35 +68,32 @@ class CameraActivity : AppCompatActivity() {
             )
         }
 
+        // GPS Setup
         gpsManage = GPSManage(this)
         gpsManage!!.requestGPS()
         gpsManage!!.setMyEvent(object : GPSManage.MyEvent{
             override fun onLocationChanged(currentLocation: Location) {
                 Log.i(TAG, "location: $currentLocation")
-                latitude = String.format("%.5f", currentLocation.latitude)
-                longitude = String.format("%.5f", currentLocation.longitude)
-                findViewById<TextView>(R.id.latitude).text = "" + latitude
-                findViewById<TextView>(R.id.longitude).text = "" + longitude
-
-                lat = currentLocation.latitude
-                long = currentLocation.longitude
+                latitude = currentLocation.latitude
+                longitude = currentLocation.longitude
+                findViewById<TextView>(R.id.latitude).text = String.format("%.5f", latitude)
+                findViewById<TextView>(R.id.longitude).text = String.format("%.5f", longitude)
 
                 weatherTask().execute()
             }
 
             override fun onDissAccessGPS() {
-
             }
-
         })
 
+        //Huawei Map
         val map = HuaweiMapCamera().huaweiMap
-        if (lat != null && long !=null){
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat!!, long!!), 14f))
-            map?.addMarker(MarkerOptions().position(LatLng(lat!!, long!!)))
+        if (latitude != null && longitude !=null){
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude!!, longitude!!), 14f))
+            map?.addMarker(MarkerOptions().position(LatLng(latitude!!, longitude!!)))
             map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
 
-            HuaweiMapCamera().mapView.tag = LatLng(lat!!, long!!)
+            HuaweiMapCamera().mapView.tag = LatLng(latitude!!, longitude!!)
         }
 
         // Set up the listeners for take photo and video capture buttons
@@ -115,46 +108,35 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
-        // Create time stamped name and MediaStore entry.
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis())
-
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
 
         imageCapture.takePicture(cameraExecutor, object :
             ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
-                //get bitmap from image
                 var bitmap = imageProxyToBitmap(image)
                 bitmap = rotateBitmap(bitmap, 90f)
 
+                // Get view to draw image
                 var image_temp = viewToBitmap(findViewById(R.id.status_image))
                 var temp = viewToBitmap(findViewById(R.id.temp_text))
                 var status = viewToBitmap(findViewById(R.id.status_text))
 
+                // Resize view
                 image_temp = resizeBitmap(image_temp!!, 180)
                 temp = resizeBitmap(temp!!, 100)
                 status = resizeBitmap(status!!, 230)
 
-                val position1 = IntArray(2)
-                status_text.getLocationOnScreen(position1)
-
-                val position2 = IntArray(2)
-                temp_text.getLocationOnScreen(position2)
-
-                val position3 = IntArray(2)
-                temp_text.getLocationOnScreen(position3)
-
+                // Add view to image
                 bitmap = combineImages(bitmap, image_temp, temp, status)!!
 
+                // Save image
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
                     Log.i(TAG, "Photo saved successfully")
-                    image.close();
+                    image.close()
                     openConfirm()
                 } else {
                     Log.i(TAG, "Failed to save photo")
@@ -173,9 +155,9 @@ class CameraActivity : AppCompatActivity() {
         val bmp = Bitmap.createBitmap(picture.width, picture.height, Bitmap.Config.ARGB_8888)
         val comboImage = Canvas(bmp)
         comboImage.drawBitmap(picture, 0f, 0f, null)
-        comboImage.drawBitmap(image_temp, 770f, 60f, null)
-        comboImage.drawBitmap(temp, 550f, 100f, null)
-        comboImage.drawBitmap(status, 550f, 150f, null)
+        comboImage.drawBitmap(image_temp, 0f, 60f, null)
+        comboImage.drawBitmap(temp, 170f, 100f, null)
+        comboImage.drawBitmap(status, 170f, 150f, null)
         return bmp
     }
 
@@ -278,9 +260,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
-
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -321,18 +301,18 @@ class CameraActivity : AppCompatActivity() {
     }
 
     companion object {
-    private const val TAG = "CameraXApp"
-    private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-    private const val REQUEST_CODE_PERMISSIONS = 10
-    private val REQUIRED_PERMISSIONS =
-        mutableListOf(
-            Manifest.permission.CAMERA
-        ).apply {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        }.toTypedArray()
-}
+        private const val TAG = "CameraXApp"
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val REQUEST_CODE_PERMISSIONS = 10
+        private val REQUIRED_PERMISSIONS =
+            mutableListOf(
+                Manifest.permission.CAMERA
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }.toTypedArray()
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -364,20 +344,20 @@ class CameraActivity : AppCompatActivity() {
     inner class weatherTask() : AsyncTask<String, Void, String>() {
         override fun onPreExecute() {
             super.onPreExecute()
-            android.util.Log.i(TAG, "onPreExecute")
+            Log.i(TAG, "onPreExecute")
         }
 
         override fun doInBackground(vararg params: String?): String? {
 
-            android.util.Log.i(TAG, "doInBackground")
+            Log.i(TAG, "doInBackground")
             var response:String?
             try{
                 response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API").readText(
                     Charsets.UTF_8
                 )
-                android.util.Log.i(TAG, "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API")
+                Log.i(TAG, "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API")
             }catch (e: Exception){
-                android.util.Log.i(TAG, "doInBackground: $e")
+                Log.i(TAG, "doInBackground: $e")
                 response = null
             }
             return response
@@ -386,7 +366,7 @@ class CameraActivity : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
 
-            android.util.Log.i(TAG, "onPostExecute")
+            Log.i(TAG, "onPostExecute")
 
             try {
                 val jsonObj = JSONObject(result)
@@ -411,7 +391,6 @@ class CameraActivity : AppCompatActivity() {
                 val weatherDescription = weather.getString("description")
                 val address = jsonObj.getString("name")
                 val icon = weather.getString("icon")
-                //val address = jsonObj.getString("name")+", "+sys.getString("country")
 
                 findViewById<TextView>(R.id.temp_text).text = temp
                 findViewById<TextView>(R.id.status_text).text = weatherDescription
