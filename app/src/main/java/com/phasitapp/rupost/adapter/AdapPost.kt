@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -26,13 +27,11 @@ import com.huawei.hms.maps.model.TileOverlayOptions
 import com.huawei.hms.maps.model.TileProvider
 import com.phasitapp.rupost.*
 import com.phasitapp.rupost.Utils.formatCreateDate
-import com.phasitapp.rupost.darf.CommentsBottomSheetDialog
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -116,6 +115,12 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                 holder.likeIV.tag = false
             }
         }
+        repositoryPost.getCommentsCount(dataList[position].id!!){ count->
+            if(count != 0){
+                holder.bgCommentCountLL.visibility = View.VISIBLE
+                holder.countCommentTV.text = "$count"
+            }
+        }
 
         //set adap image post
         val adapter = AdapImagePost(activity, dataList[position].images)
@@ -147,7 +152,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                         }
                     }
                 }
-
             }
         }
 
@@ -169,6 +173,12 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             val intent = Intent(activity, MapActivity::class.java)
             intent.putExtra(KEY_EVENT, "post")
             intent.putExtra("modelPost", dataList[position])
+            activity.startActivity(intent)
+        }
+
+        holder.bgCommentLL.setOnClickListener {
+            val intent = Intent(activity, CommentsActivity::class.java)
+            intent.putExtra(KEY_DATA, dataList[position])
             activity.startActivity(intent)
         }
     }
@@ -266,20 +276,23 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
         val viewMap = itemView.findViewById<View>(R.id.viewMap)
-        val coundLikeTV = itemView.findViewById<TextView>(R.id.coundLikeTV)
+        val countLikeTV = itemView.findViewById<TextView>(R.id.countLikeTV)
         val bgLikeCountLL = itemView.findViewById<LinearLayout>(R.id.bgLikeCountLL)
+        val countCommentTV = itemView.findViewById<TextView>(R.id.countCommentTV)
+        val bgCommentCountLL = itemView.findViewById<LinearLayout>(R.id.bgCommentCountLL)
+        val bgCommentLL = itemView.findViewById<LinearLayout>(R.id.bgCommentLL)
 
         init {
             Log.i(TAG, "init")
             mapView.onCreate(null)
             mapView.getMapAsync(this)
             bgLikeCountLL.visibility = View.GONE
-
+            bgCommentCountLL.visibility = View.GONE
         }
 
         fun plusLike() {
             countLike++
-            coundLikeTV.text = "$countLike"
+            countLikeTV.text = "$countLike"
             if (countLike != 0) {
                 bgLikeCountLL.visibility = View.VISIBLE
             } else {
@@ -289,7 +302,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         fun minusLike() {
             countLike--
-            coundLikeTV.text = "$countLike"
+            countLikeTV.text = "$countLike"
             if (countLike != 0) {
                 bgLikeCountLL.visibility = View.VISIBLE
             } else {
@@ -299,7 +312,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         fun setLike(count: Int) {
             countLike = count
-            coundLikeTV.text = "$countLike"
+            countLikeTV.text = "$countLike"
             if (countLike != 0) {
                 bgLikeCountLL.visibility = View.VISIBLE
             } else {

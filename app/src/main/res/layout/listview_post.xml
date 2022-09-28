@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -241,29 +242,63 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/bgLikeCountLL"
-                android:layout_width="wrap_content"
+                android:id="@+id/bgCommentLL"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginVertical="5dp"
                 >
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_heart_red"
-                    android:layout_marginEnd="5dp"
-                    />
 
-                <TextView
-                    android:id="@+id/coundLikeTV"
+                <LinearLayout
+                    android:id="@+id/bgLikeCountLL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="countLike"
-                    android:textColor="@color/black"
-                    />
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginVertical="5dp"
+                    >
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_heart_red"
+                        android:layout_marginEnd="5dp"
+                        />
 
+                    <TextView
+                        android:id="@+id/countLikeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="countLike"
+                        android:textColor="@color/black"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/bgCommentCountLL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginVertical="5dp"
+                    >
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chat"
+                        android:layout_marginEnd="5dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/countCommentTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="comment"
+                        android:textColor="@color/black"
+                        />
+
+                </LinearLayout>
             </LinearLayout>
 
             <RelativeLayout

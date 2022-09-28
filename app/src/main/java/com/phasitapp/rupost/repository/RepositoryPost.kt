@@ -179,6 +179,16 @@ class RepositoryPost(private var activity: Activity) {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+    fun getCommentsCount(postId: String, l: (count: Int) -> Unit){
+        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val count = snapshot.childrenCount.toInt()
+                l(count)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
     fun comments(postId: String, model: ModelComment, l: (comment: ModelComment?) -> Unit){
         val comment: MutableMap<String, Any?> = java.util.HashMap()
         comment[KEY_UID] = model.uid

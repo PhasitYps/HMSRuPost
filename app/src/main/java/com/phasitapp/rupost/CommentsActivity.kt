@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Window
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -93,10 +94,8 @@ class CommentsActivity : AppCompatActivity() {
         }
 
         messageEDT.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length != 0) {
+            override fun afterTextChanged(s: Editable) {
+                if (s.isNotBlank()) {
                     sendIV.isClickable = true
                     sendIV.isEnabled = true
                     Glide.with(this@CommentsActivity).load(R.drawable.ic_send_filled).into(sendIV)
@@ -106,11 +105,20 @@ class CommentsActivity : AppCompatActivity() {
                     Glide.with(this@CommentsActivity).load(R.drawable.ic_send).into(sendIV)
                 }
             }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+
+            }
         })
 
         sendIV.setOnClickListener {
+
+            if(prefs.strUid == ""){
+                Toast.makeText(this, "โปรดลงชื่อเข้าใช้", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             dialog_load.show()
-            val message = messageEDT.text.toString()
+            val message = messageEDT.text.toString().trim()
             val modelComment = ModelComment()
             modelComment.profile = prefs.strPhotoUri
             modelComment.username = prefs.strUsername
