@@ -47,6 +47,10 @@ class CommentsActivity : AppCompatActivity() {
         model = intent.getSerializableExtra(KEY_DATA) as ModelPost
 
         sendIV.isEnabled = false
+
+        swipeRefreshLayout.setOnRefreshListener {
+            setData()
+        }
     }
 
     private lateinit var dialog_load: Dialog
@@ -140,6 +144,7 @@ class CommentsActivity : AppCompatActivity() {
     private fun setData() {
         commentList.clear()
         repositoryPost.getComments(model.id!!) { comments ->
+            swipeRefreshLayout.isRefreshing = false
             commentList.addAll(comments)
             dataRCV.adapter!!.notifyDataSetChanged()
         }
