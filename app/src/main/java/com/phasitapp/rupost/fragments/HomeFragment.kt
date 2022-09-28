@@ -1,15 +1,20 @@
 package com.phasitapp.rupost.fragments
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
@@ -24,7 +29,6 @@ import com.phasitapp.rupost.helper.FilterPost
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.categoryCG
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -165,6 +169,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         bgNotPostLL.visibility = View.GONE
         addChipCategoryView()
 
+        swipeRefreshLayout.setOnRefreshListener {
+            setData()
+        }
+
         setData()
         setAdap()
     }
@@ -186,6 +194,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         postList.clear()
         val repositoryPost = RepositoryPost(requireActivity())
         repositoryPost.read() { result, post ->
+            swipeRefreshLayout.isRefreshing = false
             loadPostPB.visibility = View.GONE
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {
@@ -212,10 +221,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val postFilter = ArrayList<ModelPost>()
     private fun setAdap() {
         val adapter = AdapPost(requireActivity(), postFilter)
-        val layoutManager =
-            LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         postRCV.adapter = adapter
         postRCV.layoutManager = layoutManager
+
+        postRCV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            private var top = false
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (top) {
+                    actionBarCV.visibility = View.GONE
+                } else {
+                    actionBarCV.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                Log.i("wgfafwaga", "state: ${recyclerView.scrollState} dx: " + dx + ", dy: " + dy)
+                top = dy > 0
+
+            }
+        })
     }
 
     inner class ModelCategory(
