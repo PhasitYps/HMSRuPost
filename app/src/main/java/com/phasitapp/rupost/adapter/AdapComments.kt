@@ -37,7 +37,6 @@ class AdapComments(private var activity: Activity, private val dataList: ArrayLi
         }
         holder.commentIV.setOnClickListener {
 
-
         }
     }
 
