@@ -227,15 +227,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         postRCV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-            private var top = false
+            private var top = true
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (top) {
-                    actionBarCV.visibility = View.GONE
+                    bgFilterLL.visibility = View.GONE
                 } else {
-                    actionBarCV.visibility = View.VISIBLE
+                    bgFilterLL.visibility = View.VISIBLE
                 }
             }
 

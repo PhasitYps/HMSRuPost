@@ -62,114 +62,61 @@
 
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <LinearLayout
+                    android:id="@+id/bgFilterLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:scrollbarSize="1dp">
+                    android:orientation="vertical"
+                    >
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbarSize="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp">
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/categoryCG"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                            </com.google.android.material.chip.ChipGroup>
+
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp">
-
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/categoryCG"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:singleSelection="true">
-
-                        </com.google.android.material.chip.ChipGroup>
-
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:paddingVertical="5dp"
-                    >
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@drawable/bg_border_rounded"
-                        android:gravity="center"
-                        android:paddingHorizontal="10dp"
+                        android:gravity="end"
                         android:paddingVertical="5dp"
-                        android:layout_marginEnd="15dp"
-                        android:visibility="gone"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="เเฮชเเท็ก"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:layout_marginEnd="5dp"
-                            />
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:src="@drawable/ic_arrow_bottom"
-                            />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@drawable/bg_border_rounded"
-                        android:gravity="center"
                         android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:layout_marginEnd="15dp"
                         >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ยอดนิยม"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:layout_marginEnd="5dp"
-                            />
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:src="@drawable/ic_arrow_bottom"
-                            />
 
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/filterDayRL"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_border_rounded"
-                        >
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
+                            android:background="@drawable/bg_border_rounded"
                             android:gravity="center"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="5dp"
                             android:layout_marginEnd="15dp"
-                            android:background="?attr/selectableItemBackground"
+                            android:visibility="gone"
                             >
                             <TextView
-                                android:id="@+id/filterDayTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="วันนี้"
+                                android:text="เเฮชเเท็ก"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:layout_marginEnd="5dp"
@@ -182,7 +129,69 @@
 
                         </LinearLayout>
 
-                    </RelativeLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:background="@drawable/bg_border_rounded"
+                            android:gravity="center"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:layout_marginEnd="15dp"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ยอดนิยม"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="5dp"
+                                />
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:src="@drawable/ic_arrow_bottom"
+                                />
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/filterDayRL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_border_rounded"
+                            >
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="5dp"
+                                android:layout_marginEnd="15dp"
+                                android:background="?attr/selectableItemBackground"
+                                >
+                                <TextView
+                                    android:id="@+id/filterDayTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="วันนี้"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:layout_marginEnd="5dp"
+                                    />
+                                <ImageView
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
+                                    android:src="@drawable/ic_arrow_bottom"
+                                    />
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
