@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
@@ -63,6 +64,33 @@ object Utils {
         view.draw(c)
         return b
     }
+
+    fun formatCreateDate(createDate: Long): String {
+        val currentDate = System.currentTimeMillis()
+        val pastTime = currentDate - createDate
+        //259200000 = 3 day
+        //86,400,000 = 1 day
+        //3,600,000 = 1 h
+        //60,000 = 1 m
+        //1,000 = 1 s
+        Log.i("fweewfwe", "pastTime: $pastTime")
+        if (pastTime > 259200000) {
+            return Utils.formatDate("dd MMM yyyy HH:mm", Date(createDate))
+        } else if (pastTime >= 86400000) {
+            val day = (pastTime / 86400000).toInt()
+            return "$day วัน ที่เเล้ว"
+        } else if (pastTime >= 3600000) {
+            val h = (pastTime / 3600000).toInt()
+            return "$h ชม. ที่เเล้ว"
+        } else if (pastTime >= 60000) {
+            val m = (pastTime / 60000).toInt()
+            return "$m น. ที่เเล้ว"
+        } else {
+            val s = (pastTime / 1000).toInt()
+            return "$s วิ. ที่เเล้ว"
+        }
+    }
+
 
 
 }

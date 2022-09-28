@@ -25,6 +25,8 @@ import com.huawei.hms.maps.model.Tile
 import com.huawei.hms.maps.model.TileOverlayOptions
 import com.huawei.hms.maps.model.TileProvider
 import com.phasitapp.rupost.*
+import com.phasitapp.rupost.Utils.formatCreateDate
+import com.phasitapp.rupost.darf.CommentsBottomSheetDialog
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
@@ -148,14 +150,19 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
             }
         }
+
         holder.commentIV.setOnClickListener {
             Log.i("sadafwgeaggaw", "commentIV click")
+            if(prefs.strUid != ""){
+                val intent = Intent(activity, CommentsActivity::class.java)
+                intent.putExtra(KEY_DATA, dataList[position])
+                activity.startActivity(intent)
+            }
         }
         holder.shareIV.setOnClickListener {
 
         }
         holder.bookmarkIV.setOnClickListener {
-
         }
 
         holder.viewMap.setOnClickListener {
@@ -238,32 +245,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
-    private fun formatCreateDate(createDate: Long): String {
-        val currentDate = System.currentTimeMillis()
-        val pastTime = currentDate - createDate
-        //259200000 = 3 day
-        //86,400,000 = 1 day
-        //3,600,000 = 1 h
-        //60,000 = 1 m
-        //1,000 = 1 s
-        Log.i("fweewfwe", "pastTime: $pastTime")
-        if (pastTime > 259200000) {
-            return Utils.formatDate("dd MMM yyyy HH:mm", Date(createDate))
-        } else if (pastTime >= 86400000) {
-            val day = (pastTime / 86400000).toInt()
-            return "$day วัน ที่เเล้ว"
-        } else if (pastTime >= 3600000) {
-            val h = (pastTime / 3600000).toInt()
-            return "$h ชม. ที่เเล้ว"
-        } else if (pastTime >= 60000) {
-            val m = (pastTime / 60000).toInt()
-            return "$m น. ที่เเล้ว"
-        } else {
-            val s = (pastTime / 1000).toInt()
-            return "$s วิ. ที่เเล้ว"
-        }
-    }
-
     override fun getItemCount(): Int {
         return dataList.size
     }
@@ -281,7 +262,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val imageRCV = itemView.findViewById<RecyclerView>(R.id.imageRCV)
         val profileIV = itemView.findViewById<ImageView>(R.id.profileIV)
         val titleTV = itemView.findViewById<TextView>(R.id.titleTV)
-        val desciptionTV = itemView.findViewById<TextView>(R.id.menunameTV)
+        val desciptionTV = itemView.findViewById<TextView>(R.id.desciptionTV)
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
         val viewMap = itemView.findViewById<View>(R.id.viewMap)

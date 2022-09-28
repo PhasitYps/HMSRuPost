@@ -3,7 +3,9 @@ package com.phasitapp.rupost
 const val KEY_USERS = "users"
 
 const val KEY_POST = "post"
+const val KEY_COMMENTS = "comments"
 const val KEY_OPENID = "openId"
+const val KEY_DATA = "data"
 
 const val KEY_EMAIL = "email"
 const val KEY_UID = "uid"
@@ -22,6 +24,8 @@ const val KEY_CREATEDATE = "createDate"
 const val KEY_UPDATEDATE = "updateDate"
 const val KEY_PROFILE = "profile"
 const val KEY_LIKES = "likes"
+
+const val KEY_MESSAGE = "message"
 
 const val KEY_INFORMATION = "information"
 const val KEY_USERCOUNT = "userCount"

@@ -12,6 +12,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.phasitapp.rupost.*
 import com.phasitapp.rupost.helper.Prefs
+import com.phasitapp.rupost.model.ModelComment
 import com.phasitapp.rupost.model.ModelPost
 import java.io.*
 
@@ -74,9 +75,9 @@ class RepositoryPost(private var activity: Activity) {
                                         l(RESULT_SUCCESS)
 
                                     }.addOnFailureListener {
-                                    //when upload image post fail
-                                    l(RESULT_FAIL)
-                                }
+                                        //when upload image post fail
+                                        l(RESULT_FAIL)
+                                    }
                             }
                         }
                     }
@@ -106,10 +107,10 @@ class RepositoryPost(private var activity: Activity) {
                 l(RESULT_SUCCESS, list)
 
             }.addOnFailureListener {
-            Toast.makeText(activity, "exception: ${it.message}", Toast.LENGTH_SHORT).show()
-            Log.i("fwafawf", "e: ${it.message}")
-            l(RESULT_FAIL, list)
-        }
+                Toast.makeText(activity, "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+                Log.i("fwafawf", "e: ${it.message}")
+                l(RESULT_FAIL, list)
+            }
     }
 
     fun read(l: (result: String, post: ArrayList<ModelPost>) -> Unit) {
@@ -145,18 +146,56 @@ class RepositoryPost(private var activity: Activity) {
     }
 
     fun like(postId: String, like: Boolean) {
-        when(like){
-            true->{
+        when (like) {
+            true -> {
                 database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
                     .setValue(true)
             }
-            false->{
-                database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!).removeValue()
+            false -> {
+                database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
+                    .removeValue()
             }
         }
     }
 
-    fun getStaticLike(postId: String, l:(userLikes: ArrayList<String>)->Unit) {
+    fun getComments(postId: String, l: (comments: ArrayList<ModelComment>) -> Unit) {
+        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = ArrayList<ModelComment>()
+                    snapshot.children.forEach {
+                        val model = ModelComment()
+                        model!!.id = it.key
+                        model.uid = it.child(KEY_UID).getValue(String::class.java)
+                        model.message = it.child(KEY_MESSAGE).getValue(String::class.java)
+                        model.profile = it.child(KEY_PROFILE).getValue(String::class.java)
+                        model.username = it.child(KEY_USERNAME).getValue(String::class.java)
+                        model.createDate = it.child(KEY_CREATEDATE).getValue(String::class.java)
+
+                        list.add(model)
+                    }
+                    l(list)
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+    fun comments(postId: String, model: ModelComment, l: (comment: ModelComment?) -> Unit){
+        val comment: MutableMap<String, Any?> = java.util.HashMap()
+        comment[KEY_UID] = model.uid
+        comment[KEY_USERNAME] = model.username
+        comment[KEY_PROFILE] = model.profile
+        comment[KEY_MESSAGE] = model.message
+        comment[KEY_CREATEDATE] = model.createDate
+
+        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).push().setValue(comment).addOnSuccessListener {
+            l(model)
+        }.addOnFailureListener {
+            Toast.makeText(activity, "เกิดข้อผิดพลาด ติดต่อ ${it.message}", Toast.LENGTH_LONG).show()
+            l(null)
+        }
+    }
+
+    fun getStaticLike(postId: String, l: (userLikes: ArrayList<String>) -> Unit) {
         database.getReference(KEY_POST).child(postId).child(KEY_LIKES)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -166,6 +205,7 @@ class RepositoryPost(private var activity: Activity) {
                     }
                     l(dataList)
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

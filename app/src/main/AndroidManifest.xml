@@ -10,12 +10,13 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- Allow the app to obtain the coarse longitude and latitude of a user through the Wi-Fi network or base station. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Allow the app to receive location information from satellites through the GPS chip. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera.any"/>
+    <uses-feature android:name="android.hardware.camera.any" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +28,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RuPost"
         tools:targetApi="31">
+        <activity
+            android:name=".CommentsActivity"
+            android:exported="false" />
         <activity
             android:name=".Confirm_ImageActivity"
             android:exported="false" />

@@ -11,13 +11,13 @@ import com.phasitapp.rupost.R
 import com.phasitapp.rupost.Utils
 import com.phasitapp.rupost.adapter.AdapImagePost
 import com.phasitapp.rupost.model.ModelPost
-import kotlinx.android.synthetic.main.bottomsheet_detail_post.*
+import kotlinx.android.synthetic.main.bottom_sheet_detail_post.*
 import java.util.*
 
 class DetailPostBottomDialog(private val activity: Activity, private val modelPost: ModelPost): BottomSheetDialog(activity, R.style.SheetDialog) {
 
     init {
-        val bottomSheetView: View = activity.layoutInflater.inflate(R.layout.bottomsheet_detail_post, null)
+        val bottomSheetView: View = activity.layoutInflater.inflate(R.layout.bottom_sheet_detail_post, null)
         setContentView(bottomSheetView)
         val bottomSheetBehavior: BottomSheetBehavior<*> = BottomSheetBehavior.from(bottomSheetView.parent as View)
         val bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -44,7 +44,7 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
         usernameTV.text =modelPost.username
         createDateTV.text = formatCreateDate(modelPost.createDate.toString().toLong())
         titleTV.text = if(modelPost.title != null) modelPost.title else ""
-        menunameTV.text = if (modelPost.desciption != null) modelPost.desciption else ""
+        desciptionTV.text = if (modelPost.desciption != null) modelPost.desciption else ""
 
         setAdap()
     }

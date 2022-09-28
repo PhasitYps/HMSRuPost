@@ -252,7 +252,6 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         )
 
         dialog_load!!.create()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
