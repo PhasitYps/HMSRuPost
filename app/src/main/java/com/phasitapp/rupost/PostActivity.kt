@@ -6,13 +6,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.phasitapp.rupost.adapter.AdapImagePost
+import com.phasitapp.rupost.adapter.AdapImagePostActivity
 import kotlinx.android.synthetic.main.activity_post.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -22,9 +28,12 @@ class PostActivity : AppCompatActivity() {
     private var PERMISSION_REQUEST: Int? = 0
     private var SELECT_IMAGE: Int? = 1
     private var CAMERA_IMAGE: Int? = 2
+    private val imageList = arrayListOf<String>()
+
     val TAG = "Work Task"
 
-    private val imageList = arrayListOf<String>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapImagePostActivity: AdapImagePostActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +80,7 @@ class PostActivity : AppCompatActivity() {
                     val imageUri = data.data as Uri
                     val imageInByte = contentResolver.openInputStream(imageUri)?.readBytes()
 
-                    val bitmap = byteArrayToBitmap(imageInByte!!)
+                    val bitmap = rotateBitmap(byteArrayToBitmap(imageInByte!!), 90f)
                     val isSaveSuccessfully = savePhotoToInternalStorage(bitmap)
                     if (isSaveSuccessfully){
                         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
@@ -86,9 +95,19 @@ class PostActivity : AppCompatActivity() {
                     Log.i(TAG, "onActivityResult PostActivity: $imagePath")
                     imageList.add(imagePath!!)
                     Log.i(TAG, imageList.toString())
+
+                    initRecyclerView()
                 }
             }
         }
+    }
+
+    fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degrees)
+        return Bitmap.createBitmap(
+            source, 0, 0, source.width, source.height, matrix, true
+        )
     }
 
     private fun byteArrayToBitmap(data: ByteArray): Bitmap {
@@ -106,11 +125,21 @@ class PostActivity : AppCompatActivity() {
             }
             imageList.add("$filename.jpg")
             Log.i(TAG, imageList.toString())
+            initRecyclerView()
             true
         } catch (e: IOException) {
             e.printStackTrace()
             false
         }
+    }
+
+    private fun initRecyclerView(){
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.visibility = View.VISIBLE
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        adapImagePostActivity = AdapImagePostActivity(this, imageList)
+        recyclerView.adapter = adapImagePostActivity
     }
 
     companion object {

@@ -35,7 +35,7 @@
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_confirm_image.xml" value="0.21910112359550563" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_main.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_map.xml" value="0.296195652173913" />
-        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_post.xml" value="0.33" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_post.xml" value="0.25" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/activity_post_test.xml" value="0.22" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/bottom_sheet_menu.xml" value="0.3625" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/content_post_activity_test.xml" value="0.30434782608695654" />
@@ -46,8 +46,10 @@
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_home.xml" value="0.296195652173913" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_second.xml" value="0.30434782608695654" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/fragment_user.xml" value="0.3625" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/item_image.xml" value="0.25" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/item_image_act.xml" value="0.33" />
         <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/listview_image_post.xml" value="0.3625" />
-        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/listview_post.xml" value="0.2" />
+        <entry key="..\:/RuPost/HMSRuPost/app/src/main/res/layout/listview_post.xml" value="0.33" />
       </map>
     </option>
   </component>

@@ -84,17 +84,23 @@
         android:orientation="vertical"
         android:padding="15dp">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="หัวข้อเรื่อง"
+            android:textColorHint="#1D1C1A"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintTextAppearance="?attr/textAppearanceHeadline6"
-            app:hintTextColor="#5A5A5A"
-            android:textColorHint="#1D1C1A">
+            app:hintTextColor="#5A5A5A">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -110,11 +116,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="กำลังเกิดอะไรขึ้น?"
+            android:textColorHint="#5A5A5A"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintTextAppearance="?attr/textAppearanceSubtitle1"
-            app:hintTextColor="#5A5A5A"
-            android:textColorHint="#5A5A5A">
+            app:hintTextColor="#5A5A5A">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
