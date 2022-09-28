@@ -28,6 +28,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RuPost"
         tools:targetApi="31">
+
         <activity
             android:name=".CommentsActivity"
             android:exported="false" />

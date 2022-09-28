@@ -1,27 +1,19 @@
 package com.phasitapp.rupost.adapter
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.huawei.hms.maps.CameraUpdateFactory
-import com.huawei.hms.maps.HuaweiMap
-import com.huawei.hms.maps.MapView
-import com.huawei.hms.maps.OnMapReadyCallback
-import com.huawei.hms.maps.model.LatLng
-import com.huawei.hms.maps.model.MarkerOptions
+import com.phasitapp.rupost.KEY_DATA
 import com.phasitapp.rupost.R
-import com.phasitapp.rupost.Utils
 import com.phasitapp.rupost.Utils.formatCreateDate
-import com.phasitapp.rupost.dialog.ImageViewPageDialog
 import com.phasitapp.rupost.model.ModelComment
-import com.phasitapp.rupost.model.ModelPost
 import de.hdodenhof.circleimageview.CircleImageView
 
 class AdapComments(private var activity: Activity, private val dataList: ArrayList<ModelComment>) :
@@ -44,6 +36,7 @@ class AdapComments(private var activity: Activity, private val dataList: ArrayLi
 
         }
         holder.commentIV.setOnClickListener {
+
 
         }
     }
