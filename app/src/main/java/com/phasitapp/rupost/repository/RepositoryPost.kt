@@ -171,6 +171,8 @@ class RepositoryPost(private var activity: Activity) {
                         model.profile = it.child(KEY_PROFILE).getValue(String::class.java)
                         model.username = it.child(KEY_USERNAME).getValue(String::class.java)
                         model.createDate = it.child(KEY_CREATEDATE).getValue(String::class.java)
+                        model.countLike = it.child(KEY_LIKES).childrenCount.toInt()
+                        model.postId = postId
 
                         list.add(model)
                     }
@@ -179,6 +181,7 @@ class RepositoryPost(private var activity: Activity) {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+
     fun getCommentsCount(postId: String, l: (count: Int) -> Unit){
         database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -189,6 +192,7 @@ class RepositoryPost(private var activity: Activity) {
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
     fun comments(postId: String, model: ModelComment, l: (comment: ModelComment?) -> Unit){
         val comment: MutableMap<String, Any?> = java.util.HashMap()
         comment[KEY_UID] = model.uid
@@ -197,8 +201,10 @@ class RepositoryPost(private var activity: Activity) {
         comment[KEY_MESSAGE] = model.message
         comment[KEY_CREATEDATE] = model.createDate
 
-        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).push().setValue(comment).addOnSuccessListener {
-            l(model)
+        val keyRef = database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).push()
+        model.id = keyRef.key
+        keyRef.setValue(comment).addOnSuccessListener {
+           l(model)
         }.addOnFailureListener {
             Toast.makeText(activity, "เกิดข้อผิดพลาด ติดต่อ ${it.message}", Toast.LENGTH_LONG).show()
             l(null)

@@ -16,6 +16,7 @@ import com.phasitapp.rupost.adapter.AdapComments
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelComment
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryComment
 import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_comments.*
 
@@ -24,6 +25,7 @@ class CommentsActivity : AppCompatActivity() {
 
     private val TAG = "CommentsActivityTAG"
     private lateinit var repositoryPost: RepositoryPost
+    private lateinit var repositoryComment: RepositoryComment
     private lateinit var huaweiMap: HuaweiMap
     private lateinit var prefs: Prefs
     private lateinit var model: ModelPost
@@ -42,9 +44,11 @@ class CommentsActivity : AppCompatActivity() {
     }
 
     private fun init() {
+
+        model = intent.getSerializableExtra(KEY_DATA) as ModelPost
         prefs = Prefs(this)
         repositoryPost = RepositoryPost(this)
-        model = intent.getSerializableExtra(KEY_DATA) as ModelPost
+        repositoryComment = RepositoryComment(this, model.id!!)
 
         sendIV.isEnabled = false
 
@@ -93,7 +97,6 @@ class CommentsActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
         }
 
@@ -109,6 +112,7 @@ class CommentsActivity : AppCompatActivity() {
                     Glide.with(this@CommentsActivity).load(R.drawable.ic_send).into(sendIV)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
 
@@ -117,7 +121,7 @@ class CommentsActivity : AppCompatActivity() {
 
         sendIV.setOnClickListener {
 
-            if(prefs.strUid == ""){
+            if (prefs.strUid == "") {
                 Toast.makeText(this, "โปรดลงชื่อเข้าใช้", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -134,6 +138,7 @@ class CommentsActivity : AppCompatActivity() {
                     messageEDT.setText("")
                     commentList.add(comment)
                     dataRCV.adapter!!.notifyDataSetChanged()
+                    dataRCV.layoutManager!!.scrollToPosition(commentList.size - 1)
                 }
                 dialog_load.dismiss()
             }
@@ -143,15 +148,37 @@ class CommentsActivity : AppCompatActivity() {
 
     private fun setData() {
         commentList.clear()
+
         repositoryPost.getComments(model.id!!) { comments ->
-            swipeRefreshLayout.isRefreshing = false
-            commentList.addAll(comments)
-            dataRCV.adapter!!.notifyDataSetChanged()
+
+            repositoryComment.getUserCurrentLike { userLikeComments ->
+                swipeRefreshLayout.isRefreshing = false
+
+                comments.forEach { comment ->
+
+                    repositoryComment.getCountLike(comment.id!!) { count ->
+                        comment.countLike = count
+                        val filter = userLikeComments.filter { it == comment.id }
+                        if (filter.isNotEmpty()) {
+                            comment.currentUserLike = true
+                            commentList.add(comment)
+                            commentList.sortBy { it.createDate }
+                            dataRCV.adapter!!.notifyDataSetChanged()
+                        } else {
+                            comment.currentUserLike = false
+                            commentList.add(comment)
+                            commentList.sortBy { it.createDate }
+                            dataRCV.adapter!!.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
         }
+
     }
 
     private fun setAdap() {
-        val adapter = AdapComments(this, commentList)
+        val adapter = AdapComments(this, commentList, repositoryComment)
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         dataRCV.adapter = adapter
         dataRCV.layoutManager = layoutManager

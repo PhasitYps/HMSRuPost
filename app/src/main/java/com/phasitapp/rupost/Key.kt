@@ -6,6 +6,8 @@ const val KEY_POST = "post"
 const val KEY_COMMENTS = "comments"
 const val KEY_OPENID = "openId"
 const val KEY_DATA = "data"
+const val KEY_COMMENTS_LIKES = "comments_likes"
+const val KEY_USERS_LIKE_COMMENTS = "users_like_comments"
 
 const val KEY_EMAIL = "email"
 const val KEY_UID = "uid"

@@ -41,31 +41,76 @@
                 android:text="createDate"
                 android:textSize="12dp" />
 
-            <androidx.cardview.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="5dp"
-                app:cardBackgroundColor="@color/colorWhiteDark"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="0dp">
+                android:orientation="vertical"
+                android:gravity="end"
+                >
 
-                <TextView
-                    android:id="@+id/messageTV"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    tools:text="message" />
+                    app:cardBackgroundColor="@color/colorWhiteDark"
+                    app:cardCornerRadius="15dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="5dp"
+                    app:cardElevation="0dp">
 
-            </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/messageTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:textColor="@color/black"
+                        tools:text="message" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="15dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:cardUseCompatPadding="true"
+                    android:layout_alignParentRight="true"
+                    >
+                    <LinearLayout
+                        android:id="@+id/bgLikeCountLL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="4dp"
+                        android:gravity="center"
+                        >
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:src="@drawable/ic_heart_red"
+                            />
+
+                        <TextView
+                            android:id="@+id/countLikeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="15dp"
+                            tools:text="12"
+                            />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="15dp"
+                android:layout_marginVertical="5dp"
                 >
 
                 <ImageView
