@@ -22,6 +22,9 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.huawei.hms.location.GetFromLocationRequest
+import com.huawei.hms.location.HWLocation
+import com.huawei.hms.location.LocationServices
 import com.huawei.hms.maps.CameraUpdateFactory
 import com.huawei.hms.maps.HuaweiMap
 import com.huawei.hms.maps.MapView
@@ -29,9 +32,14 @@ import com.huawei.hms.maps.OnMapReadyCallback
 import com.huawei.hms.maps.model.LatLng
 import com.huawei.hms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_camera.*
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.io.UnsupportedEncodingException
 import java.net.URL
+import java.net.URLEncoder
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,6 +51,7 @@ class CameraActivity : AppCompatActivity() {
     var longitude: Double?= null
     var address_image: String? = null
     var name_image: String?= null
+    var getFromLocationRequest: GetFromLocationRequest? = null
 
     val API = "b0400551b9c2882592551bfdf9978798"
     val TAG = "Work Task"
@@ -76,10 +85,23 @@ class CameraActivity : AppCompatActivity() {
                 Log.i(TAG, "location: $currentLocation")
                 latitude = currentLocation.latitude
                 longitude = currentLocation.longitude
-                findViewById<TextView>(R.id.latitude).text = String.format("%.5f", latitude)
-                findViewById<TextView>(R.id.longitude).text = String.format("%.5f", longitude)
+                findViewById<TextView>(R.id.latitude).text = String.format("%f", latitude)
+                findViewById<TextView>(R.id.longitude).text = String.format("%f", longitude)
 
                 weatherTask().execute()
+
+                val locale = Locale("en", "US")
+                val geocoderService = LocationServices.getGeocoderService(this@CameraActivity, locale)
+                getFromLocationRequest = GetFromLocationRequest(latitude!!, longitude!!, 5)
+                geocoderService.getFromLocation(getFromLocationRequest)
+                    .addOnSuccessListener{
+                        findViewById<TextView>(R.id.address).text = HWLocation().city
+                        Toast.makeText(this@CameraActivity, HWLocation().city.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Log.i(TAG, "geocoderService Exception! $it")
+                        Toast.makeText(this@CameraActivity, "geocoderService Exception! $it", Toast.LENGTH_SHORT).show()
+                    }
             }
 
             override fun onDissAccessGPS() {
@@ -195,7 +217,7 @@ class CameraActivity : AppCompatActivity() {
             val canvas = Canvas(bitmap)
             v.draw(canvas)
         } catch (e: Exception) {
-            Log.i(TAG, "Failed because:" + e.message)
+            Log.i(TAG, "Failed because: " + e.message)
         }
         return bitmap
     }
@@ -221,6 +243,10 @@ class CameraActivity : AppCompatActivity() {
                     Log.i(TAG, "onActivityResult CameraActivity: $imagePath")
 
                     setResult(RESULT_OK, Intent().putExtra("IMAGE_PATH", imagePath))
+//                    setResult(RESULT_OK, Intent().putExtra("latitude", latitude))
+//                    setResult(RESULT_OK, Intent().putExtra("longitude", longitude))
+//                    setResult(RESULT_OK, Intent().putExtra("address", address_image))
+
                     Log.i(TAG, "Go to Post Activity")
                     finish()
                 }
@@ -341,6 +367,33 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
+    inner class HuaweiMapCamera() : OnMapReadyCallback {
+        var huaweiMap: HuaweiMap? = null
+
+        val mapView = findViewById<MapView>(R.id.mapView)
+
+        init {
+            Log.i(TAG, "init")
+            mapView.onCreate(null)
+            mapView.getMapAsync(this)
+        }
+
+        override fun onMapReady(map: HuaweiMap?) {
+            huaweiMap = map
+            huaweiMap?.uiSettings?.isMapToolbarEnabled = false
+            huaweiMap?.uiSettings?.isCompassEnabled = false
+            huaweiMap?.uiSettings?.isZoomControlsEnabled = false
+            huaweiMap?.uiSettings?.setAllGesturesEnabled(false)
+
+            val latLng = mapView.tag as LatLng
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+            map?.addMarker(MarkerOptions().position(latLng))
+
+            Log.i(TAG, "This is MapReady")
+        }
+
+    }
+
     inner class weatherTask() : AsyncTask<String, Void, String>() {
         override fun onPreExecute() {
             super.onPreExecute()
@@ -422,33 +475,6 @@ class CameraActivity : AppCompatActivity() {
             catch (e: java.lang.Exception) {
             }
         }
-    }
-
-    inner class HuaweiMapCamera() : OnMapReadyCallback {
-        var huaweiMap: HuaweiMap? = null
-
-        val mapView = findViewById<MapView>(R.id.mapView)
-
-        init {
-            Log.i(TAG, "init")
-            mapView.onCreate(null)
-            mapView.getMapAsync(this)
-        }
-
-        override fun onMapReady(map: HuaweiMap?) {
-            huaweiMap = map
-            huaweiMap?.uiSettings?.isMapToolbarEnabled = false
-            huaweiMap?.uiSettings?.isCompassEnabled = false
-            huaweiMap?.uiSettings?.isZoomControlsEnabled = false
-            huaweiMap?.uiSettings?.setAllGesturesEnabled(false)
-
-            val latLng = mapView.tag as LatLng
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
-            map?.addMarker(MarkerOptions().position(latLng))
-
-            Log.i(TAG, "This is MapReady")
-        }
-
     }
 
 }

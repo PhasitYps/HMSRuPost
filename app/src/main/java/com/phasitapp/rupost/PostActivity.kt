@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phasitapp.rupost.adapter.AdapImagePost
 import com.phasitapp.rupost.adapter.AdapImagePostActivity
+import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_post.*
 import java.io.File
 import java.io.IOException
@@ -30,6 +32,10 @@ class PostActivity : AppCompatActivity() {
     private var SELECT_IMAGE: Int? = 1
     private var CAMERA_IMAGE: Int? = 2
     private val imageList = arrayListOf<String>()
+
+    var latitude: Double?= null
+    var longitude: Double?= null
+    var address_image: String? = null
 
     val TAG = "Work Task"
 
@@ -50,12 +56,49 @@ class PostActivity : AppCompatActivity() {
         }
 
         Close_btn.setOnClickListener {
-            //startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             for (i in imageList) {
                 deletePhotoFromInternalStorage(i)
             }
             finish()
         }
+
+        Post_btn.setOnClickListener {
+            val dir = "/data/data/com.phasitapp.rupost/files/"
+            val imagePath = arrayListOf<String>()
+            for (i in imageList) {
+                imagePath.add("$dir$i")
+            }
+            val model = ModelPost(
+                title = TitleEDT.text.toString(),
+                category = null,
+                targetGroup = null,
+                desciption = DesciptionEDT.text.toString(),
+                latitude = latitude.toString(),
+                longitude = longitude.toString(),
+                address = null,
+                viewer = 0,
+                createDate = "${System.currentTimeMillis()}",
+                updateDate = "${System.currentTimeMillis()}",
+                images = imagePath
+            )
+            Log.i(TAG, "setOnClickListener: \nTitle: ${model.title} \nDesciption: ${model.desciption} \nLatitude: ${model.latitude} \nLongitude: ${model.longitude} \nCreateDate: ${model.createDate} \nUpdateDate: ${model.updateDate} \nImages: ${model.images.size}")
+
+            /*
+            val reposiPost = RepositoryPost(this)
+            reposiPost.post(model) { result ->
+                when (result) {
+                    RepositoryPost.RESULT_SUCCESS -> {
+                        Toast.makeText(this, "โพสต์สำเร็จ!", Toast.LENGTH_SHORT).show()
+                    }
+                    RepositoryPost.RESULT_FAIL -> {
+                        Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            */
+        }
+
     }
 
     private fun checkPermissionGallery() {
@@ -84,7 +127,7 @@ class PostActivity : AppCompatActivity() {
                     val imageUri = data.data as Uri
                     val imageInByte = contentResolver.openInputStream(imageUri)?.readBytes()
 
-                    val bitmap = rotateBitmap(byteArrayToBitmap(imageInByte!!), 90f)
+                    val bitmap = byteArrayToBitmap(imageInByte!!)
                     val isSaveSuccessfully = savePhotoToInternalStorage(bitmap)
                     if (isSaveSuccessfully){
                         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
@@ -95,6 +138,9 @@ class PostActivity : AppCompatActivity() {
 
                 CAMERA_IMAGE -> if (resultCode == Activity.RESULT_OK) {
                     val imagePath = data.getStringExtra("IMAGE_PATH")
+                    latitude = data.getDoubleExtra("latitude", 0.0)
+                    longitude = data.getDoubleExtra("longitude",0.0)
+                    address_image = data.getStringExtra("address_image")
 
                     Log.i(TAG, "onActivityResult PostActivity: $imagePath")
                     imageList.add(imagePath!!)
@@ -104,14 +150,6 @@ class PostActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(degrees)
-        return Bitmap.createBitmap(
-            source, 0, 0, source.width, source.height, matrix, true
-        )
     }
 
     private fun byteArrayToBitmap(data: ByteArray): Bitmap {

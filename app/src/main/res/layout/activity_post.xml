@@ -55,7 +55,7 @@
                     app:cardUseCompatPadding="true">
 
                     <TextView
-                        android:id="@+id/post_btn"
+                        android:id="@+id/Post_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="โพสต์"
@@ -103,6 +103,7 @@
             app:hintTextColor="#5A5A5A">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TitleEDT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="#1D1C1A"
@@ -111,7 +112,6 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/description"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,6 +123,7 @@
             app:hintTextColor="#5A5A5A">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/DesciptionEDT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="#5A5A5A"

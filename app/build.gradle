@@ -72,6 +72,7 @@ dependencies {
     implementation 'com.huawei.agconnect:agconnect-core:1.7.1.300'
     implementation 'com.huawei.agconnect:agconnect-auth:1.7.1.300'
     implementation 'com.huawei.hms:hwid:6.7.0.300'
+    implementation 'com.huawei.hms:location:6.4.0.300'
 
     //camerax
     def camerax_version = "1.1.0-beta01"
