@@ -219,6 +219,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private val postFilter = ArrayList<ModelPost>()
+
     private fun setAdap() {
         val adapter = AdapPost(requireActivity(), postFilter)
         val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
@@ -247,6 +248,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         })
     }
+
 
     inner class ModelCategory(
         var title: String? = null,

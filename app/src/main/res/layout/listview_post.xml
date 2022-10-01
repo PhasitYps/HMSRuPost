@@ -83,6 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     >
 
                     <LinearLayout
@@ -176,10 +177,12 @@
                             android:clickable="false"
                             />
 
-                        <View
-                            android:id="@+id/viewMap"
+                        <ImageView
+                            android:id="@+id/imageMapIV"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:visibility="gone"
+                            />
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/viewMapCV"

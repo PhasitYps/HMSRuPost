@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,11 +19,7 @@ import com.huawei.hms.maps.CameraUpdateFactory
 import com.huawei.hms.maps.HuaweiMap
 import com.huawei.hms.maps.MapView
 import com.huawei.hms.maps.OnMapReadyCallback
-import com.huawei.hms.maps.model.LatLng
-import com.huawei.hms.maps.model.MarkerOptions
-import com.huawei.hms.maps.model.Tile
-import com.huawei.hms.maps.model.TileOverlayOptions
-import com.huawei.hms.maps.model.TileProvider
+import com.huawei.hms.maps.model.*
 import com.phasitapp.rupost.*
 import com.phasitapp.rupost.Utils.formatCreateDate
 import com.phasitapp.rupost.helper.Prefs
@@ -32,7 +27,6 @@ import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
-import kotlin.collections.ArrayList
 
 
 class AdapPost(private var activity: Activity, private val dataList: ArrayList<ModelPost>) :
@@ -41,6 +35,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
     private val TAG = "AdapPost"
     private val prefs = Prefs(activity)
     private val repositoryPost = RepositoryPost(activity)
+    private var huaweiMap: HuaweiMap? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
@@ -60,15 +55,19 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         super.onViewRecycled(holder)
         Log.i(TAG, "onViewRecycled")
 
-        holder.huaweiMap?.clear()
-        holder.huaweiMap?.mapType = HuaweiMap.MAP_TYPE_NONE
+//        holder.huaweiMap?.clear()
+//        holder.huaweiMap?.mapType = HuaweiMap.MAP_TYPE_NONE
+
+    }
+
+    fun onDestroy() {
 
     }
 
     private fun setDetail(holder: ViewHolder, position: Int) {
-        val map = holder.huaweiMap
-        var lat = dataList[position].latitude
-        var long = dataList[position].longitude
+        val map = huaweiMap
+        var lat = dataList[position].latitude!!
+        var long = dataList[position].longitude!!
 
         if (lat != null && long != null) {
             map?.moveCamera(
@@ -84,6 +83,10 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
             holder.mapView.tag = LatLng(lat.toDouble(), long.toDouble())
         }
+
+        //map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
+
+        //holder.mapView.tag = LatLng(lat.toDouble(), long.toDouble())
 
         Glide.with(activity).load(dataList[position].profile).into(holder.profileIV)
         holder.usernameTV.text = dataList[position].username
@@ -163,13 +166,14 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                 activity.startActivity(intent)
             }
         }
+
         holder.shareIV.setOnClickListener {
 
         }
         holder.bookmarkIV.setOnClickListener {
         }
 
-        holder.viewMap.setOnClickListener {
+        holder.imageMapIV.setOnClickListener {
             val intent = Intent(activity, MapActivity::class.java)
             intent.putExtra(KEY_EVENT, "post")
             intent.putExtra("modelPost", dataList[position])
@@ -181,6 +185,8 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             intent.putExtra(KEY_DATA, dataList[position])
             activity.startActivity(intent)
         }
+
+
     }
 
     private fun setAnimateIcon(holder: ViewHolder) {
@@ -275,7 +281,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val desciptionTV = itemView.findViewById<TextView>(R.id.desciptionTV)
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
-        val viewMap = itemView.findViewById<View>(R.id.viewMap)
+        val imageMapIV = itemView.findViewById<ImageView>(R.id.imageMapIV)
         val countLikeTV = itemView.findViewById<TextView>(R.id.countLikeTV)
         val bgLikeCountLL = itemView.findViewById<LinearLayout>(R.id.bgLikeCountLL)
         val countCommentTV = itemView.findViewById<TextView>(R.id.countCommentTV)
@@ -286,6 +292,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             Log.i(TAG, "init")
             mapView.onCreate(null)
             mapView.getMapAsync(this)
+
             bgLikeCountLL.visibility = View.GONE
             bgCommentCountLL.visibility = View.GONE
         }
@@ -322,10 +329,10 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         override fun onMapReady(map: HuaweiMap?) {
             huaweiMap = map
-            huaweiMap?.uiSettings?.isMapToolbarEnabled = false
-            huaweiMap?.uiSettings?.isCompassEnabled = false
-            huaweiMap?.uiSettings?.isZoomControlsEnabled = false
-            huaweiMap?.uiSettings?.setAllGesturesEnabled(false)
+            huaweiMap!!.uiSettings.isMapToolbarEnabled = false
+            huaweiMap!!.uiSettings.isCompassEnabled = false
+            huaweiMap!!.uiSettings.isZoomControlsEnabled = false
+            huaweiMap!!.uiSettings.setAllGesturesEnabled(false)
 
             val latLng = mapView.tag as LatLng
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
