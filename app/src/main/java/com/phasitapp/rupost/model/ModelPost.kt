@@ -15,8 +15,14 @@ class ModelPost (
     var longitude: String? = null,
     var address: String? = null,
     var viewer: Int? = 0,
-
     var createDate: String? = null,
     var updateDate: String? = null,
-    var images: List<String> = ArrayList()
+    var images: List<String> = ArrayList(),
+
+    //more
+    var countLike: Int = 0,
+    var countComment: Int = 0,
+    var userLike: Boolean = false,
+    var data: Boolean = false
+
 ): Serializable

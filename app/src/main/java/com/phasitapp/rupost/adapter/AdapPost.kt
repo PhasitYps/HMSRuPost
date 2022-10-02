@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -65,23 +66,26 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
     }
 
     private fun setDetail(holder: ViewHolder, position: Int) {
-        val map = huaweiMap
+        holder.itemCV.tag = position
+        //val map = huaweiMap
         var lat = dataList[position].latitude!!
         var long = dataList[position].longitude!!
 
         if (lat != null && long != null) {
-            map?.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(
-                        lat.toDouble(),
-                        long.toDouble()
-                    ), 12f
-                )
-            )
-            map?.addMarker(MarkerOptions().position(LatLng(lat.toDouble(), long.toDouble())))
-            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
-
             holder.mapView.tag = LatLng(lat.toDouble(), long.toDouble())
+        //Log.i(TAG, "setDetail: " + map)
+//            map?.moveCamera(
+//                CameraUpdateFactory.newLatLngZoom(
+//                    LatLng(
+//                        lat.toDouble(),
+//                        long.toDouble()
+//                    ), 12f
+//                )
+//            )
+//            map?.addMarker(MarkerOptions().position(LatLng(lat.toDouble(), long.toDouble())))
+//            map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
+
+
         }
 
         //map?.mapType = HuaweiMap.MAP_TYPE_NORMAL
@@ -96,35 +100,46 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.desciptionTV.text =
             if (dataList[position].desciption != null) dataList[position].desciption else ""
 
-        repositoryPost.getStaticLike(dataList[position].id!!) { userLikes ->
-            Log.i("agehaehes", "Like: " + userLikes.size)
 
-            holder.setLike(userLikes.size)
+        if(!dataList[position].data){
+            Log.i("agehaehes", "data: " + dataList[position].data)
+            repositoryPost.getStaticLike(dataList[position].id!!) { userLikes ->
+                Log.i("agehaehes", "Like: " + userLikes.size)
 
-            if (userLikes.size != 0) {
-                holder.bgLikeCountLL.visibility = View.VISIBLE
-                userLikes.filter { it == prefs.strUid }.apply {
-                    if (userLikes.isNotEmpty()) {
-                        holder.likeIV.tag = true
-                        Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
-                    } else {
-                        holder.likeIV.tag = false
-                        Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
+                dataList[position].countLike = userLikes.size
+                setLike(holder, position)
+
+                if (userLikes.size != 0) {
+                    holder.bgLikeCountLL.visibility = View.VISIBLE
+                    userLikes.filter { it == prefs.strUid }.apply {
+                        if (userLikes.isNotEmpty()) {
+                            dataList[position].userLike = true
+                            holder.likeIV.tag = true
+                            Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
+                        } else {
+                            dataList[position].userLike = false
+                            holder.likeIV.tag = false
+                            Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
+                        }
                     }
+
+                } else {
+                    holder.bgLikeCountLL.visibility = View.GONE
+                    holder.likeIV.tag = false
+                    dataList[position].userLike = false
                 }
-
-            } else {
-                holder.bgLikeCountLL.visibility = View.GONE
-                holder.likeIV.tag = false
             }
-        }
-        repositoryPost.getCommentsCount(dataList[position].id!!){ count->
-            if(count != 0){
-                holder.bgCommentCountLL.visibility = View.VISIBLE
-                holder.countCommentTV.text = "$count"
+            repositoryPost.getCommentsCount(dataList[position].id!!){ count->
+                if(count != 0){
+                    holder.bgCommentCountLL.visibility = View.VISIBLE
+                    holder.countCommentTV.text = "$count"
+                    dataList[position].countComment = count
+                }
             }
+            dataList[position].data = true
+        }else{
+            setLike(holder, position)
         }
-
         //set adap image post
         val adapter = AdapImagePost(activity, dataList[position].images)
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
@@ -145,13 +160,13 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                             repositoryPost.like(dataList[position].id!!, false)
                             holder.likeIV.tag = false
                             Glide.with(activity).load(R.drawable.ic_heart).into(holder.likeIV)
-                            holder.minusLike()
+                            minusLike(holder, position)
                         }
                         false -> {
                             repositoryPost.like(dataList[position].id!!, true)
                             holder.likeIV.tag = true
                             Glide.with(activity).load(R.drawable.ic_heart_red).into(holder.likeIV)
-                            holder.plusLike()
+                            plusLike(holder, position)
                         }
                     }
                 }
@@ -261,6 +276,38 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
+    private fun plusLike(holder: ViewHolder, position: Int) {
+        dataList[position].countLike++
+
+        holder.countLikeTV.text = "${dataList[position].countLike}"
+        if (dataList[position].countLike != 0) {
+            holder.bgLikeCountLL.visibility = View.VISIBLE
+        } else {
+            holder.bgLikeCountLL.visibility = View.GONE
+        }
+    }
+
+    private fun minusLike(holder: ViewHolder, position: Int) {
+        dataList[position].countLike--
+
+        holder.countLikeTV.text = "${dataList[position].countLike}"
+        if (dataList[position].countLike != 0) {
+            holder.bgLikeCountLL.visibility = View.VISIBLE
+        } else {
+            holder.bgLikeCountLL.visibility = View.GONE
+        }
+    }
+
+    private fun setLike(holder: ViewHolder, position: Int) {
+        //countLike = count
+        holder.countLikeTV.text = "${dataList[position].countLike}"
+        if (dataList[position].countLike != 0) {
+            holder.bgLikeCountLL.visibility = View.VISIBLE
+        } else {
+            holder.bgLikeCountLL.visibility = View.GONE
+        }
+    }
+
     override fun getItemCount(): Int {
         return dataList.size
     }
@@ -268,7 +315,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnMapReadyCallback {
 
         var huaweiMap: HuaweiMap? = null
-        var countLike: Int = 0
 
         val likeIV = itemView.findViewById<ImageView>(R.id.likeIV)
         val commentIV = itemView.findViewById<ImageView>(R.id.commentIV)
@@ -287,6 +333,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val countCommentTV = itemView.findViewById<TextView>(R.id.countCommentTV)
         val bgCommentCountLL = itemView.findViewById<LinearLayout>(R.id.bgCommentCountLL)
         val bgCommentLL = itemView.findViewById<LinearLayout>(R.id.bgCommentLL)
+        val itemCV = itemView.findViewById<CardView>(R.id.itemCV)
 
         init {
             Log.i(TAG, "init")
@@ -297,35 +344,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             bgCommentCountLL.visibility = View.GONE
         }
 
-        fun plusLike() {
-            countLike++
-            countLikeTV.text = "$countLike"
-            if (countLike != 0) {
-                bgLikeCountLL.visibility = View.VISIBLE
-            } else {
-                bgLikeCountLL.visibility = View.GONE
-            }
-        }
 
-        fun minusLike() {
-            countLike--
-            countLikeTV.text = "$countLike"
-            if (countLike != 0) {
-                bgLikeCountLL.visibility = View.VISIBLE
-            } else {
-                bgLikeCountLL.visibility = View.GONE
-            }
-        }
-
-        fun setLike(count: Int) {
-            countLike = count
-            countLikeTV.text = "$countLike"
-            if (countLike != 0) {
-                bgLikeCountLL.visibility = View.VISIBLE
-            } else {
-                bgLikeCountLL.visibility = View.GONE
-            }
-        }
 
         override fun onMapReady(map: HuaweiMap?) {
             huaweiMap = map
@@ -333,6 +352,9 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             huaweiMap!!.uiSettings.isCompassEnabled = false
             huaweiMap!!.uiSettings.isZoomControlsEnabled = false
             huaweiMap!!.uiSettings.setAllGesturesEnabled(false)
+
+
+            //notifyItemChanged(mapView.tag.toString().toInt())
 
             val latLng = mapView.tag as LatLng
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))

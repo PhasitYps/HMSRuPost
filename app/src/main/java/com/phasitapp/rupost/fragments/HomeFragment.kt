@@ -41,7 +41,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
         init()
+        setData()
+        setAdap()
         event()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //postRCV.adapter?
     }
 
     private val categoryDisplayList = ArrayList<ModelCategory>()
@@ -173,8 +181,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             setData()
         }
 
-        setData()
-        setAdap()
+
     }
 
 
@@ -210,8 +217,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }
                 }
                 RepositoryPost.RESULT_FAIL -> {
-                    bgNotPostLL.visibility = View.VISIBLE
-                    Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
+                    //bgNotPostLL.visibility = View.VISIBLE
+                    //Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
                 }
             }
 
