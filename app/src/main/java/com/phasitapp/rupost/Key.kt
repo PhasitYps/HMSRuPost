@@ -9,6 +9,7 @@ const val KEY_DATA = "data"
 const val KEY_COMMENTS_LIKES = "comments_likes"
 const val KEY_USERS_LIKE_COMMENTS = "users_like_comments"
 
+const val KEY_UNION_ID = "unionId"
 const val KEY_EMAIL = "email"
 const val KEY_UID = "uid"
 const val KEY_USERNAME = "username"
@@ -26,6 +27,7 @@ const val KEY_CREATEDATE = "createDate"
 const val KEY_UPDATEDATE = "updateDate"
 const val KEY_PROFILE = "profile"
 const val KEY_LIKES = "likes"
+const val KEY_TAG = "tag"
 
 const val KEY_MESSAGE = "message"
 

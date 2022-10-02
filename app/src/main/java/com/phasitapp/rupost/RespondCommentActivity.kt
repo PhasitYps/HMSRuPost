@@ -17,6 +17,7 @@ class RespondCommentActivity : AppCompatActivity() {
     private lateinit var repositoryComment: RepositoryComment
     private lateinit var prefs: Prefs
     private var countLike = 0
+    private lateinit var modelComment: ModelComment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +29,10 @@ class RespondCommentActivity : AppCompatActivity() {
     }
 
     private fun init(){
-        val model = intent.getSerializableExtra(KEY_DATA) as ModelComment
+        modelComment = intent.getSerializableExtra(KEY_DATA) as ModelComment
 
         prefs = Prefs(this)
-        repositoryComment = RepositoryComment(this, model.postId!!)
+        repositoryComment = RepositoryComment(this, modelComment.postId!!)
     }
     private fun setDetail(){
         val model = intent.getSerializableExtra(KEY_DATA) as ModelComment
@@ -82,6 +83,7 @@ class RespondCommentActivity : AppCompatActivity() {
             }
 
         }
+
         commentIV.setOnClickListener {
 
         }
@@ -103,6 +105,15 @@ class RespondCommentActivity : AppCompatActivity() {
             }
 
         })
+
+        sendIV.setOnClickListener {
+            val model = ModelComment()
+            model.tag = modelComment.id
+            model.uid = prefs.strUid
+            model.username = prefs.strUsername
+            model.profile = prefs.strPhotoUri
+            //model.message =
+        }
     }
 
     private fun plusLike() {

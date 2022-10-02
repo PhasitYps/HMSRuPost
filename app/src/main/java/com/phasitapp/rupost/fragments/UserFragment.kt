@@ -26,6 +26,7 @@ import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.fragment_user.*
 
 
@@ -35,6 +36,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     private var pref: Prefs? = null
     private val firestore = FirebaseFirestore.getInstance()
     private val userRef = firestore.collection(KEY_USERS)
+    private lateinit var repositoryUser: RepositoryUser
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +53,10 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
     private fun init() {
         pref = Prefs(requireContext())
+        repositoryUser = RepositoryUser(requireActivity())
         updateUI()
+
+
 
     }
 
@@ -84,6 +89,21 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
         huaweiBTN.setOnClickListener {
             silentSignInByHwId()
+        }
+
+        detailMoreTV.setOnClickListener{
+            when(bgDetailLL.visibility){
+                View.VISIBLE->{
+                    bgDetailLL.visibility = View.GONE
+                }
+                View.GONE->{
+                    bgDetailLL.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        editProfileTV.setOnClickListener {
+
         }
     }
 
@@ -125,57 +145,86 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
 
         //check user
-        userRef.whereEqualTo(KEY_OPENID, authAccount.openId).get()
-            .addOnSuccessListener { querySnapshot ->
+        repositoryUser.getByOpenId(authAccount.openId){ model: ModelUser? ->
+            if(model != null){
+                setUserCurrent(model!!)
+                updateUI()
+            }else{
+                userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
+                    if (it.exists()) {
+                        var usercount = it.get(KEY_USERCOUNT).toString().toInt()
 
-                if (!querySnapshot.isEmpty) {
-                    val m = querySnapshot!!.first().toObject(ModelUser::class.java)
-                    setUserCurrent(m!!)
-                    updateUI()
-                } else {
-                    userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
-                        if (it.exists()) {
-                            var usercount = it.get(KEY_USERCOUNT).toString().toInt()
-
-                            val model = ModelUser(
-                                uid = System.currentTimeMillis().toString(),
-                                openId = authAccount.openId,
-                                unionId = authAccount.unionId,
-                                username = "สมาชิกหมายเลข $usercount",
-                                email = authAccount.email,
-                                photoUri = authAccount.avatarUriString,
-                                displayName = authAccount.displayName,
-                                createDate = System.currentTimeMillis(),
-                                updateDate = System.currentTimeMillis()
-                            )
-
-                            userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
-                            createUser(model)
-                        }
+                        val model = ModelUser(
+                            openId = authAccount.openId,
+                            unionId = authAccount.unionId,
+                            username = "สมาชิกหมายเลข $usercount",
+                            email = authAccount.email,
+                            profile = authAccount.avatarUriString,
+                            createDate = System.currentTimeMillis(),
+                            updateDate = System.currentTimeMillis()
+                        )
+                        userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
+                        createUser(model)
                     }
                 }
-                dialog_load?.dismiss()
-
-            }.addOnFailureListener {
-            Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
-            dialog_load!!.dismiss()
+            }
+            dialog_load?.dismiss()
         }
+
+//        userRef.whereEqualTo(KEY_OPENID, authAccount.openId).get()
+//            .addOnSuccessListener { querySnapshot ->
+//
+//                if (!querySnapshot.isEmpty) {
+//                    val m = querySnapshot!!.first().toObject(ModelUser::class.java)
+//                    setUserCurrent(m!!)
+//                    updateUI()
+//                } else {
+//                    userRef.document(KEY_INFORMATION).get().addOnSuccessListener {
+//                        if (it.exists()) {
+//                            var usercount = it.get(KEY_USERCOUNT).toString().toInt()
+//
+//                            val model = ModelUser(
+//                                uid = System.currentTimeMillis().toString(),
+//                                openId = authAccount.openId,
+//                                unionId = authAccount.unionId,
+//                                username = "สมาชิกหมายเลข $usercount",
+//                                email = authAccount.email,
+//                                profile = authAccount.avatarUriString,
+//                                displayName = authAccount.displayName,
+//                                createDate = System.currentTimeMillis(),
+//                                updateDate = System.currentTimeMillis()
+//                            )
+//
+//                            userRef.document(KEY_INFORMATION).update(KEY_USERCOUNT, ++usercount)
+//                            createUser(model)
+//                        }
+//                    }
+//                }
+//                dialog_load?.dismiss()
+//
+//            }.addOnFailureListener {
+//            Toast.makeText(requireActivity(), "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+//            dialog_load!!.dismiss()
+//        }
 
     }
 
     private fun createUser(model: ModelUser) {
         dialog_load!!.show()
 
-        userRef.document(model.uid!!).set(model).addOnCompleteListener {
-            if (it.isSuccessful) {
-                setUserCurrent(model)
-                updateUI()
-            } else {
-                Toast.makeText(
-                    requireActivity(),
-                    "สร้างชื่อผู้ใช้เกิดข้อผิดพลาด",
-                    Toast.LENGTH_SHORT
-                ).show()
+        repositoryUser.create(model){ result ->
+            when(result){
+                RepositoryUser.RESULT_SUCCESS->{
+                    setUserCurrent(model)
+                    updateUI()
+                }
+                RepositoryUser.RESULT_FAIL->{
+                    Toast.makeText(
+                        requireActivity(),
+                        "สร้างชื่อผู้ใช้เกิดข้อผิดพลาด",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             dialog_load!!.dismiss()
         }
@@ -193,34 +242,54 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                 bgLoginRL.visibility = View.GONE
                 bgProfileRL.visibility = View.VISIBLE
                 loadPostPB.visibility = View.VISIBLE
+                bgDetailLL.visibility = View.GONE
 
                 //set deatail user
-                bgDetailLL.visibility = View.VISIBLE
 
-                userRef.document(pref!!.strUid!!).get().addOnSuccessListener {
-                    loadPostPB.visibility = View.GONE
-                    val model = it.toObject(ModelUser::class.java)!!
+                repositoryUser.getByUid(pref!!.strUid!!){ model->
 
-                    Log.i("sadafwgeaggaw", "username: " + model.username)
-                    Log.i("sadafwgeaggaw", "description: " + model.description)
+                    if(model != null){
+                        loadPostPB.visibility = View.GONE
+                        Log.i("sadafwgeaggaw", "username: " + model.username)
+                        Log.i("sadafwgeaggaw", "description: " + model.description)
 
-                    Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
-                        .into(imageUrlUserIV)
-                    usernameTV.text = model.username
-                    menunameTV.text = model.description
+                        Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
+                            .into(imageUrlUserIV)
+                        usernameTV.text = model.username
+                        menunameTV.text = model.description
 
-                    setDataPost()
-
-                }.addOnFailureListener {
-                    Toast.makeText(
-                        requireActivity(),
-                        "exception: ${it.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        setDataPost()
+                    }else{
+                        Toast.makeText(
+                            requireActivity(),
+                            "เกิดข้อผิดพบพลาด ติดต่อฐานข้อมูล get users",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
 
+//                userRef.document(pref!!.strUid!!).get().addOnSuccessListener {
+//                    loadPostPB.visibility = View.GONE
+//                    val model = it.toObject(ModelUser::class.java)!!
+//
+//                    Log.i("sadafwgeaggaw", "username: " + model.username)
+//                    Log.i("sadafwgeaggaw", "description: " + model.description)
+//
+//                    Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
+//                        .into(imageUrlUserIV)
+//                    usernameTV.text = model.username
+//                    menunameTV.text = model.description
+//
+//                    setDataPost()
+//
+//                }.addOnFailureListener {
+//                    Toast.makeText(
+//                        requireActivity(),
+//                        "exception: ${it.message}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
             }
-
         }
     }
 
@@ -229,7 +298,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             pref!!.strEmail = model.email
             pref!!.strUsername = model.username
             pref!!.strOpenId = model.openId
-            pref!!.strPhotoUri = model.photoUri
+            pref!!.strPhotoUri = model.profile
             pref!!.strUid = model.uid
         } else {
             pref!!.strEmail = ""

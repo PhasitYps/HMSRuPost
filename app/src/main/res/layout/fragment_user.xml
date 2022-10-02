@@ -228,7 +228,7 @@
                             android:id="@+id/usernameTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="username"
+                            tools:text="username"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
 
@@ -236,7 +236,7 @@
                             android:id="@+id/menunameTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="คำอธิบาย" />
+                            tools:text="คำอธิบาย" />
 
                     </LinearLayout>
 
@@ -279,7 +279,7 @@
                             app:cardUseCompatPadding="true">
 
                             <TextView
-                                android:id="@+id/editTV"
+                                android:id="@+id/editProfileTV"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="?attr/selectableItemBackground"

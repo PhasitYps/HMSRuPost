@@ -133,10 +133,13 @@ class CommentsActivity : AppCompatActivity() {
             modelComment.uid = prefs.strUid
             modelComment.message = message
             modelComment.createDate = System.currentTimeMillis().toString()
+            modelComment.tag = "post"
+
             repositoryPost.comments(model.id!!, modelComment) { comment ->
                 if (comment != null) {
                     messageEDT.setText("")
                     commentList.add(comment)
+
                     dataRCV.adapter!!.notifyDataSetChanged()
                     dataRCV.layoutManager!!.scrollToPosition(commentList.size - 1)
                 }

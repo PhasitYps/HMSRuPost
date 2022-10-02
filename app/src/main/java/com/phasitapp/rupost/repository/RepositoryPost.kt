@@ -172,6 +172,7 @@ class RepositoryPost(private var activity: Activity) {
                         model.username = it.child(KEY_USERNAME).getValue(String::class.java)
                         model.createDate = it.child(KEY_CREATEDATE).getValue(String::class.java)
                         model.countLike = it.child(KEY_LIKES).childrenCount.toInt()
+                        model.tag = it.child(KEY_TAG).getValue(String::class.java)
                         model.postId = postId
 
                         list.add(model)
@@ -200,6 +201,7 @@ class RepositoryPost(private var activity: Activity) {
         comment[KEY_PROFILE] = model.profile
         comment[KEY_MESSAGE] = model.message
         comment[KEY_CREATEDATE] = model.createDate
+        comment[KEY_TAG] = model.tag
 
         val keyRef = database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).push()
         model.id = keyRef.key

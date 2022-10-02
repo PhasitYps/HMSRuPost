@@ -6,7 +6,7 @@ class ModelUser (
     var unionId: String? = null,
     var username: String? = null,
     var email: String? = null,
-    var photoUri: String? = null,
+    var profile: String? = null,
     var displayName: String? = null,
     var description: String? = null,
     var createDate: Long? = null,

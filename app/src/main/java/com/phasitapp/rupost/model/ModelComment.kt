@@ -9,6 +9,7 @@ class ModelComment (
     var profile: String? = null,
     var message: String? = null,
     var createDate: String? = null,
+    var tag: String? = null,
 
     //more
     var countLike: Int = 0,

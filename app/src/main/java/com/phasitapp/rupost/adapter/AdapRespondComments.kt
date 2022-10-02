@@ -19,8 +19,8 @@ import com.phasitapp.rupost.repository.RepositoryComment
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-class AdapComments(private var activity: Activity, private val commentList: ArrayList<ModelComment>, private val repositoryComment: RepositoryComment) :
-    RecyclerView.Adapter<AdapComments.ViewHolder>() {
+class AdapRespondComments(private var activity: Activity, private val commentList: ArrayList<ModelComment>, private val repositoryComment: RepositoryComment) :
+    RecyclerView.Adapter<AdapRespondComments.ViewHolder>() {
 
     private val TAG = "AdapImagePost"
     private val prefs = Prefs(activity)
