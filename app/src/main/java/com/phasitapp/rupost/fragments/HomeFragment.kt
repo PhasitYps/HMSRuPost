@@ -28,12 +28,15 @@ import com.phasitapp.rupost.dialog.BottomSheetMenuFilter
 import com.phasitapp.rupost.helper.FilterPost
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val postList = ArrayList<ModelPost>()
+
+    private lateinit var repositoryUser: RepositoryUser
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -174,6 +177,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun init() {
+
+        repositoryUser = RepositoryUser(requireActivity())
         bgNotPostLL.visibility = View.GONE
         addChipCategoryView()
 
@@ -206,10 +211,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {
 
-                    postList.addAll(post)
-                    updateFilterPost()
+                    Log.i("fewfweg", "post: " + post.size)
+                    post.forEach { model ->
 
-                    if (postList.size != 0) {
+                        repositoryUser.getByUid(model.uid!!){ modelUser->
+                            model.profile = modelUser!!.profile
+                            model.username = modelUser!!.username
+                            postList.add(model)
+
+                            Log.i("fewfweg", "postList: " + postList.size)
+                            updateFilterPost()
+                        }
+                    }
+
+                    if (post.size != 0) {
                         bgNotPostLL.visibility = View.GONE
                     } else {
                         bgNotPostLL.visibility = View.VISIBLE

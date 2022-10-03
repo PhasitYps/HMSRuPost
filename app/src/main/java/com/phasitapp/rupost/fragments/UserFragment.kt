@@ -1,6 +1,7 @@
 package com.phasitapp.rupost.fragments
 
 import android.app.ActionBar
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.Window
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,7 +35,7 @@ import kotlinx.android.synthetic.main.fragment_user.*
 class UserFragment : Fragment(R.layout.fragment_user) {
     // Define the log tag.
     private val TAG = "sadafwgeaggaw"
-    private var pref: Prefs? = null
+    private var prefs: Prefs? = null
     private val firestore = FirebaseFirestore.getInstance()
     private val userRef = firestore.collection(KEY_USERS)
     private lateinit var repositoryUser: RepositoryUser
@@ -52,11 +54,9 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     }
 
     private fun init() {
-        pref = Prefs(requireContext())
+        prefs = Prefs(requireContext())
         repositoryUser = RepositoryUser(requireActivity())
         updateUI()
-
-
 
     }
 
@@ -64,17 +64,29 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     private fun setDataPost() {
         postList.clear()
         val repositoryPost = RepositoryPost(requireActivity())
-        repositoryPost.readByUid(pref!!.strUid!!) { result, post ->
+        repositoryPost.readByUid(prefs!!.strUid!!) { result, post ->
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {
                     postList.addAll(post)
                     setAdap()
+
+                    repositoryUser.getByUid(prefs!!.strUid!!){ modelUser->
+
+                        postList.forEach { model->
+                            model.profile = modelUser!!.profile
+                            model.username = modelUser!!.username
+                        }
+                        dataRCV.adapter!!.notifyDataSetChanged()
+                    }
                 }
                 RepositoryPost.RESULT_FAIL -> {
 
                 }
             }
         }
+
+
+
     }
 
     private fun setAdap() {
@@ -103,9 +115,25 @@ class UserFragment : Fragment(R.layout.fragment_user) {
         }
 
         editProfileTV.setOnClickListener {
-
+            val intent = Intent(requireActivity(), EditProfileActivity::class.java)
+            resultForEditProfile.launch(intent)
         }
     }
+
+    var resultForEditProfile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            val profile = data!!.getStringExtra(KEY_PROFILE)
+            val username = data!!.getStringExtra(KEY_USERNAME)
+            val description = data!!.getStringExtra(KEY_DESCIPTION)
+
+            usernameTV.text = username
+            Glide.with(requireActivity()).load(profile).centerCrop().into(imageUrlUserIV)
+            descriptionTV.text = if(description == "") "ไม่คำอธิบาย" else description
+        }
+    }
+
 
 
     private val REQUEST_CODE_SIGN_IN = 1000
@@ -155,9 +183,11 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                         var usercount = it.get(KEY_USERCOUNT).toString().toInt()
 
                         val model = ModelUser(
+                            description = "",
                             openId = authAccount.openId,
                             unionId = authAccount.unionId,
                             username = "สมาชิกหมายเลข $usercount",
+                            number = "$usercount",
                             email = authAccount.email,
                             profile = authAccount.avatarUriString,
                             createDate = System.currentTimeMillis(),
@@ -212,10 +242,10 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     private fun createUser(model: ModelUser) {
         dialog_load!!.show()
 
-        repositoryUser.create(model){ result ->
+        repositoryUser.create(model){ result, m ->
             when(result){
                 RepositoryUser.RESULT_SUCCESS->{
-                    setUserCurrent(model)
+                    setUserCurrent(m)
                     updateUI()
                 }
                 RepositoryUser.RESULT_FAIL->{
@@ -246,17 +276,18 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
                 //set deatail user
 
-                repositoryUser.getByUid(pref!!.strUid!!){ model->
+                Log.i("sadafwgeaggaw", "This is get uid: " + prefs!!.strUid)
+                repositoryUser.getByUid(prefs!!.strUid!!){ model->
 
                     if(model != null){
                         loadPostPB.visibility = View.GONE
+
                         Log.i("sadafwgeaggaw", "username: " + model.username)
                         Log.i("sadafwgeaggaw", "description: " + model.description)
 
-                        Glide.with(requireActivity()).load(pref!!.strPhotoUri).centerCrop()
-                            .into(imageUrlUserIV)
+                        Glide.with(requireActivity()).load(model.profile).centerCrop().into(imageUrlUserIV)
                         usernameTV.text = model.username
-                        menunameTV.text = model.description
+                        descriptionTV.text = if(model.description == "") "ไม่มีคำอธิบาย" else model.description
 
                         setDataPost()
                     }else{
@@ -295,17 +326,19 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
     private fun setUserCurrent(model: ModelUser?) {
         if (model != null) {
-            pref!!.strEmail = model.email
-            pref!!.strUsername = model.username
-            pref!!.strOpenId = model.openId
-            pref!!.strPhotoUri = model.profile
-            pref!!.strUid = model.uid
+            prefs!!.strEmail = model.email
+            prefs!!.strUsername = model.username
+            prefs!!.strOpenId = model.openId
+            prefs!!.strPhotoUri = model.profile
+            prefs!!.strUid = model.uid
+            prefs!!.strNumber = model.number
         } else {
-            pref!!.strEmail = ""
-            pref!!.strUsername = ""
-            pref!!.strOpenId = ""
-            pref!!.strPhotoUri = ""
-            pref!!.strUid = ""
+            prefs!!.strEmail = ""
+            prefs!!.strUsername = ""
+            prefs!!.strOpenId = ""
+            prefs!!.strPhotoUri = ""
+            prefs!!.strUid = ""
+            prefs!!.strNumber = ""
         }
     }
 

@@ -29,7 +29,9 @@ import com.phasitapp.rupost.dialog.LayersMapDialog
 import com.phasitapp.rupost.helper.FilterPost
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.model.ModelUser
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.phasitapp.rupost.repository.RepositoryUser
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_map.*
@@ -46,6 +48,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var hMap: HuaweiMap? = null
     private lateinit var gpsManage: GPSManage
     private lateinit var prefs: Prefs
+    private lateinit var repositoryUser: RepositoryUser
 
     private val postList = ArrayList<ModelPost>()
     private val latLngList = ArrayList<LatLng>()
@@ -64,6 +67,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var currentMarker: Marker? = null
     private fun init() {
+        repositoryUser = RepositoryUser(this)
         prefs = Prefs(this)
         gpsManage = GPSManage(this)
         gpsManage.setMyEvent(object : GPSManage.MyEvent {
@@ -181,11 +185,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             val repositoryPost = RepositoryPost(this)
             repositoryPost.read { result, posts ->
                 if (result == RepositoryPost.RESULT_SUCCESS) {
+
                     postList.addAll(posts)
                     postList.setForEachMarkerAndMove()
-
-//                    hMap!!.setMarkersClustering(true)
-//                    hMap!!.uiSettings.setMarkerClusterColor(Color.RED)
                 }
             }
         }
@@ -202,7 +204,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             val model = marker.tag as ModelPost
                             showDetailPostBottomSheetDialog(model)
                         }
-
                     }
 
                     override fun onCancel() {

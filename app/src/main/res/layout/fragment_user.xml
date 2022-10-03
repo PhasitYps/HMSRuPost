@@ -122,23 +122,17 @@
                             app:cardPreventCornerOverlap="true"
                             app:cardUseCompatPadding="true">
 
-                            <RelativeLayout
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/imageUrlUserIV"
                                 android:layout_width="60dp"
                                 android:layout_height="60dp"
-                                android:background="@drawable/bg_circle_white">
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:src="@drawable/ic_user_filled" />
 
-                                <ImageView
-                                    android:id="@+id/imageUrlUserIV"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_centerInParent="true"
-                                    android:layout_marginStart="2dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginEnd="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:src="@drawable/ic_user_filled" />
-
-                            </RelativeLayout>
 
                         </androidx.cardview.widget.CardView>
 
@@ -216,27 +210,32 @@
 
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/usernameTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="username"
+                        android:textColor="@color/black"
+                        android:paddingHorizontal="15dp"
+                        android:textStyle="bold" />
+
+
                     <LinearLayout
                         android:id="@+id/bgDetailLL"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="15dp"
+                        android:layout_marginVertical="10dp"
                         >
 
                         <TextView
-                            android:id="@+id/usernameTV"
+                            android:id="@+id/descriptionTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="username"
+                            tools:text="คำอธิบาย"
                             android:textColor="@color/black"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/menunameTV"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:text="คำอธิบาย" />
+                            />
 
                     </LinearLayout>
 

@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.huawei.hms.maps.MapsInitializer
 import com.phasitapp.rupost.dialog.BottomSheetMenu
 import com.phasitapp.rupost.fragments.HomeFragment
@@ -34,9 +36,13 @@ class MainActivity : AppCompatActivity() {
         event()
         setAnimaleWhenClickIcon()
 
+//        Firebase.firestore.collection("post").get().addOnSuccessListener {
+//            it.forEach {
+//                Firebase.firestore.collection(KEY_POSTS).add(it.data)
+//            }
+//        }
 
         //addPostTest()
-
     }
 
     override fun onResume() {

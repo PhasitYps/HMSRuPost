@@ -33,9 +33,7 @@ class RepositoryPost(private var activity: Activity) {
 
     fun post(model: ModelPost, l: (result: String) -> Unit) {
         val uid = prefs.strUid
-        val profile = prefs.strPhotoUri
-        val username = prefs.strUsername
-        val postRef = firestore.collection(KEY_POST)
+        val postRef = firestore.collection(KEY_POSTS)
         val imageList = model.images
 
         val post: MutableMap<String, Any?> = HashMap()
@@ -49,8 +47,6 @@ class RepositoryPost(private var activity: Activity) {
         post[KEY_ADDRESS] = model.address
         post[KEY_CREATEDATE] = model.createDate
         post[KEY_UPDATEDATE] = model.updateDate
-        post[KEY_PROFILE] = profile
-        post[KEY_USERNAME] = username
         post[KEY_VIEWER] = 0
 
         postRef.add(post).addOnSuccessListener {
@@ -61,7 +57,7 @@ class RepositoryPost(private var activity: Activity) {
             if (imageList.isNotEmpty()) {
                 imageList.forEach { imagePath ->
                     val postStorageRef =
-                        storage.getReference(KEY_POST).child("${System.currentTimeMillis()}.jpg")
+                        storage.getReference(KEY_POSTS).child("${System.currentTimeMillis()}.jpg")
                     val file = File(imagePath)
                     val byteArray = convertFileToByteArray(file)
                     postStorageRef.putBytes(byteArray).addOnSuccessListener {
@@ -96,7 +92,7 @@ class RepositoryPost(private var activity: Activity) {
 
     fun readByUid(uid: String, l: (result: String, post: ArrayList<ModelPost>) -> Unit) {
         val list = ArrayList<ModelPost>()
-        firestore.collection(KEY_POST).whereEqualTo(KEY_UID, uid).get()
+        firestore.collection(KEY_POSTS).whereEqualTo(KEY_UID, uid).get()
             .addOnSuccessListener { documents ->
                 documents.forEach { document ->
 
@@ -115,7 +111,8 @@ class RepositoryPost(private var activity: Activity) {
 
     fun read(l: (result: String, post: ArrayList<ModelPost>) -> Unit) {
         val list = ArrayList<ModelPost>()
-        firestore.collection(KEY_POST).get().addOnSuccessListener { documents ->
+        firestore.collection(KEY_POSTS).get().addOnSuccessListener { documents ->
+
             documents.forEach { document ->
 
                 Log.i("fwafawf", "address: " + document[KEY_ADDRESS])
@@ -132,6 +129,7 @@ class RepositoryPost(private var activity: Activity) {
 
                 val model = document.toObject(ModelPost::class.java)
                 model.id = document.id
+
                 Log.i("fwafawf", "imagelist: " + model.images.size)
                 Log.i("fwafawf", "id: " + model.id)
                 list.add(model)
@@ -148,18 +146,18 @@ class RepositoryPost(private var activity: Activity) {
     fun like(postId: String, like: Boolean) {
         when (like) {
             true -> {
-                database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
+                database.getReference(KEY_POSTS).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
                     .setValue(true)
             }
             false -> {
-                database.getReference(KEY_POST).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
+                database.getReference(KEY_POSTS).child(postId).child(KEY_LIKES).child(prefs.strUid!!)
                     .removeValue()
             }
         }
     }
 
     fun getComments(postId: String, l: (comments: ArrayList<ModelComment>) -> Unit) {
-        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS)
+        database.getReference(KEY_POSTS).child(postId).child(KEY_COMMENTS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = ArrayList<ModelComment>()
@@ -168,8 +166,6 @@ class RepositoryPost(private var activity: Activity) {
                         model!!.id = it.key
                         model.uid = it.child(KEY_UID).getValue(String::class.java)
                         model.message = it.child(KEY_MESSAGE).getValue(String::class.java)
-                        model.profile = it.child(KEY_PROFILE).getValue(String::class.java)
-                        model.username = it.child(KEY_USERNAME).getValue(String::class.java)
                         model.createDate = it.child(KEY_CREATEDATE).getValue(String::class.java)
                         model.countLike = it.child(KEY_LIKES).childrenCount.toInt()
                         model.tag = it.child(KEY_TAG).getValue(String::class.java)
@@ -184,7 +180,7 @@ class RepositoryPost(private var activity: Activity) {
     }
 
     fun getCommentsCount(postId: String, l: (count: Int) -> Unit){
-        database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).addListenerForSingleValueEvent(object : ValueEventListener{
+        database.getReference(KEY_POSTS).child(postId).child(KEY_COMMENTS).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val count = snapshot.childrenCount.toInt()
                 l(count)
@@ -197,13 +193,11 @@ class RepositoryPost(private var activity: Activity) {
     fun comments(postId: String, model: ModelComment, l: (comment: ModelComment?) -> Unit){
         val comment: MutableMap<String, Any?> = java.util.HashMap()
         comment[KEY_UID] = model.uid
-        comment[KEY_USERNAME] = model.username
-        comment[KEY_PROFILE] = model.profile
         comment[KEY_MESSAGE] = model.message
         comment[KEY_CREATEDATE] = model.createDate
         comment[KEY_TAG] = model.tag
 
-        val keyRef = database.getReference(KEY_POST).child(postId).child(KEY_COMMENTS).push()
+        val keyRef = database.getReference(KEY_POSTS).child(postId).child(KEY_COMMENTS).push()
         model.id = keyRef.key
         keyRef.setValue(comment).addOnSuccessListener {
            l(model)
@@ -214,7 +208,7 @@ class RepositoryPost(private var activity: Activity) {
     }
 
     fun getStaticLike(postId: String, l: (userLikes: ArrayList<String>) -> Unit) {
-        database.getReference(KEY_POST).child(postId).child(KEY_LIKES)
+        database.getReference(KEY_POSTS).child(postId).child(KEY_LIKES)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val dataList = ArrayList<String>()

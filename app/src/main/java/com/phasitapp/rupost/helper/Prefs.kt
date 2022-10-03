@@ -12,6 +12,7 @@ class Prefs (private var context: Context) {
     private val APP_PREF_STR_EMAIL = "strEmail"
     private val APP_PREF_STR_OPEN_ID = "strOpenId"
     private val APP_PREF_STR_PHOTO_URI = "strPhotoUri"
+    private val APP_PREF_STR_NUMBER = "strNumber"
 
     var strUid: String?
         get() = preferences.getString(APP_PREF_STR_UID, "")
@@ -32,6 +33,10 @@ class Prefs (private var context: Context) {
     var strPhotoUri: String?
         get() = preferences.getString(APP_PREF_STR_PHOTO_URI, "")
         set(value) = preferences.edit().putString(APP_PREF_STR_PHOTO_URI, value).apply()
+
+    var strNumber: String?
+        get() = preferences.getString(APP_PREF_STR_NUMBER, "")
+        set(value) = preferences.edit().putString(APP_PREF_STR_NUMBER, value).apply()
 
 
 

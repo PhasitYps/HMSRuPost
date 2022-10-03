@@ -7,7 +7,7 @@ class ModelUser (
     var username: String? = null,
     var email: String? = null,
     var profile: String? = null,
-    var displayName: String? = null,
+    var number: String? = null,
     var description: String? = null,
     var createDate: Long? = null,
     var updateDate: Long? = null,

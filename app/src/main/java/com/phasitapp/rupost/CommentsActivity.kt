@@ -16,8 +16,10 @@ import com.phasitapp.rupost.adapter.AdapComments
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelComment
 import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.model.ModelUser
 import com.phasitapp.rupost.repository.RepositoryComment
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.activity_comments.*
 
 
@@ -25,6 +27,7 @@ class CommentsActivity : AppCompatActivity() {
 
     private val TAG = "CommentsActivityTAG"
     private lateinit var repositoryPost: RepositoryPost
+    private lateinit var repositoryUser: RepositoryUser
     private lateinit var repositoryComment: RepositoryComment
     private lateinit var huaweiMap: HuaweiMap
     private lateinit var prefs: Prefs
@@ -49,6 +52,7 @@ class CommentsActivity : AppCompatActivity() {
         prefs = Prefs(this)
         repositoryPost = RepositoryPost(this)
         repositoryComment = RepositoryComment(this, model.id!!)
+        repositoryUser = RepositoryUser(this)
 
         sendIV.isEnabled = false
 
@@ -152,23 +156,28 @@ class CommentsActivity : AppCompatActivity() {
     private fun setData() {
         commentList.clear()
 
+        Log.i("fewfwe", "Thread")
         repositoryPost.getComments(model.id!!) { comments ->
-
+            Log.i("fewfwe", "getComments")
             repositoryComment.getUserCurrentLike { userLikeComments ->
+                Log.i("fewfwe", "getUserCurrentLike")
                 swipeRefreshLayout.isRefreshing = false
 
                 comments.forEach { comment ->
 
                     repositoryComment.getCountLike(comment.id!!) { count ->
                         comment.countLike = count
+                        Log.i("fewfwe", "getCountLike")
+
                         val filter = userLikeComments.filter { it == comment.id }
-                        if (filter.isNotEmpty()) {
-                            comment.currentUserLike = true
-                            commentList.add(comment)
-                            commentList.sortBy { it.createDate }
-                            dataRCV.adapter!!.notifyDataSetChanged()
-                        } else {
-                            comment.currentUserLike = false
+                        comment.currentUserLike = filter.isNotEmpty()
+
+                        repositoryUser.getByUid(comment.uid!!){ modelUser: ModelUser? ->
+                            Log.i("fewfwe", "getByUid")
+
+                            comment.username = modelUser!!.username
+                            comment.profile = modelUser!!.profile
+
                             commentList.add(comment)
                             commentList.sortBy { it.createDate }
                             dataRCV.adapter!!.notifyDataSetChanged()

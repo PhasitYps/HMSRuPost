@@ -1,6 +1,7 @@
 package com.phasitapp.rupost.repository
 
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +29,7 @@ class RepositoryUser(private var activity: Activity) {
         val RESULT_FAIL = "fail"
     }
 
-    fun create(model: ModelUser, l: (result: String) -> Unit) {
+    fun create(model: ModelUser, l: (result: String, model: ModelUser) -> Unit) {
 
         val uid = database.getReference(KEY_USERS).ref.push().key
 
@@ -44,16 +45,34 @@ class RepositoryUser(private var activity: Activity) {
             user[KEY_USERNAME] = model.username
             user[KEY_UNION_ID] = model.unionId
             user[KEY_DESCIPTION] = model.description
+            user[KEY_NUMBER] = model.number
 
             user[KEY_CREATEDATE] = model.createDate
             user[KEY_UPDATEDATE] = model.updateDate
 
             database.getReference(KEY_USERS).child(uid).setValue(user).addOnSuccessListener {
-
-                l(RESULT_SUCCESS)
+                model.uid = uid
+                l(RESULT_SUCCESS, model)
             }.addOnFailureListener {
-                l(RESULT_FAIL)
+                l(RESULT_FAIL, model)
             }
+        }
+    }
+
+    fun update(model: ModelUser,l: (result: String) -> Unit){
+
+        val user: MutableMap<String, Any?> = HashMap()
+        user[KEY_PROFILE] = model.profile
+        user[KEY_USERNAME] = model.username
+        user[KEY_DESCIPTION] = model.description
+
+        user[KEY_UPDATEDATE] = model.updateDate
+        Log.i("fewfwef", "uid: " + prefs.strUid)
+
+        database.getReference(KEY_USERS).child(prefs.strUid!!).updateChildren(user).addOnSuccessListener {
+            l(RESULT_SUCCESS)
+        }.addOnFailureListener {
+            l(RESULT_FAIL)
         }
     }
 
@@ -62,21 +81,18 @@ class RepositoryUser(private var activity: Activity) {
         database.getReference(KEY_USERS).orderByChild(KEY_OPENID).equalTo(openId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = ArrayList<ModelUser>()
-                    snapshot.children.forEach {
+                    if(snapshot.exists()){
                         val model = ModelUser()
-                        model.openId = it.child(KEY_OPENID).getValue(String::class.java)
-                        model.uid = it.child(KEY_UID).getValue(String::class.java)
-                        model.createDate = it.child(KEY_CREATEDATE).getValue(Long::class.java)
-                        model.email = it.child(KEY_EMAIL).getValue(String::class.java)
-                        model.username = it.child(KEY_USERNAME).getValue(String::class.java)
-                        model.description = it.child(KEY_DESCIPTION).getValue(String::class.java)
-                        model.profile = it.child(KEY_PROFILE).getValue(String::class.java)
+                        model.openId = snapshot.child(KEY_OPENID).getValue(String::class.java)
+                        model.uid = snapshot.child(KEY_UID).getValue(String::class.java)
+                        model.createDate = snapshot.child(KEY_CREATEDATE).getValue(Long::class.java)
+                        model.email = snapshot.child(KEY_EMAIL).getValue(String::class.java)
+                        model.username = snapshot.child(KEY_USERNAME).getValue(String::class.java)
+                        model.description = snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
+                        model.profile = snapshot.child(KEY_PROFILE).getValue(String::class.java)
 
-                        list.add(model)
-                    }
-                    if(list.size > 0){
-                        l(list[0])
+                        Log.i("sadafwgeaggaw", "This is get model.username: " + model.username)
+                        l(model)
                     }else{
                         l(null)
                     }
@@ -91,25 +107,22 @@ class RepositoryUser(private var activity: Activity) {
         database.getReference(KEY_USERS).child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = ArrayList<ModelUser>()
-                    snapshot.children.forEach {
-                        val model = ModelUser()
-                        model.openId = it.child(KEY_OPENID).getValue(String::class.java)
-                        model.uid = it.child(KEY_UID).getValue(String::class.java)
-                        model.createDate = it.child(KEY_CREATEDATE).getValue(Long::class.java)
-                        model.email = it.child(KEY_EMAIL).getValue(String::class.java)
-                        model.username = it.child(KEY_USERNAME).getValue(String::class.java)
-                        model.description = it.child(KEY_DESCIPTION).getValue(String::class.java)
-                        model.profile = it.child(KEY_PROFILE).getValue(String::class.java)
 
-                        list.add(model)
-                    }
-                    if(list.size > 0){
-                        l(list[0])
+                    if(snapshot.exists()){
+                        val model = ModelUser()
+                        model.openId = snapshot.child(KEY_OPENID).getValue(String::class.java)
+                        model.uid = snapshot.child(KEY_UID).getValue(String::class.java)
+                        model.createDate = snapshot.child(KEY_CREATEDATE).getValue(Long::class.java)
+                        model.email = snapshot.child(KEY_EMAIL).getValue(String::class.java)
+                        model.username = snapshot.child(KEY_USERNAME).getValue(String::class.java)
+                        model.description = snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
+                        model.profile = snapshot.child(KEY_PROFILE).getValue(String::class.java)
+
+                        Log.i("sadafwgeaggaw", "This is get model.username: " + model.username)
+                        l(model)
                     }else{
                         l(null)
                     }
-
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })

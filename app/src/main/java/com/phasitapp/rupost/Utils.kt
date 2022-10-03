@@ -11,6 +11,7 @@ import android.view.View
 import androidx.annotation.AttrRes
 import androidx.core.app.ActivityCompat
 import com.phasitapp.rupost.helper.Prefs
+import com.phasitapp.rupost.model.ModelUser
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +36,7 @@ object Utils {
 
     fun hasUserCurrent(context: Context): Boolean{
         val prefs = Prefs(context)
-        return prefs.strOpenId != ""
+        return prefs.strUid != ""
     }
 
     fun formatDate(format:String, date: Date): String{

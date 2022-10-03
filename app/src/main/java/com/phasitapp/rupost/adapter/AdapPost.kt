@@ -324,7 +324,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val imageRCV = itemView.findViewById<RecyclerView>(R.id.imageRCV)
         val profileIV = itemView.findViewById<ImageView>(R.id.profileIV)
         val titleTV = itemView.findViewById<TextView>(R.id.titleTV)
-        val desciptionTV = itemView.findViewById<TextView>(R.id.desciptionTV)
+        val desciptionTV = itemView.findViewById<TextView>(R.id.descriptionTV)
         val usernameTV = itemView.findViewById<TextView>(R.id.usernameTV)
         val createDateTV = itemView.findViewById<TextView>(R.id.createDateTV)
         val imageMapIV = itemView.findViewById<ImageView>(R.id.imageMapIV)
