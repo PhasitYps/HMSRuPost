@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_profile.detailMoreTV
 import kotlinx.android.synthetic.main.activity_profile.imageUrlUserIV
 import kotlinx.android.synthetic.main.activity_profile.loadPostPB
 import kotlinx.android.synthetic.main.activity_profile.usernameTV
-import kotlinx.android.synthetic.main.fragment_user.*
 
 class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
