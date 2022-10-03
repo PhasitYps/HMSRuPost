@@ -30,6 +30,8 @@ const val KEY_LIKES = "likes"
 const val KEY_TAG = "tag"
 const val KEY_NUMBER = "number"
 const val KEY_AVATARS = "avatars"
+const val KEY_FOLLOWERS = "followers"
+const val KEY_FOLLOWINGS = "followings"
 
 const val KEY_MESSAGE = "message"
 

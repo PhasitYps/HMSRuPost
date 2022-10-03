@@ -1,17 +1,18 @@
 package com.phasitapp.rupost.dialog
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.phasitapp.rupost.R
-import com.phasitapp.rupost.Utils
+import com.phasitapp.rupost.*
 import com.phasitapp.rupost.adapter.AdapImagePost
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
+import com.phasitapp.rupost.repository.RepositoryPost
 import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.bottom_sheet_detail_post.*
 import java.util.*
@@ -20,6 +21,7 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
     BottomSheetDialog(activity, R.style.SheetDialog) {
 
     private val repositoryUser = RepositoryUser(activity)
+    private val repositoryPost = RepositoryPost(activity)
 
     init {
         val bottomSheetView: View =
@@ -42,6 +44,25 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
 
         bottomSheetBehavior.setBottomSheetCallback(bottomSheetCallback)
         setDetail()
+
+        commentIV.setOnClickListener {
+            val intent = Intent(activity, CommentsActivity::class.java)
+            intent.putExtra(KEY_DATA, modelPost)
+            activity.startActivity(intent)
+        }
+
+        bgCommentCountLL.setOnClickListener{
+            val intent = Intent(activity, CommentsActivity::class.java)
+            intent.putExtra(KEY_DATA, modelPost)
+            activity.startActivity(intent)
+        }
+
+        bgLikeCountLL.setOnClickListener {
+            val intent = Intent(activity, UserLikeActivity::class.java)
+            intent.putExtra(KEY_DATA, modelPost.id)
+            activity.startActivity(intent)
+        }
+
     }
 
     private fun setDetail() {
@@ -56,6 +77,13 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
             Glide.with(activity).load(modelPost.profile).into(profileIV)
         }
 
+        repositoryPost.getCommentsCount(modelPost.id!!){ count->
+            countCommentTV.text = "$count"
+        }
+
+        repositoryPost.getCountLike(modelPost.id!!){ count ->
+            countLikeTV.text = "$count"
+        }
         createDateTV.text = formatCreateDate(modelPost.createDate.toString().toLong())
         titleTV.text = if (modelPost.title != null) modelPost.title else ""
         descriptionTV.text = if (modelPost.desciption != null) modelPost.desciption else ""

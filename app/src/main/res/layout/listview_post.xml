@@ -182,7 +182,7 @@
                             android:id="@+id/imageMapIV"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             />
 
                         <androidx.cardview.widget.CardView
@@ -246,11 +246,9 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/bgCommentLL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground"
                 >
 
                 <LinearLayout
@@ -261,6 +259,7 @@
                     android:gravity="center"
                     android:layout_marginStart="15dp"
                     android:layout_marginVertical="5dp"
+                    android:background="?attr/selectableItemBackground"
                     >
                     <ImageView
                         android:layout_width="20dp"
@@ -291,7 +290,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_chat"
+                        android:src="@drawable/ic_comment"
                         android:layout_marginEnd="5dp"
                         />
 
@@ -377,13 +376,13 @@
                     android:layout_centerInParent="true"
                     android:gravity="center"
                     >
+
                     <ImageView
                         android:id="@+id/bookmarkIV"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_bookmark"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        />
+                        android:src="@drawable/ic_bookmark" />
                 </RelativeLayout>
 
             </RelativeLayout>

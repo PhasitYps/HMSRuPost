@@ -1,7 +1,5 @@
 package com.phasitapp.rupost.fragments
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -9,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
-import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.Fragment
@@ -20,9 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.chip.Chip
-import com.huawei.hms.maps.*
 import com.phasitapp.rupost.*
-import com.phasitapp.rupost.R
 import com.phasitapp.rupost.adapter.AdapPost
 import com.phasitapp.rupost.dialog.BottomSheetMenuFilter
 import com.phasitapp.rupost.helper.FilterPost
@@ -30,6 +25,7 @@ import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.util.*
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -37,6 +33,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val postList = ArrayList<ModelPost>()
 
     private lateinit var repositoryUser: RepositoryUser
+    private lateinit var repositoryPost: RepositoryPost
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -166,12 +163,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun updateFilterPost() {
         postFilter.clear()
+
         FilterPost().filter(
             postList,
             currentCategory = currentCategory,
             currentFilterDay = currentFilterDay
         ) { postsFilter ->
             postFilter.addAll(postsFilter)
+            //postFilter.add(ModelPost())
             postRCV.adapter!!.notifyDataSetChanged()
         }
     }
@@ -179,13 +178,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun init() {
 
         repositoryUser = RepositoryUser(requireActivity())
+        repositoryPost = RepositoryPost(requireActivity())
         bgNotPostLL.visibility = View.GONE
         addChipCategoryView()
 
         swipeRefreshLayout.setOnRefreshListener {
             setData()
         }
-
 
     }
 
@@ -202,10 +201,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+
     private fun setData() {
         postList.clear()
-        val repositoryPost = RepositoryPost(requireActivity())
-        repositoryPost.read() { result, post ->
+
+        val calStart = Calendar.getInstance()
+        calStart.add(Calendar.DATE, -7)
+        val startAt = calStart.timeInMillis
+
+        Log.i("fewfweg", "start: " + startAt)
+
+        repositoryPost.read(startAt, 5) { result, post ->
             swipeRefreshLayout.isRefreshing = false
             loadPostPB.visibility = View.GONE
             when (result) {
@@ -220,6 +226,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             postList.add(model)
 
                             Log.i("fewfweg", "postList: " + postList.size)
+                            //postRCV.adapter!!.notifyItemInserted(postList.size -1)
                             updateFilterPost()
                         }
                     }
@@ -242,6 +249,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val postFilter = ArrayList<ModelPost>()
 
+    private var isLoading = false
     private fun setAdap() {
         val adapter = AdapPost(requireActivity(), postFilter)
         val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
@@ -260,6 +268,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 } else {
                     bgFilterLL.visibility = View.VISIBLE
                 }
+
+//                if (!isLoading) {
+//                    if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == postList.size - 1) {
+//                        //bottom of list!
+//                        loadMore();
+//                        isLoading = true;
+//                    }
+//                }
+
+//                val visibleItemCount: Int = layoutManager.getChildCount()
+//                val totalItemCount: Int = layoutManager.getItemCount()
+//                val pastVisibleItems: Int = layoutManager.findFirstVisibleItemPosition()
+////                Log.d("-----","visibleItemCount: " + visibleItemCount);
+////                Log.d("-----","totalItemCount: " + totalItemCount);
+////                Log.d("-----","pastVisibleItems: " + pastVisibleItems);
+//
+//                if ((limitPost.toInt() - pastVisibleItems) >= 2) {
+//                    //End of list
+//                    Log.d("-----","setData");
+//                    limitPost+=2
+//                    setData()
+//                }
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -269,6 +299,68 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             }
         })
+    }
+
+    private fun loadMore() {
+        postList.add(ModelPost())
+        postRCV.adapter!!.notifyItemInserted(postList.size - 1)
+
+        val scrollPosition: Int = postList.size
+
+        var currentSize = scrollPosition - 1
+        val nextLimit = currentSize + 10
+
+        val calStart = Calendar.getInstance()
+        calStart.add(Calendar.DATE, -7)
+        val startAt = calStart.timeInMillis
+
+        repositoryPost.read(startAt, nextLimit.toLong()) { result, post ->
+            postList.removeAt(postList.size - 1)
+            postRCV.adapter!!.notifyItemRemoved(scrollPosition)
+
+            when (result) {
+                RepositoryPost.RESULT_SUCCESS -> {
+
+                    Log.i("fewfweg", "post: " + post.size)
+                    if(post.size == postList.size){
+                        return@read
+                    }
+
+                    post.forEach { model ->
+
+                        val hasItem = postList.filter { it.id == model.id }.isNotEmpty()
+
+                        if(!hasItem){
+
+                            repositoryUser.getByUid(model.uid!!){ modelUser->
+                                model.profile = modelUser!!.profile
+                                model.username = modelUser!!.username
+                                postList.add(model)
+
+                                Log.i("fewfweg", "postList: " + postList.size)
+                                //postRCV.adapter!!.notifyItemInserted(postList.size -1)
+                                updateFilterPost()
+                            }
+                        }
+
+                    }
+                    if (post.size != 0) {
+                        bgNotPostLL.visibility = View.GONE
+                    } else {
+                        bgNotPostLL.visibility = View.VISIBLE
+                        Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
+                    }
+                }
+                RepositoryPost.RESULT_FAIL -> {
+                    //bgNotPostLL.visibility = View.VISIBLE
+                    //Glide.with(requireActivity()).load(R.drawable.gif_not_data).into(notFoundIV)
+                }
+            }
+        }
+
+        isLoading = false
+
+
     }
 
 

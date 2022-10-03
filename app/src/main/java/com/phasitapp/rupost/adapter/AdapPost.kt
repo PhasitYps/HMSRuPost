@@ -5,12 +5,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
+import android.util.Property
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,41 +33,43 @@ import java.io.ByteArrayOutputStream
 
 
 class AdapPost(private var activity: Activity, private val dataList: ArrayList<ModelPost>) :
-    RecyclerView.Adapter<AdapPost.ViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TAG = "AdapPost"
     private val prefs = Prefs(activity)
     private val repositoryPost = RepositoryPost(activity)
     private var huaweiMap: HuaweiMap? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.listview_post, parent, false)
-        return ViewHolder(view)
+    private val VIEW_TYPE_ITEM = 0
+    private val VIEW_TYPE_LOADING = 1
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        return if (viewType === VIEW_TYPE_ITEM) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.listview_post, parent, false)
+            ItemViewHolder(view)
+        } else {
+            val view: View = LayoutInflater.from(parent.context).inflate(R.layout.listview_loading, parent, false)
+            LoadingViewHolder(view)
+        }
+
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Log.i(TAG, "onBindViewHolder")
 
-        setDetail(holder, position)
-        event(holder, position)
-        setAnimateIcon(holder)
-    }
+        if (holder is ItemViewHolder) {
+            setDetail(holder, position)
+            event(holder, position)
+            setAnimateIcon(holder)
 
-    override fun onViewRecycled(holder: ViewHolder) {
-        super.onViewRecycled(holder)
-        Log.i(TAG, "onViewRecycled")
+        } else if (holder is LoadingViewHolder) {
 
-//        holder.huaweiMap?.clear()
-//        holder.huaweiMap?.mapType = HuaweiMap.MAP_TYPE_NONE
+        }
 
     }
 
-    fun onDestroy() {
-
-    }
-
-    private fun setDetail(holder: ViewHolder, position: Int) {
+    private fun setDetail(holder: ItemViewHolder, position: Int) {
         holder.itemCV.tag = position
         //val map = huaweiMap
         var lat = dataList[position].latitude!!
@@ -148,7 +152,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
     }
 
-    private fun event(holder: ViewHolder, position: Int) {
+    private fun event(holder: ItemViewHolder, position: Int) {
 
         holder.likeIV.setOnClickListener {
             Log.i("agehaehes", "likeIV click")
@@ -195,16 +199,30 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             activity.startActivity(intent)
         }
 
-        holder.bgCommentLL.setOnClickListener {
+        holder.bgCommentCountLL.setOnClickListener {
             val intent = Intent(activity, CommentsActivity::class.java)
             intent.putExtra(KEY_DATA, dataList[position])
             activity.startActivity(intent)
         }
 
+        holder.bgLikeCountLL.setOnClickListener {
+            val intent = Intent(activity, UserLikeActivity::class.java)
+            intent.putExtra(KEY_DATA,  dataList[position].id)
+            activity.startActivity(intent)
+        }
 
+        holder.bookmarkIV.setOnClickListener {
+
+        }
+
+        holder.profileIV.setOnClickListener {
+            val intent = Intent(activity, ProfileActivity::class.java)
+            intent.putExtra(KEY_UID, dataList[position].uid)
+            activity.startActivity(intent)
+        }
     }
 
-    private fun setAnimateIcon(holder: ViewHolder) {
+    private fun setAnimateIcon(holder: ItemViewHolder) {
         val defaultIcon = holder.likeIV.layoutParams.width
         val smallIcon = (defaultIcon * 0.85).toInt()
 
@@ -276,7 +294,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
-    private fun plusLike(holder: ViewHolder, position: Int) {
+    private fun plusLike(holder: ItemViewHolder, position: Int) {
         dataList[position].countLike++
 
         holder.countLikeTV.text = "${dataList[position].countLike}"
@@ -287,7 +305,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
-    private fun minusLike(holder: ViewHolder, position: Int) {
+    private fun minusLike(holder: ItemViewHolder, position: Int) {
         dataList[position].countLike--
 
         holder.countLikeTV.text = "${dataList[position].countLike}"
@@ -298,7 +316,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
-    private fun setLike(holder: ViewHolder, position: Int) {
+    private fun setLike(holder: ItemViewHolder, position: Int) {
         //countLike = count
         holder.countLikeTV.text = "${dataList[position].countLike}"
         if (dataList[position].countLike != 0) {
@@ -308,11 +326,19 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        if(dataList[position].id == null){
+            return VIEW_TYPE_LOADING
+        }else{
+            return VIEW_TYPE_ITEM
+        }
+    }
+
     override fun getItemCount(): Int {
         return dataList.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnMapReadyCallback {
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnMapReadyCallback {
 
         var huaweiMap: HuaweiMap? = null
 
@@ -332,7 +358,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val bgLikeCountLL = itemView.findViewById<LinearLayout>(R.id.bgLikeCountLL)
         val countCommentTV = itemView.findViewById<TextView>(R.id.countCommentTV)
         val bgCommentCountLL = itemView.findViewById<LinearLayout>(R.id.bgCommentCountLL)
-        val bgCommentLL = itemView.findViewById<LinearLayout>(R.id.bgCommentLL)
         val itemCV = itemView.findViewById<CardView>(R.id.itemCV)
 
         init {
@@ -343,8 +368,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             bgLikeCountLL.visibility = View.GONE
             bgCommentCountLL.visibility = View.GONE
         }
-
-
 
         override fun onMapReady(map: HuaweiMap?) {
             huaweiMap = map
@@ -386,6 +409,11 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         }
 
+    }
+
+    inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val progressBar = itemView.findViewById<ProgressBar>(R.id.progressBar)
     }
 
 

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorTransparent">
 
     <androidx.core.widget.NestedScrollView
@@ -112,7 +113,7 @@
                                         android:id="@+id/profileIV"
                                         android:layout_width="40dp"
                                         android:layout_height="40dp"
-                                        android:src="@drawable/image_profile"
+                                        tools:src="@drawable/image_profile"
                                         />
                                 </androidx.cardview.widget.CardView>
 
@@ -126,7 +127,7 @@
                                         android:id="@+id/usernameTV"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="username"
+                                        tools:text="username"
                                         android:textColor="@color/black"
                                         android:textStyle="bold"
                                         />
@@ -135,7 +136,7 @@
                                         android:id="@+id/createDateTV"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="createDate"
+                                        tools:text="createDate"
                                         android:textStyle="bold"
                                         android:textSize="12dp"
                                         />
@@ -265,30 +266,84 @@
 
                             </LinearLayout>
 
-                            <View
+                            <LinearLayout
+                                android:id="@+id/bgCommentLL"
                                 android:layout_width="match_parent"
-                                android:layout_height="1.5dp"
-                                android:background="@color/colorWhiteDark"
-                                android:visibility="gone"
-                                />
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:background="?attr/selectableItemBackground"
+                                >
+
+                                <LinearLayout
+                                    android:id="@+id/bgLikeCountLL"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center"
+                                    android:layout_marginStart="15dp"
+                                    android:layout_marginVertical="5dp"
+                                    >
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_heart_red"
+                                        android:layout_marginEnd="5dp"
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/countLikeTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="countLike"
+                                        android:textColor="@color/black"
+                                        />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/bgCommentCountLL"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center"
+                                    android:layout_marginStart="15dp"
+                                    android:layout_marginVertical="5dp"
+                                    >
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_comment"
+                                        android:layout_marginEnd="5dp"
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/countCommentTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="comment"
+                                        android:textColor="@color/black"
+                                        />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:padding="10dp"
                                 >
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    >
+                                    android:orientation="horizontal">
 
                                     <RelativeLayout
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"
                                         android:layout_marginEnd="15dp"
-                                        android:gravity="center"
-                                        >
+                                        android:gravity="center">
 
                                         <ImageView
                                             android:id="@+id/likeIV"
@@ -304,24 +359,22 @@
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"
                                         android:layout_marginEnd="15dp"
-                                        android:gravity="center"
-                                        >
+                                        android:gravity="center">
+
                                         <ImageView
                                             android:id="@+id/commentIV"
                                             android:layout_width="30dp"
                                             android:layout_height="30dp"
-                                            android:padding="2dp"
-                                            android:src="@drawable/ic_comment"
                                             android:background="?attr/selectableItemBackgroundBorderless"
-                                            />
+                                            android:padding="2dp"
+                                            android:src="@drawable/ic_comment" />
                                     </RelativeLayout>
 
                                     <RelativeLayout
                                         android:layout_width="30dp"
                                         android:layout_height="30dp"
                                         android:layout_marginEnd="15dp"
-                                        android:gravity="center"
-                                        >
+                                        android:gravity="center">
 
                                         <ImageView
                                             android:id="@+id/shareIV"
@@ -330,8 +383,7 @@
                                             android:background="?attr/selectableItemBackgroundBorderless"
                                             android:padding="2dp"
                                             android:src="@drawable/ic_send"
-                                            android:visibility="gone"
-                                            />
+                                            android:visibility="gone" />
                                     </RelativeLayout>
 
                                 </LinearLayout>

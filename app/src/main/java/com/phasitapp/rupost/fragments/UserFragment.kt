@@ -30,6 +30,13 @@ import com.phasitapp.rupost.model.ModelUser
 import com.phasitapp.rupost.repository.RepositoryPost
 import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.fragment_user.*
+import kotlinx.android.synthetic.main.fragment_user.bgDetailLL
+import kotlinx.android.synthetic.main.fragment_user.dataRCV
+import kotlinx.android.synthetic.main.fragment_user.descriptionTV
+import kotlinx.android.synthetic.main.fragment_user.detailMoreTV
+import kotlinx.android.synthetic.main.fragment_user.imageUrlUserIV
+import kotlinx.android.synthetic.main.fragment_user.loadPostPB
+import kotlinx.android.synthetic.main.fragment_user.usernameTV
 
 
 class UserFragment : Fragment(R.layout.fragment_user) {
@@ -61,32 +68,31 @@ class UserFragment : Fragment(R.layout.fragment_user) {
     }
 
     private val postList = ArrayList<ModelPost>()
-    private fun setDataPost() {
+    private fun setDataPost(modelUser: ModelUser) {
         postList.clear()
+        val uid = prefs!!.strUid
         val repositoryPost = RepositoryPost(requireActivity())
-        repositoryPost.readByUid(prefs!!.strUid!!) { result, post ->
+        repositoryPost.readByUid(uid!!) { result, post ->
             when (result) {
                 RepositoryPost.RESULT_SUCCESS -> {
-                    postList.addAll(post)
-                    setAdap()
-
-                    repositoryUser.getByUid(prefs!!.strUid!!){ modelUser->
-
-                        postList.forEach { model->
-                            model.profile = modelUser!!.profile
-                            model.username = modelUser!!.username
-                        }
-                        dataRCV.adapter!!.notifyDataSetChanged()
+                    countPostTV.text = "${post.size}"
+                    post.forEach { modelPost ->
+                        modelPost.profile = modelUser!!.profile
+                        modelPost.username = modelUser!!.username
+                        postList.add(modelPost)
                     }
+                    setAdap()
                 }
-                RepositoryPost.RESULT_FAIL -> {
-
-                }
+                RepositoryPost.RESULT_FAIL -> {}
             }
         }
 
-
-
+        repositoryUser.countFollowingByUid(uid){ count->
+            countFollowingTV.text = "$count"
+        }
+        repositoryUser.countFollowerByUid(uid){ count->
+            countFollowerTV.text = "$count"
+        }
     }
 
     private fun setAdap() {
@@ -289,7 +295,8 @@ class UserFragment : Fragment(R.layout.fragment_user) {
                         usernameTV.text = model.username
                         descriptionTV.text = if(model.description == "") "ไม่มีคำอธิบาย" else model.description
 
-                        setDataPost()
+                        setDataPost(model)
+
                     }else{
                         Toast.makeText(
                             requireActivity(),

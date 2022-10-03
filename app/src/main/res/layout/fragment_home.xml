@@ -221,6 +221,8 @@
                     android:id="@+id/postRCV"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="150dp"
                     />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

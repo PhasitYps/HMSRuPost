@@ -109,9 +109,10 @@ class RepositoryPost(private var activity: Activity) {
             }
     }
 
-    fun read(l: (result: String, post: ArrayList<ModelPost>) -> Unit) {
+    fun read(startAt: Long, limit: Long, l: (result: String, post: ArrayList<ModelPost>) -> Unit) {
         val list = ArrayList<ModelPost>()
-        firestore.collection(KEY_POSTS).get().addOnSuccessListener { documents ->
+
+        firestore.collection(KEY_POSTS).orderBy(KEY_CREATEDATE).startAt(startAt).limit(limit).get().addOnSuccessListener { documents ->
 
             documents.forEach { document ->
 
@@ -220,6 +221,23 @@ class RepositoryPost(private var activity: Activity) {
 
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    fun getCountLike(postId: String, l: (count: Int) -> Unit) {
+        database.getReference(KEY_POSTS).child(postId).child(KEY_LIKES)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    val count = snapshot.childrenCount.toInt()
+                    l(count)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    fun getBookMark(uid: String){
+
     }
 
     private fun convertFileToByteArray(file: File): ByteArray {

@@ -37,6 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.fragment_home.categoryCG
 import java.io.ByteArrayOutputStream
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -183,7 +184,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             //when click from map view
             val repositoryPost = RepositoryPost(this)
-            repositoryPost.read { result, posts ->
+
+            val calStart = Calendar.getInstance()
+            calStart.add(Calendar.DATE, -7)
+            val startAt = calStart.timeInMillis
+
+            repositoryPost.read(startAt, 100) { result, posts ->
                 if (result == RepositoryPost.RESULT_SUCCESS) {
 
                     postList.addAll(posts)

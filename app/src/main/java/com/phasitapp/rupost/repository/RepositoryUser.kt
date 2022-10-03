@@ -102,6 +102,26 @@ class RepositoryUser(private var activity: Activity) {
             })
     }
 
+    fun countFollowerByUid(uid: String, l:(count:Int)->Unit){
+        database.getReference(KEY_FOLLOWERS).child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val count = snapshot.childrenCount.toInt()
+                l(count)
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    fun countFollowingByUid(uid: String, l:(count:Int)->Unit){
+        database.getReference(KEY_FOLLOWINGS).child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val count = snapshot.childrenCount.toInt()
+                l(count)
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
     fun getByUid(uid: String, l: (model: ModelUser?) -> Unit) {
 
         database.getReference(KEY_USERS).child(uid)
