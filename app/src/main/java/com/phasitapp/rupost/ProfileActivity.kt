@@ -48,6 +48,10 @@ class ProfileActivity : AppCompatActivity() {
         backIV.setOnClickListener {
             finish()
         }
+
+        followTV.setOnClickListener {
+
+        }
     }
     private fun init(){
         bgDetailLL.visibility = View.GONE
