@@ -46,4 +46,8 @@ const val FILTERDAY_YESTERDAY = "เมื่อวาน"
 const val FILTERDAY_3DAY_LAST = "3 วันล่าสุด"
 const val FILTERDAY_7DAY_LAST = "7 วันล่าสุด"
 
+const val FILTERACTIVITY_POPULAR = "ยอดนิยม"
+const val FILTERACTIVITY_LAST = "ล่าสุด"
+const val FILTERACTIVITY_UPDATELAST = "กิจกรรมล่าสุด"
+
 const val FOLDER_IMAGES = "images"

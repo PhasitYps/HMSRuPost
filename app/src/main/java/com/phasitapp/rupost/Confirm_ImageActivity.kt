@@ -32,11 +32,11 @@ class Confirm_ImageActivity : AppCompatActivity() {
         }
 
         Select_btn.setOnClickListener {
-            sendImagePathtoCamera()
+            sendImagePathToCamera()
         }
     }
 
-    private fun sendImagePathtoCamera(){
+    private fun sendImagePathToCamera(){
         setResult(RESULT_OK, Intent().putExtra("IMAGE_PATH", nameImage))
         Log.i(TAG, "Send IMAGE_PATH to Camera $nameImage")
         finish()

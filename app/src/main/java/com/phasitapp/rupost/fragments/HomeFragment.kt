@@ -120,6 +120,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private var currentFilterDay = FILTERDAY_7DAY_LAST
+    private var currentFilterActivity = FILTERACTIVITY_LAST
     private fun showFilterDayBottomSheetDialog() {
 
         val menuList = ArrayList<BottomSheetMenuFilter.ModelMenuBottomSheet>()
@@ -155,6 +156,42 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             filterDayTV.text = m.menuname
                             updateFilterPost()
                         }
+                    }
+                }
+            })
+    }
+
+    private fun showFilterActivityBottomSheetDialog() {
+
+        val menuList = ArrayList<BottomSheetMenuFilter.ModelMenuBottomSheet>()
+        menuList.add(BottomSheetMenuFilter.ModelMenuBottomSheet(FILTERACTIVITY_UPDATELAST))
+        menuList.add(BottomSheetMenuFilter.ModelMenuBottomSheet(FILTERACTIVITY_LAST))
+        menuList.add(BottomSheetMenuFilter.ModelMenuBottomSheet(FILTERACTIVITY_POPULAR))
+
+        BottomSheetMenuFilter(
+            requireActivity(),
+            menuList,
+            "เรียงลำดับ",
+            object : BottomSheetMenuFilter.SelectListener {
+                override fun onMyClick(
+                    m: BottomSheetMenuFilter.ModelMenuBottomSheet,
+                    position: Int
+                ) {
+                    currentFilterActivity = m.menuname
+                    when (position) {
+                        0 -> {
+                            filterActivityTV.text = m.menuname
+                            updateFilterPost()
+                        }
+                        1 -> {
+                            filterActivityTV.text = m.menuname
+                            updateFilterPost()
+                        }
+                        2 -> {
+                            filterActivityTV.text = m.menuname
+                            updateFilterPost()
+                        }
+
                     }
                 }
             })
@@ -199,6 +236,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         filterDayRL.setOnClickListener {
             showFilterDayBottomSheetDialog()
         }
+
+        filterIV.setOnClickListener {
+            when(bgFilterLL.visibility){
+                View.VISIBLE->{
+                    bgFilterLL.visibility = View.GONE
+                }
+                View.GONE->{
+                    bgFilterLL.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        filterActivityRL.setOnClickListener {
+            showFilterActivityBottomSheetDialog()
+        }
     }
 
 
@@ -218,7 +270,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 RepositoryPost.RESULT_SUCCESS -> {
 
                     Log.i("fewfweg", "post: " + post.size)
-                    post.forEach { model ->
+                    post.forEachIndexed { index, model ->
 
                         repositoryUser.getByUid(model.uid!!){ modelUser->
                             model.profile = modelUser!!.profile
@@ -227,7 +279,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                             Log.i("fewfweg", "postList: " + postList.size)
                             //postRCV.adapter!!.notifyItemInserted(postList.size -1)
-                            updateFilterPost()
+                            if(index == post.lastIndex){
+                                updateFilterPost()
+                            }
                         }
                     }
 
@@ -263,11 +317,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (top) {
-                    bgFilterLL.visibility = View.GONE
-                } else {
-                    bgFilterLL.visibility = View.VISIBLE
-                }
+//                if (top) {
+//                    bgFilterLL.visibility = View.GONE
+//                } else {
+//                    bgFilterLL.visibility = View.VISIBLE
+//                }
 
 //                if (!isLoading) {
 //                    if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == postList.size - 1) {

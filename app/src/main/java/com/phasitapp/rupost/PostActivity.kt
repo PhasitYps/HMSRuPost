@@ -6,14 +6,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.phasitapp.rupost.adapter.AdapImagePost
+import com.phasitapp.rupost.adapter.AdapImagePostActivity
+import com.phasitapp.rupost.model.ModelPost
+import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_post.*
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,9 +31,16 @@ class PostActivity : AppCompatActivity() {
     private var PERMISSION_REQUEST: Int? = 0
     private var SELECT_IMAGE: Int? = 1
     private var CAMERA_IMAGE: Int? = 2
+    private val imageList = arrayListOf<String>()
+
+    var latitude: Double?= null
+    var longitude: Double?= null
+    var address_image: String? = null
+
     val TAG = "Work Task"
 
-    private val imageList = arrayListOf<String>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapImagePostActivity: AdapImagePostActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +57,48 @@ class PostActivity : AppCompatActivity() {
 
         Close_btn.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+            for (i in imageList) {
+                deletePhotoFromInternalStorage(i)
+            }
             finish()
         }
+
+        Post_btn.setOnClickListener {
+            val dir = "/data/data/com.phasitapp.rupost/files/"
+            val imagePath = arrayListOf<String>()
+            for (i in imageList) {
+                imagePath.add("$dir$i")
+            }
+            val model = ModelPost(
+                title = TitleEDT.text.toString(),
+                category = null,
+                targetGroup = null,
+                desciption = DesciptionEDT.text.toString(),
+                latitude = latitude.toString(),
+                longitude = longitude.toString(),
+                address = null,
+                viewer = 0,
+                createDate = "${System.currentTimeMillis()}",
+                updateDate = "${System.currentTimeMillis()}",
+                images = imagePath
+            )
+            Log.i(TAG, "setOnClickListener: \nTitle: ${model.title} \nDesciption: ${model.desciption} \nLatitude: ${model.latitude} \nLongitude: ${model.longitude} \nCreateDate: ${model.createDate} \nUpdateDate: ${model.updateDate} \nImages: ${model.images.size}")
+
+            /*
+            val reposiPost = RepositoryPost(this)
+            reposiPost.post(model) { result ->
+                when (result) {
+                    RepositoryPost.RESULT_SUCCESS -> {
+                        Toast.makeText(this, "โพสต์สำเร็จ!", Toast.LENGTH_SHORT).show()
+                    }
+                    RepositoryPost.RESULT_FAIL -> {
+                        Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            */
+        }
+
     }
 
     private fun checkPermissionGallery() {
@@ -82,10 +138,15 @@ class PostActivity : AppCompatActivity() {
 
                 CAMERA_IMAGE -> if (resultCode == Activity.RESULT_OK) {
                     val imagePath = data.getStringExtra("IMAGE_PATH")
+                    latitude = data.getDoubleExtra("latitude", 0.0)
+                    longitude = data.getDoubleExtra("longitude",0.0)
+                    address_image = data.getStringExtra("address_image")
 
                     Log.i(TAG, "onActivityResult PostActivity: $imagePath")
                     imageList.add(imagePath!!)
                     Log.i(TAG, imageList.toString())
+
+                    initRecyclerView()
                 }
             }
         }
@@ -106,11 +167,28 @@ class PostActivity : AppCompatActivity() {
             }
             imageList.add("$filename.jpg")
             Log.i(TAG, imageList.toString())
+            initRecyclerView()
             true
         } catch (e: IOException) {
             e.printStackTrace()
             false
         }
+    }
+
+    private fun initRecyclerView(){
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.visibility = View.VISIBLE
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        adapImagePostActivity = AdapImagePostActivity(this, imageList)
+        recyclerView.adapter = adapImagePostActivity
+    }
+
+    private fun deletePhotoFromInternalStorage(filename: String): Boolean{
+        val dir = "/data/data/com.phasitapp.rupost/files/"
+        val file = File(dir, filename)
+        Log.i(TAG, "Delete image success")
+        return file.delete()
     }
 
     companion object {

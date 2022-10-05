@@ -27,38 +27,57 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/mapLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="5dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    >
 
                     <LinearLayout
+                        android:id="@+id/mapLL"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_border_rounded"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="5dp"
+                        android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal"
-                        android:padding="8dp">
+                        >
 
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/ic_map"
-                            app:tint="@color/black" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="มุมมองเเผนที่"
-                            android:textColor="@color/black"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border_rounded"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_map"
+                                app:tint="@color/black" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="มุมมองเเผนที่"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/filterIV"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_filter"
+                        android:layout_marginEnd="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        />
 
                 </LinearLayout>
 
@@ -129,31 +148,40 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
+                        <RelativeLayout
+                            android:id="@+id/filterActivityRL"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/bg_border_rounded"
-                            android:gravity="center"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="5dp"
                             android:layout_marginEnd="15dp"
+                            android:background="@drawable/bg_border_rounded"
                             >
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="ยอดนิยม"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"
-                                android:layout_marginEnd="5dp"
-                                />
-                            <ImageView
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
-                                android:src="@drawable/ic_arrow_bottom"
-                                />
+                                android:orientation="horizontal"
+                                android:background="?attr/selectableItemBackground"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="5dp"
+                                >
+                                <TextView
+                                    android:id="@+id/filterActivityTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="ยอดนิยม"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:layout_marginEnd="5dp"
+                                    />
+                                <ImageView
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
+                                    android:src="@drawable/ic_arrow_bottom"
+                                    />
 
-                        </LinearLayout>
+                            </LinearLayout>
+
+                        </RelativeLayout>
 
                         <RelativeLayout
                             android:id="@+id/filterDayRL"

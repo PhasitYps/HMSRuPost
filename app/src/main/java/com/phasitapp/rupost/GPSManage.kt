@@ -30,10 +30,13 @@ class GPSManage(private var activity: Activity) {
     private var locationManager: LocationManager? = null
     private val PERMISSION_REQUEST = 1001
     private val TAG = "From GPSManage"
+    private var isNetwork: Boolean = false
+
 
     init {
         locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGPS = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        isNetwork = locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
@@ -54,6 +57,7 @@ class GPSManage(private var activity: Activity) {
         }
     }
     fun requestGPS(){
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || activity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -63,7 +67,7 @@ class GPSManage(private var activity: Activity) {
 
             } else {
                 locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
-                /*if (isNetwork) {
+                if (isNetwork) {
 
                     locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5f, locationListener)
 
@@ -73,7 +77,7 @@ class GPSManage(private var activity: Activity) {
                         lat = loc.latitude
                         lng = loc.longitude
                     }
-                }*/
+                }
                 if (isGPS) {
                     locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
                     val loc = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)

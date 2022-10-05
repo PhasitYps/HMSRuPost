@@ -177,7 +177,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             //when click from map post
             val model = intent.getSerializableExtra("modelPost") as ModelPost
             postList.add(model)
-            showDetailPostBottomSheetDialog(model)
+            //showDetailPostBottomSheetDialog(model)
 
             postList.setForEachMarkerAndMove()
 
@@ -236,12 +236,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 val item = list[i]
                 bc.include(item)
             }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 150), 2000, null)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 150), 1500, null)
         }
     }
 
+    private val markerList = ArrayList<Marker>()
     private fun ArrayList<ModelPost>.setForEachMarkerAndMove() {
-        hMap!!.clear()
+
+        markerList.forEach {
+            it.remove()
+        }
+        markerList.clear()
         latLngList.clear()
         forEach { model ->
             val lat = model.latitude
@@ -256,6 +261,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                     )
                     marker.tag = model
+                    markerList.add(marker)
                 }
             } else {
                 when (model.category) {
@@ -266,6 +272,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                     .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                             )
                             marker.tag = model
+                            markerList.add(marker)
                         }
                     }
                     CATEGORY_SHARE -> {
@@ -275,6 +282,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                     .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                             )
                             marker.tag = model
+                            markerList.add(marker)
                         }
                     }
                     CATEGORY_EVENT -> {
@@ -284,6 +292,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                     .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                             )
                             marker.tag = model
+                            markerList.add(marker)
                         }
                     }
                 }

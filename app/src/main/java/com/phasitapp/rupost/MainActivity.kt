@@ -21,6 +21,8 @@ import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {

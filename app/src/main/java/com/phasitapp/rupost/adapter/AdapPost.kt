@@ -192,7 +192,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         holder.bookmarkIV.setOnClickListener {
         }
 
-        holder.imageMapIV.setOnClickListener {
+        holder.mapviewCV.setOnClickListener {
             val intent = Intent(activity, MapActivity::class.java)
             intent.putExtra(KEY_EVENT, "post")
             intent.putExtra("modelPost", dataList[position])
@@ -359,11 +359,12 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
         val countCommentTV = itemView.findViewById<TextView>(R.id.countCommentTV)
         val bgCommentCountLL = itemView.findViewById<LinearLayout>(R.id.bgCommentCountLL)
         val itemCV = itemView.findViewById<CardView>(R.id.itemCV)
+        val mapviewCV = itemView.findViewById<CardView>(R.id.mapviewCV)
 
         init {
-            Log.i(TAG, "init")
-            mapView.onCreate(null)
-            mapView.getMapAsync(this)
+//            Log.i(TAG, "init")
+//            mapView.onCreate(null)
+//            mapView.getMapAsync(this)
 
             bgLikeCountLL.visibility = View.GONE
             bgCommentCountLL.visibility = View.GONE
