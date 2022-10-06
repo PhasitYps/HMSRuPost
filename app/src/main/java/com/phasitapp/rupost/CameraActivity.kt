@@ -242,16 +242,15 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                 var bitmap = imageProxyToBitmap(image)
                 bitmap = rotateBitmap(bitmap, 90f)
 
-                //อย่าลืมลบ comment ก่อน commit (Note: Ford)
-                //var image_temp = viewToBitmap(findViewById(R.id.status_image))
-                //var temp = viewToBitmap(findViewById(R.id.temp_text))
-                //var status = viewToBitmap(findViewById(R.id.status_text))
+                var image_temp = viewToBitmap(findViewById(R.id.status_image))
+                var temp = viewToBitmap(findViewById(R.id.temp_text))
+                var status = viewToBitmap(findViewById(R.id.status_text))
 
-                //image_temp = resizeBitmap(image_temp!!, 180)
-                //temp = resizeBitmap(temp!!, 100)
-                //status = resizeBitmap(status!!, 230)
+                image_temp = resizeBitmap(image_temp!!, 180)
+                temp = resizeBitmap(temp!!, 100)
+                status = resizeBitmap(status!!, 230)
 
-                //bitmap = combineImages(bitmap, image_temp, temp, status)!!
+                bitmap = combineImages(bitmap, image_temp, temp, status)!!
 
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
@@ -336,10 +335,6 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                     val imagePath = data.getStringExtra("IMAGE_PATH")
                     Log.i(TAG, "onActivityResult CameraActivity: $imagePath")
 
-                    //อย่าลืมลบ Unit test ก่อน commit (Note: Ford)
-                    latitude = "Unit test latitude..."
-                    longitude = "Unit test longitude..."
-                    address_image = "Unit test address image..."
                     ModelInfo = ModelPost(
                         latitude = latitude,
                         longitude = longitude,

@@ -84,19 +84,20 @@ class PostActivity : AppCompatActivity() {
                     "\nUpdateDate: ${Model.updateDate} " +
                     "\nImages: ${Model.images.size}")
 
-            /*
+
             val reposiPost = RepositoryPost(this)
-            reposiPost.post(model) { result ->
+            reposiPost.post(Model) { result ->
                 when (result) {
                     RepositoryPost.RESULT_SUCCESS -> {
                         Toast.makeText(this, "โพสต์สำเร็จ!", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                     RepositoryPost.RESULT_FAIL -> {
                         Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                 }
             }
-            */
         }
 
     }
@@ -137,14 +138,6 @@ class PostActivity : AppCompatActivity() {
                 }
 
                 CAMERA_IMAGE -> if (resultCode == Activity.RESULT_OK) {
-//                    val imagePath = data.getStringExtra("IMAGE_PATH")
-//                    latitude = data.getDoubleExtra("latitude", 0.0)
-//                    longitude = data.getDoubleExtra("longitude",0.0)
-//                    address_image = data.getStringExtra("address_image")
-//
-//                    Log.i(TAG, "onActivityResult PostActivity: $imagePath")
-//                    imageList.add(imagePath!!)
-//                    Log.i(TAG, imageList.toString())
 
                     val model = data.getSerializableExtra("ModelInfoFromCamera") as ModelPost
                     Log.i(TAG,"From getSerializableExtra (latitude): ${model.latitude}")
