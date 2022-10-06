@@ -49,7 +49,7 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
     var name_image: String?= null
 
     val API = "b0400551b9c2882592551bfdf9978798"
-    val TAG = "WorkTask"
+    val TAG = "Work Task"
 
     private var gpsManage: GPSManage? = null
     private var imageCapture: ImageCapture? = null
@@ -58,9 +58,11 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
     private var long: Double? = null
 
     private var SELECT_IMAGE: Int? = 1
+    private var ModelInfo: ModelPost? = null
 
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var hMap: HuaweiMap
+
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,24 +242,16 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                 var bitmap = imageProxyToBitmap(image)
                 bitmap = rotateBitmap(bitmap, 90f)
 
-                var image_temp = viewToBitmap(findViewById(R.id.status_image))
-                var temp = viewToBitmap(findViewById(R.id.temp_text))
-                var status = viewToBitmap(findViewById(R.id.status_text))
+                //อย่าลืมลบ comment ก่อน commit (Note: Ford)
+                //var image_temp = viewToBitmap(findViewById(R.id.status_image))
+                //var temp = viewToBitmap(findViewById(R.id.temp_text))
+                //var status = viewToBitmap(findViewById(R.id.status_text))
 
-                image_temp = resizeBitmap(image_temp!!, 180)
-                temp = resizeBitmap(temp!!, 100)
-                status = resizeBitmap(status!!, 230)
+                //image_temp = resizeBitmap(image_temp!!, 180)
+                //temp = resizeBitmap(temp!!, 100)
+                //status = resizeBitmap(status!!, 230)
 
-                val position1 = IntArray(2)
-                status_text.getLocationOnScreen(position1)
-
-                val position2 = IntArray(2)
-                temp_text.getLocationOnScreen(position2)
-
-                val position3 = IntArray(2)
-                temp_text.getLocationOnScreen(position3)
-
-                bitmap = combineImages(bitmap, image_temp, temp, status)!!
+                //bitmap = combineImages(bitmap, image_temp, temp, status)!!
 
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
@@ -328,11 +322,7 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun openConfirm() {
         val intent = Intent(this@CameraActivity, Confirm_ImageActivity::class.java)
-        intent.putExtra("latitude", lat)
-        intent.putExtra("longitude", long)
-        intent.putExtra("address", address_image)
         intent.putExtra("name_image", name_image)
-        intent.putExtra("createDate", currentDate.time)
         Log.i(TAG, "Go to Confirm Image Activity")
 
         startActivityForResult(intent, SELECT_IMAGE!!)
@@ -344,10 +334,21 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
             when (requestCode) {
                 SELECT_IMAGE-> if (resultCode == Activity.RESULT_OK) {
                     val imagePath = data.getStringExtra("IMAGE_PATH")
-
                     Log.i(TAG, "onActivityResult CameraActivity: $imagePath")
 
-                    setResult(RESULT_OK, Intent().putExtra("IMAGE_PATH", imagePath))
+                    //อย่าลืมลบ Unit test ก่อน commit (Note: Ford)
+                    latitude = "Unit test latitude..."
+                    longitude = "Unit test longitude..."
+                    address_image = "Unit test address image..."
+                    ModelInfo = ModelPost(
+                        latitude = latitude,
+                        longitude = longitude,
+                        address = address_image,
+                        images = arrayListOf(imagePath!!)
+                    )
+
+                    setResult(RESULT_OK, Intent().putExtra("ModelInfoFromCamera", ModelInfo))
+                    Log.i(TAG, "Send Data to Post Activity...")
                     Log.i(TAG, "Go to Post Activity")
                     finish()
                 }
@@ -463,94 +464,7 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT
                 ).show()
-
             }
         }
     }
-
-//    inner class weatherTask() : AsyncTask<String, Void, String>() {
-//        override fun onPreExecute() {
-//            super.onPreExecute()
-//            android.util.Log.i(TAG, "onPreExecute")
-//        }
-//
-//        override fun doInBackground(vararg params: String?): String? {
-//
-//            android.util.Log.i(TAG, "doInBackground")
-//            var response:String?
-//            try{
-//                response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API").readText(
-//                    Charsets.UTF_8
-//                )
-//                android.util.Log.i(TAG, "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API")
-//            }catch (e: Exception){
-//                android.util.Log.i(TAG, "doInBackground: $e")
-//                response = null
-//            }
-//            return response
-//        }
-//
-//        override fun onPostExecute(result: String?) {
-//            super.onPostExecute(result)
-//
-//            android.util.Log.i(TAG, "onPostExecute")
-//
-//            try {
-//                val jsonObj = JSONObject(result)
-//                val main = jsonObj.getJSONObject("main")
-//                val sys = jsonObj.getJSONObject("sys")
-//                val wind = jsonObj.getJSONObject("wind")
-//                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-//
-//                val updatedAt: Long = jsonObj.getLong("dt")
-//                val updatedAtText = "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
-//                    Date(updatedAt*1000)
-//                )
-//                val temp = String.format("%.0f°C", main.getDouble("temp"))
-//                val tempMin = "Min Temp: %.0f°C".format(main.getDouble("temp_min"))
-//                val tempMax = "Max Temp: %.0f°C".format(main.getDouble("temp_max"))
-//                val pressure = main.getString("pressure")
-//                val humidity = main.getString("humidity")
-//
-//                val sunrise:Long = sys.getLong("sunrise")
-//                val sunset:Long = sys.getLong("sunset")
-//                val windSpeed = wind.getString("speed")
-//                val weatherDescription = weather.getString("description")
-//                val address = jsonObj.getString("name")
-//                val icon = weather.getString("icon")
-//                //val address = jsonObj.getString("name")+", "+sys.getString("country")
-//
-//                findViewById<TextView>(R.id.temp_text).text = temp
-//                findViewById<TextView>(R.id.status_text).text = weatherDescription
-//                findViewById<TextView>(R.id.address).text = address
-//                address_image = address
-//
-//                when(icon){
-//                    "01d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_1)
-//                    "01n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_1)
-//                    "02d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_2)
-//                    "02n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_2)
-//                    "03d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_3)
-//                    "03n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_3)
-//                    "04d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_4)
-//                    "04n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_4)
-//                    "09d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_9)
-//                    "09n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_9)
-//                    "10d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_10)
-//                    "10n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_10)
-//                    "11d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_11)
-//                    "11n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_11)
-//                    "13d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_13)
-//                    "13n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_13)
-//                    "50d" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.day_50)
-//                    "50n" -> findViewById<ImageView>(R.id.status_image).setImageResource(R.drawable.night_50)
-//                }
-//
-//            }
-//            catch (e: java.lang.Exception) {
-//            }
-//        }
-//    }
-
-
 }

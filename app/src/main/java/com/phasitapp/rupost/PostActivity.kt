@@ -31,11 +31,9 @@ class PostActivity : AppCompatActivity() {
     private var PERMISSION_REQUEST: Int? = 0
     private var SELECT_IMAGE: Int? = 1
     private var CAMERA_IMAGE: Int? = 2
-    private val imageList = arrayListOf<String>()
+    private var Model = ModelPost()
 
-    var latitude: Double?= null
-    var longitude: Double?= null
-    var address_image: String? = null
+    private val imageList = arrayListOf<String>()
 
     val TAG = "Work Task"
 
@@ -69,20 +67,22 @@ class PostActivity : AppCompatActivity() {
             for (i in imageList) {
                 imagePath.add("$dir$i")
             }
-            val model = ModelPost(
-                title = TitleEDT.text.toString(),
-                category = null,
-                targetGroup = null,
-                desciption = DesciptionEDT.text.toString(),
-                latitude = latitude.toString(),
-                longitude = longitude.toString(),
-                address = null,
-                viewer = 0,
-                createDate = "${System.currentTimeMillis()}",
-                updateDate = "${System.currentTimeMillis()}",
-                images = imagePath
-            )
-            Log.i(TAG, "setOnClickListener: \nTitle: ${model.title} \nDesciption: ${model.desciption} \nLatitude: ${model.latitude} \nLongitude: ${model.longitude} \nCreateDate: ${model.createDate} \nUpdateDate: ${model.updateDate} \nImages: ${model.images.size}")
+            Model.title = TitleEDT.text.toString()
+            Model.desciption = DesciptionEDT.text.toString()
+            Model.viewer = 0
+            Model.createDate = "${System.currentTimeMillis()}"
+            Model.updateDate = "${System.currentTimeMillis()}"
+            Model.images = imagePath
+
+            Log.i(TAG, "setOnClickListener: " +
+                    "\nTitle: ${Model.title} " +
+                    "\nDesciption: ${Model.desciption} " +
+                    "\nLatitude: ${Model.latitude} " +
+                    "\nLongitude: ${Model.longitude} " +
+                    "\nAddress: ${Model.address}" +
+                    "\nCreateDate: ${Model.createDate} " +
+                    "\nUpdateDate: ${Model.updateDate} " +
+                    "\nImages: ${Model.images.size}")
 
             /*
             val reposiPost = RepositoryPost(this)
@@ -130,22 +130,36 @@ class PostActivity : AppCompatActivity() {
                     val bitmap = byteArrayToBitmap(imageInByte!!)
                     val isSaveSuccessfully = savePhotoToInternalStorage(bitmap)
                     if (isSaveSuccessfully){
-                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                        Log.i(TAG, "Success to save photo from gallery ")
                     } else {
                         Log.i(TAG, "Failed to save photo")
                     }
                 }
 
                 CAMERA_IMAGE -> if (resultCode == Activity.RESULT_OK) {
-                    val imagePath = data.getStringExtra("IMAGE_PATH")
-                    latitude = data.getDoubleExtra("latitude", 0.0)
-                    longitude = data.getDoubleExtra("longitude",0.0)
-                    address_image = data.getStringExtra("address_image")
+//                    val imagePath = data.getStringExtra("IMAGE_PATH")
+//                    latitude = data.getDoubleExtra("latitude", 0.0)
+//                    longitude = data.getDoubleExtra("longitude",0.0)
+//                    address_image = data.getStringExtra("address_image")
+//
+//                    Log.i(TAG, "onActivityResult PostActivity: $imagePath")
+//                    imageList.add(imagePath!!)
+//                    Log.i(TAG, imageList.toString())
 
-                    Log.i(TAG, "onActivityResult PostActivity: $imagePath")
-                    imageList.add(imagePath!!)
+                    val model = data.getSerializableExtra("ModelInfoFromCamera") as ModelPost
+                    Log.i(TAG,"From getSerializableExtra (latitude): ${model.latitude}")
+                    Log.i(TAG,"From getSerializableExtra (longitude): ${model.longitude}")
+                    Log.i(TAG,"From getSerializableExtra (address): ${model.address}")
+                    Log.i(TAG,"From getSerializableExtra (images): ${model.images[0]}")
+
+                    Log.i(TAG,"Insert imageList")
+                    imageList.add(model.images[0])
                     Log.i(TAG, imageList.toString())
 
+                    Model.latitude = model.latitude
+                    Model.longitude = model.longitude
+                    Model.address = model.address
+                    Log.i(TAG, "Model save latitude, longitude, address successfully")
                     initRecyclerView()
                 }
             }
