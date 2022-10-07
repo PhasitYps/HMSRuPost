@@ -36,6 +36,7 @@ class PostActivity : AppCompatActivity() {
     private var SELECT_IMAGE: Int? = 1
     private var CAMERA_IMAGE: Int? = 2
     private var Model = ModelPost()
+    private val CATEGORY = "category"
 
     private val imageList = arrayListOf<String>()
 
@@ -64,6 +65,9 @@ class PostActivity : AppCompatActivity() {
             }
             finish()
         }
+        val SELECT_CATEGORY = intent.getStringExtra(CATEGORY)
+        Log.i(TAG, "${SELECT_CATEGORY!!}")
+        dropdown.setText(SELECT_CATEGORY)
 
         val items = listOf("คำถาม", "แบ่งปัน", "อีเวนท์")
         val adapter = ArrayAdapter(this, R.layout.list_item, items)

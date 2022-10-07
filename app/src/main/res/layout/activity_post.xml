@@ -123,17 +123,18 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="หัวข้อเรื่อง"
+            app:hintEnabled="false"
             android:textColorHint="#1D1C1A"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintTextAppearance="?attr/textAppearanceHeadline6"
-            app:hintTextColor="#5A5A5A">
+            app:hintTextColor="#FFF">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/TitleEDT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="หัวข้อเรื่อง"
                 android:textColorHint="#1D1C1A"
                 android:textSize="22sp" />
 
@@ -143,18 +144,19 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="กำลังเกิดอะไรขึ้น?"
             android:textColorHint="#5A5A5A"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintTextAppearance="?attr/textAppearanceSubtitle1"
-            app:hintTextColor="#5A5A5A">
+            app:hintTextColor="#5A5A5A"
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/DesciptionEDT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="#5A5A5A"
+                android:hint="กำลังเกิดอะไรขึ้น?"
                 android:textSize="18sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
