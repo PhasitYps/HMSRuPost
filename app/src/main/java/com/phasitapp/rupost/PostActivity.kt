@@ -13,12 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phasitapp.rupost.adapter.AdapImagePost
 import com.phasitapp.rupost.adapter.AdapImagePostActivity
+import com.phasitapp.rupost.databinding.ActivityPostBinding
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
 import kotlinx.android.synthetic.main.activity_post.*
@@ -61,12 +65,17 @@ class PostActivity : AppCompatActivity() {
             finish()
         }
 
+        val items = listOf("คำถาม", "แบ่งปัน", "อีเวนท์")
+        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        dropdown.setAdapter(adapter)
+
         Post_btn.setOnClickListener {
             val dir = "/data/data/com.phasitapp.rupost/files/"
             val imagePath = arrayListOf<String>()
             for (i in imageList) {
                 imagePath.add("$dir$i")
             }
+            Model.category = dropdown.text.toString()
             Model.title = TitleEDT.text.toString()
             Model.desciption = DesciptionEDT.text.toString()
             Model.viewer = 0
@@ -75,6 +84,7 @@ class PostActivity : AppCompatActivity() {
             Model.images = imagePath
 
             Log.i(TAG, "setOnClickListener: " +
+                    "\nCategory: ${Model.category} " +
                     "\nTitle: ${Model.title} " +
                     "\nDesciption: ${Model.desciption} " +
                     "\nLatitude: ${Model.latitude} " +
