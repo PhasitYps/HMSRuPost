@@ -94,6 +94,7 @@
                 android:layout_height="wrap_content" />
 
             <RelativeLayout
+                android:id="@+id/mini_map"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 >
@@ -107,8 +108,7 @@
                 <ImageView
                     android:id="@+id/imageMapIV"
                     android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    />
+                    android:layout_height="80dp" />
 
             </RelativeLayout>
 
@@ -117,6 +117,7 @@
                 android:layout_height="wrap_content" />
 
             <LinearLayout
+                android:id="@+id/background_detail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#3CF1EBF1"

@@ -243,12 +243,16 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                 var image_temp = viewToBitmap(findViewById(R.id.status_image))
                 var temp = viewToBitmap(findViewById(R.id.temp_text))
                 var status = viewToBitmap(findViewById(R.id.status_text))
+                var detail = viewToBitmap(findViewById(R.id.background_detail))
+                var miniMap = viewToBitmap(findViewById(R.id.mini_map))
 
                 image_temp = resizeBitmap(image_temp!!, 180)
                 temp = resizeBitmap(temp!!, 100)
                 status = resizeBitmap(status!!, 230)
+                detail = resizeBitmap(detail!!, 700)
+                miniMap = resizeBitmap(miniMap!!, 190)
 
-                bitmap = combineImages(bitmap, image_temp, temp, status)!!
+                bitmap = combineImages(bitmap, image_temp, temp, status, detail, miniMap)!!
 
                 val isSaveSuccessfully = savePhotoToInternalStorage(name, bitmap)
                 if (isSaveSuccessfully) {
@@ -268,13 +272,20 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun combineImages(picture: Bitmap,
-                      image_temp: Bitmap, temp: Bitmap, status: Bitmap): Bitmap? {
+                      image_temp: Bitmap,
+                      temp: Bitmap,
+                      status: Bitmap,
+                      detail: Bitmap,
+                      miniMap: Bitmap
+    ): Bitmap? {
         val bmp = Bitmap.createBitmap(picture.width, picture.height, Bitmap.Config.ARGB_8888)
         val comboImage = Canvas(bmp)
         comboImage.drawBitmap(picture, 0f, 0f, null)
         comboImage.drawBitmap(image_temp, 770f, 60f, null)
         comboImage.drawBitmap(temp, 550f, 100f, null)
         comboImage.drawBitmap(status, 550f, 150f, null)
+        comboImage.drawBitmap(detail, 240f, 1000f, null)
+        comboImage.drawBitmap(miniMap, 20f, 1000f, null)
         return bmp
     }
 
