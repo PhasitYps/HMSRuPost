@@ -87,6 +87,20 @@ class PostActivity : AppCompatActivity() {
             Model.updateDate = "${System.currentTimeMillis()}"
             Model.images = imagePath
 
+            if (Model.title == ""){
+                Toast.makeText(this, "โปรดใส่หัวข้อเรื่องก่อน...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (Model.desciption == ""){
+                Toast.makeText(this, "โปรดใส่เนื้อหาก่อน...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (Model.latitude == null && Model.longitude == null && Model.address == null){
+                Toast.makeText(this, "โปรดเลือกพิกัดหรือถ่ายรูปจากในแอพ...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (Model.images.isEmpty()){
+                Toast.makeText(this, "โปรดเลือกรูปก่อน...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             Log.i(TAG, "setOnClickListener: " +
                     "\nCategory: ${Model.category} " +
                     "\nTitle: ${Model.title} " +
