@@ -9,33 +9,37 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.phasitapp.rupost.adapter.AdapImagePost
+import com.huawei.hms.maps.CameraUpdateFactory
+import com.huawei.hms.maps.HuaweiMap
+import com.huawei.hms.maps.OnMapReadyCallback
+import com.huawei.hms.maps.model.*
 import com.phasitapp.rupost.adapter.AdapImagePostActivity
-import com.phasitapp.rupost.databinding.ActivityPostBinding
+import com.phasitapp.rupost.dialog.SetLocationDialog
+import com.phasitapp.rupost.helper.GeocodingApi
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_post.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PostActivity : AppCompatActivity() {
-    private var PERMISSION_REQUEST: Int? = 0
-    private var SELECT_IMAGE: Int? = 1
-    private var CAMERA_IMAGE: Int? = 2
-    private var Model = ModelPost()
+
+class PostActivity : AppCompatActivity(), OnMapReadyCallback {
+    private val PERMISSION_REQUEST: Int = 0
+    private val SELECT_IMAGE: Int = 1
+    private val CAMERA_IMAGE: Int = 2
+    private var model = ModelPost()
     private val CATEGORY = "category"
 
     private val imageList = arrayListOf<String>()
@@ -45,13 +49,40 @@ class PostActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapImagePostActivity: AdapImagePostActivity
 
+    private var hMap: HuaweiMap? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
 
+        init()
+        event()
+
+    }
+
+    private fun initMap() {
+
+        mapView.onCreate(null)
+        mapView.getMapAsync(this)
+    }
+
+    private fun init(){
+
+        val SELECT_CATEGORY = intent.getStringExtra(CATEGORY)
+        Log.i(TAG, "${SELECT_CATEGORY!!}")
+        dropdown.setText(SELECT_CATEGORY)
+
+        val items = listOf("คำถาม", "แบ่งปัน", "อีเวนท์")
+        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        dropdown.setAdapter(adapter)
+
+        updateUI()
+    }
+    private fun event(){
         Camera_btn.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
-            startActivityForResult(intent, CAMERA_IMAGE!!)
+            startActivityForResult(intent, CAMERA_IMAGE)
         }
 
         Gallary_Btn.setOnClickListener {
@@ -65,56 +96,52 @@ class PostActivity : AppCompatActivity() {
             }
             finish()
         }
-        val SELECT_CATEGORY = intent.getStringExtra(CATEGORY)
-        Log.i(TAG, "${SELECT_CATEGORY!!}")
-        dropdown.setText(SELECT_CATEGORY)
-
-        val items = listOf("คำถาม", "แบ่งปัน", "อีเวนท์")
-        val adapter = ArrayAdapter(this, R.layout.list_item, items)
-        dropdown.setAdapter(adapter)
 
         Post_btn.setOnClickListener {
-            val dir = "/data/data/com.phasitapp.rupost/files/"
+
             val imagePath = arrayListOf<String>()
             for (i in imageList) {
-                imagePath.add("$dir$i")
+                imagePath.add("$filesDir$i")
             }
-            Model.category = dropdown.text.toString()
-            Model.title = TitleEDT.text.toString()
-            Model.desciption = DesciptionEDT.text.toString()
-            Model.viewer = 0
-            Model.createDate = "${System.currentTimeMillis()}"
-            Model.updateDate = "${System.currentTimeMillis()}"
-            Model.images = imagePath
 
-            if (Model.title == ""){
-                Toast.makeText(this, "โปรดใส่หัวข้อเรื่องก่อน...", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (Model.desciption == ""){
-                Toast.makeText(this, "โปรดใส่เนื้อหาก่อน...", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (Model.latitude == null && Model.longitude == null && Model.address == null){
+            model.category = dropdown.text.toString()
+            model.title = TitleEDT.text.toString()
+            model.desciption = DesciptionEDT.text.toString()
+            model.viewer = 0
+            model.createDate = "${System.currentTimeMillis()}"
+            model.updateDate = "${System.currentTimeMillis()}"
+            model.images = imagePath
+
+            if (model.latitude == null && model.longitude == null){
                 Toast.makeText(this, "โปรดเลือกพิกัดหรือถ่ายรูปจากในแอพ...", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            } else if (Model.images.isEmpty()){
+            } else if (model.images.isEmpty()){
                 Toast.makeText(this, "โปรดเลือกรูปก่อน...", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            val geocodingApi = GeocodingApi(this)
+            geocodingApi.getAddressByLatLng(13.962979127372698,100.58538411422326){ address ->
+                Log.i("PostActivityTAg", "This is address: " + address)
+                model.address = address
+            }
+
+
+
             Log.i(TAG, "setOnClickListener: " +
-                    "\nCategory: ${Model.category} " +
-                    "\nTitle: ${Model.title} " +
-                    "\nDesciption: ${Model.desciption} " +
-                    "\nLatitude: ${Model.latitude} " +
-                    "\nLongitude: ${Model.longitude} " +
-                    "\nAddress: ${Model.address}" +
-                    "\nCreateDate: ${Model.createDate} " +
-                    "\nUpdateDate: ${Model.updateDate} " +
-                    "\nImages: ${Model.images.size}")
+                    "\nCategory: ${model.category} " +
+                    "\nTitle: ${model.title} " +
+                    "\nDesciption: ${model.desciption} " +
+                    "\nLatitude: ${model.latitude} " +
+                    "\nLongitude: ${model.longitude} " +
+                    "\nAddress: ${model.address}" +
+                    "\nCreateDate: ${model.createDate} " +
+                    "\nUpdateDate: ${model.updateDate} " +
+                    "\nImages: ${model.images.size}")
 
 
             val reposiPost = RepositoryPost(this)
-            reposiPost.post(Model) { result ->
+            reposiPost.post(model) { result ->
                 when (result) {
                     RepositoryPost.RESULT_SUCCESS -> {
                         Toast.makeText(this, "โพสต์สำเร็จ!", Toast.LENGTH_SHORT).show()
@@ -128,12 +155,48 @@ class PostActivity : AppCompatActivity() {
             }
         }
 
+        selectLocationRL.setOnClickListener {
+            showSetMapDialog()
+        }
+    }
+
+    private fun showSetMapDialog(){
+        val dialog = SetLocationDialog(this)
+        dialog.setMyEvent{ latLng ->
+            model.latitude = latLng.latitude.toString()
+            model.longitude = latLng.longitude.toString()
+
+            updateUI()
+        }
+        dialog.show()
+    }
+
+    private var currentMarker: Marker? = null
+    private fun updateUI(){
+
+        if(model.latitude != null && model.longitude != null){
+            bgMapViewCV.visibility = View.VISIBLE
+            selectLocationRL.visibility = View.GONE
+            if(hMap == null){
+                initMap()
+            }else{
+                currentMarker?.remove()
+
+                val latlng = LatLng(model.latitude!!.toDouble(), model.longitude!!.toDouble())
+                hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 17f))
+                currentMarker = hMap!!.addMarker(MarkerOptions().position(latlng))
+
+            }
+        }else{
+            bgMapViewCV.visibility = View.GONE
+            selectLocationRL.visibility = View.VISIBLE
+        }
     }
 
     private fun checkPermissionGallery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),PERMISSION_REQUEST!!)
+                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),PERMISSION_REQUEST)
             } else {
                 openGallery()
             }
@@ -145,7 +208,7 @@ class PostActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,true)
-        startActivityForResult(intent, SELECT_IMAGE!!)
+        startActivityForResult(intent, SELECT_IMAGE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -177,9 +240,10 @@ class PostActivity : AppCompatActivity() {
                     imageList.add(model.images[0])
                     Log.i(TAG, imageList.toString())
 
-                    Model.latitude = model.latitude
-                    Model.longitude = model.longitude
-                    Model.address = model.address
+                    this.model.latitude = model.latitude
+                    this.model.longitude = model.longitude
+
+                    //set map
                     Log.i(TAG, "Model save latitude, longitude, address successfully")
                     initRecyclerView()
                 }
@@ -238,6 +302,48 @@ class PostActivity : AppCompatActivity() {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+    }
+
+    private var mTileOverlay: TileOverlay? = null
+    override fun onMapReady(map: HuaweiMap?) {
+        hMap = map
+        hMap!!.uiSettings.isCompassEnabled = false
+        hMap!!.uiSettings.isZoomControlsEnabled = false
+        hMap!!.uiSettings.setAllGesturesEnabled(false)
+        hMap!!.uiSettings.isMapToolbarEnabled = false
+
+
+        val latlng = LatLng(model.latitude!!.toDouble(), model.longitude!!.toDouble())
+        hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 17f))
+        currentMarker = hMap!!.addMarker(MarkerOptions().position(latlng))
+
+        hMap!!.mapType = HuaweiMap.MAP_TYPE_NONE
+        mTileOverlay?.remove()
+        mTileOverlay?.clearTileCache()
+        val mTileSize = 256
+        val mScale = 1
+        val mDimension = mScale * mTileSize
+        val mTileProvider = TileProvider { x, y, zoom ->
+            Log.i("sadafwgeaggaw", "x: $x, y:$y, z:$zoom")
+            val matrix = Matrix()
+            val scale: Float = Math.pow(2.0, zoom.toDouble()).toFloat() * mScale
+            matrix.postScale(scale, scale)
+            matrix.postTranslate(
+                (-x * mDimension).toFloat(),
+                (-y * mDimension).toFloat()
+            )
+
+            // Generate a Bitmap image.
+            val googleUrl = "https://mts3.google.com/vt/lyrs=y@186112443&hl=x-local&src=app&x=$x&y=$y&z=$zoom&s=Galile"
+            val bitmap = Picasso.get().load(googleUrl).get()
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            Tile(mDimension, mDimension, stream.toByteArray())
+
+        }
+        val options = TileOverlayOptions().tileProvider(mTileProvider).transparency(0f)
+        mTileOverlay = hMap!!.addTileOverlay(options)
+
     }
 
 }

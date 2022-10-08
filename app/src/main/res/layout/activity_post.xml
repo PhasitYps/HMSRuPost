@@ -16,92 +16,88 @@
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            >
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:id="@+id/TopBox1"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:gravity="center">
 
-                    <LinearLayout
-                        android:id="@+id/TopBox1"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:gravity="center">
+                    <ImageView
+                        android:id="@+id/Close_btn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_arrow_left"
+                        app:tint="#1D1C1A"
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless">
 
-                        <ImageView
-                            android:id="@+id/Close_btn"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_baseline_close_24"
-                            app:tint="#1D1C1A"
-                            android:clickable="true"
-                            android:background="?attr/selectableItemBackgroundBorderless">
-                        </ImageView>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="130dp"
-                        android:layout_height="wrap_content">
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/menu"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            >
-
-                            <AutoCompleteTextView
-                                android:id="@+id/dropdown"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:inputType="none"
-                                android:text="คำถาม"
-                                />
-
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </LinearLayout>
+                    </ImageView>
 
                 </LinearLayout>
 
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:visibility="visible"
-                    app:cardBackgroundColor="#5A5A5A"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
-
-                    <TextView
-                        android:id="@+id/Post_btn"
+                <LinearLayout
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/menu"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="โพสต์"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"/>
+                        >
 
-                </androidx.cardview.widget.CardView>
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="none"
+                            android:text="คำถาม"
+                            />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/colorBlack"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardPreventCornerOverlap="false"
+                android:layout_centerInParent="true"
+                app:cardUseCompatPadding="false">
+
+                <TextView
+                    android:id="@+id/Post_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="โพสต์"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:paddingHorizontal="30dp"
+                    android:paddingVertical="10dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    />
+
+            </androidx.cardview.widget.CardView>
 
 
 
-            </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -166,36 +162,105 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:weightSum="2">
+        >
+
+        <RelativeLayout
+            android:id="@+id/selectLocationRL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:background="?attr/selectableItemBackground"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_border_rounded"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingVertical="35dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/ic_marker_address" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/ic_plus" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="เลือกพิกัด"
+                    android:textColor="@color/black" />
+
+            </LinearLayout>
 
 
-        <Button
-            android:id="@+id/Gallary_Btn"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-            android:layout_width="150dp"
-            android:layout_height="80dp"
-            android:layout_margin="20dp"
-            android:layout_weight="1"
-            android:text="แกลเลอรี่"
-            android:textColor="#1D1C1A"
-            app:icon="@drawable/ic_baseline_image_24"
-            app:iconGravity="top"
-            app:iconTint="#1D1C1A" />
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/Camera_btn"
-            android:layout_width="150dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:layout_margin="20dp"
-            android:text="กล้อง"
-            android:textColor="#1D1C1A"
-            app:iconTint="#1D1C1A"
-            app:icon="@drawable/ic_baseline_photo_camera_24"
-            app:iconGravity="top"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-            />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bgMapViewCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false"
+            app:cardPreventCornerOverlap="false"
+            android:layout_marginHorizontal="15dp"
+            >
+            <com.huawei.hms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/Gallary_Btn"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:text="แกลเลอรี่"
+                android:textColor="#1D1C1A"
+                app:icon="@drawable/ic_baseline_image_24"
+                app:iconGravity="top"
+                app:iconTint="#1D1C1A"
+                android:paddingVertical="10dp"
+                />
+
+            <Button
+                android:id="@+id/Camera_btn"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:paddingVertical="10dp"
+                android:layout_weight="1"
+                android:text="กล้อง"
+                android:textColor="#1D1C1A"
+                app:icon="@drawable/ic_baseline_photo_camera_24"
+                app:iconGravity="top"
+                app:iconTint="#1D1C1A" />
+        </LinearLayout>
+
+
     </LinearLayout>
+
 
 </RelativeLayout>

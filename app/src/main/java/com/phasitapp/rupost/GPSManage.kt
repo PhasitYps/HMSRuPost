@@ -66,7 +66,7 @@ class GPSManage(private var activity: Activity) {
 
 
             } else {
-                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
+                //locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 3f, locationListener)
                 if (isNetwork) {
 
                     locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5f, locationListener)

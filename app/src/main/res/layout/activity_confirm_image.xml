@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Confirm_ImageActivity">
+    tools:context=".Confirm_ImageActivity"
+    android:background="@color/colorBlack">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/Top_Layout"
@@ -13,7 +14,8 @@
         android:visibility="visible"
         app:cardElevation="5dp"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false">
+        app:cardUseCompatPadding="false"
+        app:cardBackgroundColor="@color/colorBlack">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +37,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_baseline_close_24"
-                        app:tint="#1D1C1A"
+                        app:tint="@color/colorWhite"
                         android:clickable="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         >
@@ -54,7 +56,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_baseline_check_24"
-                        app:tint="#1D1C1A"
+                        app:tint="@color/colorWhite"
                         android:clickable="true"
                         android:background="?attr/selectableItemBackgroundBorderless">
                     </ImageView>
