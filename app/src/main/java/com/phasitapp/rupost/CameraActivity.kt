@@ -138,7 +138,8 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                         val latLng = LatLng(lat!!, long!!)
 
                         hMap!!.clear()
-                        hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f), 2000,object : HuaweiMap.CancelableCallback{
+                        hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                        hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f), 1000,object : HuaweiMap.CancelableCallback{
                             override fun onFinish() {
                                 hMap!!.snapshot {
                                     Glide.with(this@CameraActivity).load(it).into(imageMapIV)
@@ -264,7 +265,8 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
             longitudeTV.text = "${String.format("%.7f", long)}"
 
             val latLng = LatLng(lat!!, long!!)
-            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f), 100,object : HuaweiMap.CancelableCallback{
+            hMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            hMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f), 1500,object : HuaweiMap.CancelableCallback{
                 override fun onFinish() {
                     hMap!!.snapshot {
                         Glide.with(this@CameraActivity).load(it).into(imageMapIV)
@@ -382,7 +384,7 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.i(TAG, "takePicture")
                 //get bitmap from image
                 var bitmap = imageProxyToBitmap(image)
-                bitmap = rotateBitmap(bitmap, 0f)
+                bitmap = rotateBitmap(bitmap, 90f)
                 bitmap = resizeBitmap(bitmap, 1500)
 
                 Log.i(TAG, "width: " + bitmap.width)
