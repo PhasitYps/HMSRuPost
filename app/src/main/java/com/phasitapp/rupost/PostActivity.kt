@@ -111,6 +111,8 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
             model.createDate = "${System.currentTimeMillis()}"
             model.updateDate = "${System.currentTimeMillis()}"
             model.images = imagePath
+            model.targetGroup = "สาธารณะ"
+
 
             if (model.latitude == null && model.longitude == null){
                 Toast.makeText(this, "โปรดเลือกพิกัดหรือถ่ายรูปจากในแอพ...", Toast.LENGTH_SHORT).show()
@@ -121,37 +123,35 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             val geocodingApi = GeocodingApi(this)
-            geocodingApi.getAddressByLatLng(13.962979127372698,100.58538411422326){ address ->
+            geocodingApi.getAddressByLatLng(model.latitude!!.toDouble(), model.longitude!!.toDouble()){ address ->
                 Log.i("PostActivityTAg", "This is address: " + address)
                 model.address = address
-            }
+                Log.i(TAG, "setOnClickListener: " +
+                        "\nCategory: ${model.category} " +
+                        "\nTitle: ${model.title} " +
+                        "\nDesciption: ${model.desciption} " +
+                        "\nLatitude: ${model.latitude} " +
+                        "\nLongitude: ${model.longitude} " +
+                        "\nAddress: ${model.address}" +
+                        "\nCreateDate: ${model.createDate} " +
+                        "\nUpdateDate: ${model.updateDate} " +
+                        "\nImages: ${model.images.size}")
 
 
-
-            Log.i(TAG, "setOnClickListener: " +
-                    "\nCategory: ${model.category} " +
-                    "\nTitle: ${model.title} " +
-                    "\nDesciption: ${model.desciption} " +
-                    "\nLatitude: ${model.latitude} " +
-                    "\nLongitude: ${model.longitude} " +
-                    "\nAddress: ${model.address}" +
-                    "\nCreateDate: ${model.createDate} " +
-                    "\nUpdateDate: ${model.updateDate} " +
-                    "\nImages: ${model.images.size}")
-
-
-            val reposiPost = RepositoryPost(this)
-            reposiPost.post(model) { result ->
-                when (result) {
-                    RepositoryPost.RESULT_SUCCESS -> {
-                        Toast.makeText(this, "โพสต์สำเร็จ!", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                    RepositoryPost.RESULT_FAIL -> {
-                        Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
-                        finish()
+                val reposiPost = RepositoryPost(this)
+                reposiPost.post(model) { result ->
+                    when (result) {
+                        RepositoryPost.RESULT_SUCCESS -> {
+                            Toast.makeText(this, "โพสต์เรียบร้อย", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        RepositoryPost.RESULT_FAIL -> {
+                            Toast.makeText(this, "เกิดข้อผิดพลาด", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     }
                 }
+
             }
         }
 
@@ -284,8 +284,7 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun deletePhotoFromInternalStorage(filename: String): Boolean{
-        val dir = "/data/data/com.phasitapp.rupost/files/"
-        val file = File(dir, filename)
+        val file = File(filesDir, filename)
         Log.i(TAG, "Delete image success")
         return file.delete()
     }
@@ -343,6 +342,7 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         val options = TileOverlayOptions().tileProvider(mTileProvider).transparency(0f)
         mTileOverlay = hMap!!.addTileOverlay(options)
+
 
     }
 

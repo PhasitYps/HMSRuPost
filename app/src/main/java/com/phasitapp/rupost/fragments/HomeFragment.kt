@@ -46,12 +46,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         event()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        //postRCV.adapter?
-    }
-
     private val categoryDisplayList = ArrayList<ModelCategory>()
     private var currentCategory = "ทั้งหมด"
     private fun addChipCategoryView() {
@@ -263,7 +257,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         Log.i("fewfweg", "start: " + startAt)
 
-        repositoryPost.read(startAt, 5) { result, post ->
+        repositoryPost.read(startAt, 50) { result, post ->
             swipeRefreshLayout.isRefreshing = false
             loadPostPB.visibility = View.GONE
             when (result) {

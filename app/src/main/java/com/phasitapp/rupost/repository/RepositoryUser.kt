@@ -59,7 +59,7 @@ class RepositoryUser(private var activity: Activity) {
         }
     }
 
-    fun update(model: ModelUser,l: (result: String) -> Unit){
+    fun update(model: ModelUser, l: (result: String) -> Unit) {
 
         val user: MutableMap<String, Any?> = HashMap()
         user[KEY_PROFILE] = model.profile
@@ -69,9 +69,10 @@ class RepositoryUser(private var activity: Activity) {
         user[KEY_UPDATEDATE] = model.updateDate
         Log.i("fewfwef", "uid: " + prefs.strUid)
 
-        database.getReference(KEY_USERS).child(prefs.strUid!!).updateChildren(user).addOnSuccessListener {
-            l(RESULT_SUCCESS)
-        }.addOnFailureListener {
+        database.getReference(KEY_USERS).child(prefs.strUid!!).updateChildren(user)
+            .addOnSuccessListener {
+                l(RESULT_SUCCESS)
+            }.addOnFailureListener {
             l(RESULT_FAIL)
         }
     }
@@ -81,45 +82,51 @@ class RepositoryUser(private var activity: Activity) {
         database.getReference(KEY_USERS).orderByChild(KEY_OPENID).equalTo(openId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists()){
+                    if (snapshot.exists()) {
                         val model = ModelUser()
                         model.openId = snapshot.child(KEY_OPENID).getValue(String::class.java)
                         model.uid = snapshot.child(KEY_UID).getValue(String::class.java)
                         model.createDate = snapshot.child(KEY_CREATEDATE).getValue(Long::class.java)
                         model.email = snapshot.child(KEY_EMAIL).getValue(String::class.java)
                         model.username = snapshot.child(KEY_USERNAME).getValue(String::class.java)
-                        model.description = snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
+                        model.description =
+                            snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
                         model.profile = snapshot.child(KEY_PROFILE).getValue(String::class.java)
 
                         Log.i("sadafwgeaggaw", "This is get model.username: " + model.username)
                         l(model)
-                    }else{
+                    } else {
                         l(null)
                     }
 
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
 
-    fun countFollowerByUid(uid: String, l:(count:Int)->Unit){
-        database.getReference(KEY_FOLLOWERS).child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val count = snapshot.childrenCount.toInt()
-                l(count)
-            }
-            override fun onCancelled(error: DatabaseError) {}
-        })
+    fun countFollowerByUid(uid: String, l: (count: Int) -> Unit) {
+        database.getReference(KEY_FOLLOWERS).child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val count = snapshot.childrenCount.toInt()
+                    l(count)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
-    fun countFollowingByUid(uid: String, l:(count:Int)->Unit){
-        database.getReference(KEY_FOLLOWINGS).child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val count = snapshot.childrenCount.toInt()
-                l(count)
-            }
-            override fun onCancelled(error: DatabaseError) {}
-        })
+    fun countFollowingByUid(uid: String, l: (count: Int) -> Unit) {
+        database.getReference(KEY_FOLLOWINGS).child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val count = snapshot.childrenCount.toInt()
+                    l(count)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     fun getByUid(uid: String, l: (model: ModelUser?) -> Unit) {
@@ -128,24 +135,68 @@ class RepositoryUser(private var activity: Activity) {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
-                    if(snapshot.exists()){
+                    if (snapshot.exists()) {
                         val model = ModelUser()
                         model.openId = snapshot.child(KEY_OPENID).getValue(String::class.java)
                         model.uid = snapshot.child(KEY_UID).getValue(String::class.java)
                         model.createDate = snapshot.child(KEY_CREATEDATE).getValue(Long::class.java)
                         model.email = snapshot.child(KEY_EMAIL).getValue(String::class.java)
                         model.username = snapshot.child(KEY_USERNAME).getValue(String::class.java)
-                        model.description = snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
+                        model.description =
+                            snapshot.child(KEY_DESCIPTION).getValue(String::class.java)
                         model.profile = snapshot.child(KEY_PROFILE).getValue(String::class.java)
 
                         Log.i("sadafwgeaggaw", "This is get model.username: " + model.username)
                         l(model)
-                    }else{
+                    } else {
                         l(null)
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    fun getBookmark(uid: String, l: (bookmarkList: ArrayList<String>) -> Unit) {
+        database.getReference(KEY_USERS).child(uid).child(KEY_BOOKMARKS)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val bookmarkList = ArrayList<String>()
+                    snapshot.children.forEach {
+                        val postId = it.key!!
+                        bookmarkList.add(postId)
+                    }
+                    l(bookmarkList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+    }
+
+    fun bookmark(uid: String, postId: String, isBookmark: Boolean){
+        when(isBookmark){
+            true->{
+                database.getReference(KEY_USERS).child(uid).child(KEY_BOOKMARKS).child(postId).setValue(true)
+            }
+            false->{
+                database.getReference(KEY_USERS).child(uid).child(KEY_BOOKMARKS).child(postId).removeValue()
+            }
+        }
+    }
+
+    fun getBookmarkPost(uid: String, postId: String, l:(isBookmark: Boolean)->Unit){
+        database.getReference(KEY_USERS).child(uid).child(KEY_BOOKMARKS).child(postId).get().addOnSuccessListener {
+            val isBookmark = it.getValue(Boolean::class.java)
+            if(isBookmark != null){
+                l(true)
+            }else{
+                l(false)
+            }
+        }.addOnFailureListener {
+
+        }
     }
 
 }

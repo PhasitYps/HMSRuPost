@@ -51,3 +51,4 @@ const val FILTERACTIVITY_LAST = "ล่าสุด"
 const val FILTERACTIVITY_UPDATELAST = "กิจกรรมล่าสุด"
 
 const val FOLDER_IMAGES = "images"
+const val KEY_BOOKMARKS = "bookmarks"

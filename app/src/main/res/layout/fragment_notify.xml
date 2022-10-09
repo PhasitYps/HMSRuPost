@@ -6,14 +6,5 @@
     android:orientation="vertical"
     tools:context=".fragments.HomeFragment">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Test input text" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Test input text" />
 
 </LinearLayout>

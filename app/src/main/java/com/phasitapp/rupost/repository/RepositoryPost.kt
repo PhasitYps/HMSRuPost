@@ -144,6 +144,23 @@ class RepositoryPost(private var activity: Activity) {
         }
     }
 
+    fun readById(postId: String, l: (result: String, post: ModelPost?) -> Unit) {
+
+        firestore.collection(KEY_POSTS).document(postId).get()
+            .addOnSuccessListener { document ->
+                val model = document.toObject(ModelPost::class.java)
+                if(model != null){
+                    model!!.id = document.id
+                }
+                l(RESULT_SUCCESS, model)
+
+            }.addOnFailureListener {
+                Toast.makeText(activity, "exception: ${it.message}", Toast.LENGTH_SHORT).show()
+                Log.i("fwafawf", "e: ${it.message}")
+                l(RESULT_FAIL, null)
+            }
+    }
+
     fun like(postId: String, like: Boolean) {
         when (like) {
             true -> {

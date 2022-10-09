@@ -4,17 +4,21 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.phasitapp.rupost.*
 import com.phasitapp.rupost.adapter.AdapImagePost
+import com.phasitapp.rupost.helper.OpenWeatherApi
+import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.model.ModelUser
 import com.phasitapp.rupost.repository.RepositoryPost
 import com.phasitapp.rupost.repository.RepositoryUser
 import kotlinx.android.synthetic.main.bottom_sheet_detail_post.*
+import okhttp3.internal.wait
 import java.util.*
 
 class DetailPostBottomDialog(private val activity: Activity, private val modelPost: ModelPost) :
@@ -22,6 +26,8 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
 
     private val repositoryUser = RepositoryUser(activity)
     private val repositoryPost = RepositoryPost(activity)
+    private var prefs: Prefs? = Prefs(activity)
+    private val openWeatherApi = OpenWeatherApi(activity)
 
     init {
         val bottomSheetView: View =
@@ -44,7 +50,10 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
 
         bottomSheetBehavior.setBottomSheetCallback(bottomSheetCallback)
         setDetail()
+        event()
 
+    }
+    private fun event(){
         commentIV.setOnClickListener {
             val intent = Intent(activity, CommentsActivity::class.java)
             intent.putExtra(KEY_DATA, modelPost)
@@ -63,11 +72,83 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
             activity.startActivity(intent)
         }
 
+        likeIV.setOnClickListener {
+            if (prefs!!.strUid != "") {
+                if (likeIV.tag != null) {
+                    val currnetLike = likeIV.tag as Boolean
+                    when (currnetLike) {
+                        true -> {
+                            repositoryPost.like(modelPost.id!!, false)
+                            likeIV.tag = false
+                            Glide.with(activity).load(R.drawable.ic_heart).into(likeIV)
+                            minusLike()
+                        }
+                        false -> {
+                            repositoryPost.like(modelPost.id!!, true)
+                            likeIV.tag = true
+                            Glide.with(activity).load(R.drawable.ic_heart_red).into(likeIV)
+                            plusLike()
+                        }
+                    }
+                }
+            }
+        }
+
+        bookmarkIV.setOnClickListener {
+            val uid = prefs!!.strUid
+            if(uid != null){
+                val isBookmark = bookmarkIV.tag as Boolean
+                if(isBookmark){
+                    bookmarkIV.tag = false
+                    repositoryUser.bookmark(uid, modelPost.id!!, false)
+                    Glide.with(activity).load(R.drawable.ic_bookmark).into(bookmarkIV)
+                }else{
+                    bookmarkIV.tag = true
+                    repositoryUser.bookmark(uid, modelPost.id!!, true)
+                    Glide.with(activity).load(R.drawable.ic_bookmark_filled).into(bookmarkIV)
+                    Toast.makeText(activity, "บันทึกโพสต์เรียบร้อย", Toast.LENGTH_SHORT).show()
+                }
+
+            }else{
+                Toast.makeText(activity, "กรุณาเข้าสู่ระบบ", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun plusLike() {
+        modelPost.countLike++
+
+        countLikeTV.text = "${modelPost.countLike}"
+        if (modelPost.countLike != 0) {
+            bgLikeCountLL.visibility = View.VISIBLE
+        } else {
+            bgLikeCountLL.visibility = View.GONE
+        }
+    }
+
+    private fun minusLike() {
+        modelPost.countLike--
+
+        countLikeTV.text = "${modelPost.countLike}"
+        if (modelPost.countLike != 0) {
+            bgLikeCountLL.visibility = View.VISIBLE
+        } else {
+            bgLikeCountLL.visibility = View.GONE
+        }
     }
 
     private fun setDetail() {
         var lat = modelPost.latitude
         var long = modelPost.longitude
+        likeIV.tag = false
+
+        openWeatherApi.setLang("th")
+        openWeatherApi.getCurrentByLatLng(lat!!.toDouble(), long!!.toDouble()){
+            tempTV.text = it.temp
+            weatherDescriptionTV.text = it.description
+            windTV.text = "${it.wind} กม./ชม."
+            Glide.with(activity).load(it.iconBitmap).into(weatherIconIV)
+        }
 
         repositoryUser.getByUid(modelPost.uid!!) { modelUser: ModelUser? ->
             modelPost.username = modelUser!!.username
@@ -81,9 +162,34 @@ class DetailPostBottomDialog(private val activity: Activity, private val modelPo
             countCommentTV.text = "$count"
         }
 
-        repositoryPost.getCountLike(modelPost.id!!){ count ->
-            countLikeTV.text = "$count"
+        repositoryPost.getStaticLike(modelPost.id!!){ userlikeList ->
+            countLikeTV.text = "${userlikeList.size}"
+            modelPost.countLike = userlikeList.size
+
+            if(prefs!!.strUid != null){
+                val filter = userlikeList.filter { it == prefs!!.strUid }
+                if(filter.isNotEmpty()){
+                    Glide.with(activity).load(R.drawable.ic_heart_red).into(likeIV)
+                    likeIV.tag = true
+                }else{
+                    Glide.with(activity).load(R.drawable.ic_heart).into(likeIV)
+                    likeIV.tag = false
+                }
+            }
         }
+
+        if(prefs!!.strUid != null){
+            val uid = prefs!!.strUid!!
+            repositoryUser.getBookmarkPost(uid, modelPost.id!!){ isBookmark->
+                bookmarkIV.tag = isBookmark
+                if(isBookmark){
+                    Glide.with(activity).load(R.drawable.ic_bookmark_filled).into(bookmarkIV)
+                }else{
+                    Glide.with(activity).load(R.drawable.ic_bookmark).into(bookmarkIV)
+                }
+            }
+        }
+
         createDateTV.text = formatCreateDate(modelPost.createDate.toString().toLong())
         titleTV.text = if (modelPost.title != null) modelPost.title else ""
         descriptionTV.text = if (modelPost.desciption != null) modelPost.desciption else ""

@@ -15,11 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.huawei.hms.maps.CameraUpdateFactory
 import com.huawei.hms.maps.HuaweiMap
-import com.huawei.hms.maps.model.LatLng
-import com.huawei.hms.maps.model.Tile
-import com.huawei.hms.maps.model.TileOverlay
-import com.huawei.hms.maps.model.TileOverlayOptions
-import com.huawei.hms.maps.model.TileProvider
+import com.huawei.hms.maps.model.*
 import com.phasitapp.rupost.GPSManage
 import com.phasitapp.rupost.R
 import com.phasitapp.rupost.helper.Prefs
@@ -33,7 +29,6 @@ import java.io.ByteArrayOutputStream
 class SetLocationDialog(private var activity: Activity):Dialog(activity) {
 
     private var l: ((LatLng) -> Unit?)? = null
-
     fun setMyEvent(l: (latLng: LatLng)->Unit){
         this.l = l
     }
@@ -64,6 +59,7 @@ class SetLocationDialog(private var activity: Activity):Dialog(activity) {
 
     }
 
+    private var currentMarker: Marker? = null
     private fun init(){
         setOnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -74,6 +70,7 @@ class SetLocationDialog(private var activity: Activity):Dialog(activity) {
         }
 
         setOnDismissListener {
+            mapView.onDestroy()
             gpsManager.close()
         }
 
@@ -145,9 +142,10 @@ class SetLocationDialog(private var activity: Activity):Dialog(activity) {
                 longitude = latLng.longitude
 
                 l?.let { it1 -> it1(LatLng(latitude!!, longitude!!)) }
+
                 dismiss()
             }else {
-                Toast.makeText(activity, "โปรดตรวจสอบเครือข่าย", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "กรุณาเช็คเครือข่าย", Toast.LENGTH_SHORT).show()
             }
         }
 

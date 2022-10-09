@@ -173,9 +173,10 @@
                                             />
 
                                         <TextView
+                                            android:id="@+id/tempTV"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="31°C"
+                                            tools:text="31°C"
                                             android:textColor="@color/black"
                                             android:textStyle="bold"
                                             />
@@ -196,9 +197,10 @@
                                             />
 
                                         <TextView
+                                            android:id="@+id/windTV"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="8 กม./ชม."
+                                            tools:text="8 กม./ชม."
                                             android:textColor="@color/black"
                                             android:textStyle="bold"
                                             />
@@ -211,16 +213,18 @@
                                         android:gravity="center"
                                         >
                                         <ImageView
+                                            android:id="@+id/weatherIconIV"
                                             android:layout_width="24dp"
                                             android:layout_height="24dp"
-                                            android:src="@drawable/ic_humidity"
+                                            tools:src="@drawable/day_2"
                                             android:layout_marginEnd="8dp"
                                             />
 
                                         <TextView
+                                            android:id="@+id/weatherDescriptionTV"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="45%"
+                                            tools:text="ฟ้าใส"
                                             android:textColor="@color/black"
                                             android:textStyle="bold"
                                             />
