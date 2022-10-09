@@ -168,7 +168,7 @@
                                     android:id="@+id/filterActivityTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="ยอดนิยม"
+                                    android:text="ล่าสุด"
                                     android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:layout_marginEnd="5dp"

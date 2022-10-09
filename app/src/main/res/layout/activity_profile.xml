@@ -202,6 +202,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/bgFollowCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -223,6 +224,31 @@
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bgEditCV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/colorWhiteDark"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:cardUseCompatPadding="true">
+
+                    <TextView
+                        android:id="@+id/editTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:paddingVertical="15dp"
+                        android:text="เเก้ไข"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                </androidx.cardview.widget.CardView>
+
 
             </LinearLayout>
 

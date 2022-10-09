@@ -10,10 +10,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +25,9 @@ import com.phasitapp.rupost.Utils.formatCreateDate
 import com.phasitapp.rupost.helper.Prefs
 import com.phasitapp.rupost.model.ModelPost
 import com.phasitapp.rupost.repository.RepositoryPost
+import com.phasitapp.rupost.repository.RepositoryUser
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.bottom_sheet_detail_post.*
 import java.io.ByteArrayOutputStream
 
 
@@ -38,6 +37,7 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
     private val TAG = "AdapPost"
     private val prefs = Prefs(activity)
     private val repositoryPost = RepositoryPost(activity)
+    private val repositoryUser = RepositoryUser(activity)
     private var huaweiMap: HuaweiMap? = null
 
     private val VIEW_TYPE_ITEM = 0
@@ -106,6 +106,8 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
 
         if(!dataList[position].data){
+
+
             Log.i("agehaehes", "data: " + dataList[position].data)
             repositoryPost.getStaticLike(dataList[position].id!!) { userLikes ->
                 Log.i("agehaehes", "Like: " + userLikes.size)
@@ -140,6 +142,19 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
                     dataList[position].countComment = count
                 }
             }
+
+            val uid = prefs!!.strUid
+            if(uid != ""){
+                repositoryUser.getBookmarkPost(uid!!, dataList[position].id!!){ isBookmark->
+                    holder.bookmarkIV.tag = isBookmark
+                    if(isBookmark){
+                        Glide.with(activity).load(R.drawable.ic_bookmark_filled).into(holder.bookmarkIV)
+                    }else{
+                        Glide.with(activity).load(R.drawable.ic_bookmark).into(holder.bookmarkIV)
+                    }
+                }
+            }
+
             dataList[position].data = true
         }else{
             setLike(holder, position)
@@ -190,6 +205,23 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
 
         }
         holder.bookmarkIV.setOnClickListener {
+            val uid = prefs!!.strUid
+            if(uid != null){
+                val isBookmark = holder.bookmarkIV.tag as Boolean
+                if(isBookmark){
+                    holder.bookmarkIV.tag = false
+                    repositoryUser.bookmark(uid, dataList[position].id!!, false)
+                    Glide.with(activity).load(R.drawable.ic_bookmark).into(holder.bookmarkIV)
+                }else{
+                    holder.bookmarkIV.tag = true
+                    repositoryUser.bookmark(uid, dataList[position].id!!, true)
+                    Glide.with(activity).load(R.drawable.ic_bookmark_filled).into(holder.bookmarkIV)
+                    Toast.makeText(activity, "บันทึกโพสต์เรียบร้อย", Toast.LENGTH_SHORT).show()
+                }
+
+            }else{
+                Toast.makeText(activity, "กรุณาเข้าสู่ระบบ", Toast.LENGTH_SHORT).show()
+            }
         }
 
         holder.mapviewCV.setOnClickListener {
@@ -209,10 +241,6 @@ class AdapPost(private var activity: Activity, private val dataList: ArrayList<M
             val intent = Intent(activity, UserLikeActivity::class.java)
             intent.putExtra(KEY_DATA,  dataList[position].id)
             activity.startActivity(intent)
-        }
-
-        holder.bookmarkIV.setOnClickListener {
-
         }
 
         holder.profileIV.setOnClickListener {

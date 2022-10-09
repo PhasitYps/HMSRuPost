@@ -114,7 +114,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private var currentFilterDay = FILTERDAY_7DAY_LAST
-    private var currentFilterActivity = FILTERACTIVITY_LAST
     private fun showFilterDayBottomSheetDialog() {
 
         val menuList = ArrayList<BottomSheetMenuFilter.ModelMenuBottomSheet>()
@@ -155,6 +154,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             })
     }
 
+    private var currentFilterActivity = FILTERACTIVITY_LAST
     private fun showFilterActivityBottomSheetDialog() {
 
         val menuList = ArrayList<BottomSheetMenuFilter.ModelMenuBottomSheet>()
@@ -191,14 +191,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             })
     }
 
-
     private fun updateFilterPost() {
         postFilter.clear()
 
         FilterPost().filter(
             postList,
             currentCategory = currentCategory,
-            currentFilterDay = currentFilterDay
+            currentFilterDay = currentFilterDay,
+            currentFilterActivity = currentFilterActivity
         ) { postsFilter ->
             postFilter.addAll(postsFilter)
             //postFilter.add(ModelPost())

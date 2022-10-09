@@ -181,7 +181,6 @@ class CameraActivity : AppCompatActivity(), OnMapReadyCallback {
                                 //val address = jsonObj.getString("name")+", "+sys.getString("country")
 
 
-
                                 runOnUiThread {
                                     // Stuff that updates the UI
                                     bgWeatherLL.visibility = View.VISIBLE

@@ -1,7 +1,9 @@
 package com.phasitapp.rupost
 
 import android.Manifest
+import android.app.ActionBar
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +36,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class PostActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -42,12 +46,9 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
     private var model = ModelPost()
     private val CATEGORY = "category"
 
-    private val imageList = arrayListOf<String>()
+    private val imageList = ArrayList<String>()
 
     val TAG = "Work Task"
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapImagePostActivity: AdapImagePostActivity
 
     private var hMap: HuaweiMap? = null
 
@@ -57,14 +58,10 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_post)
 
         init()
+        initDialogLoad()
+        setAdap()
         event()
 
-    }
-
-    private fun initMap() {
-
-        mapView.onCreate(null)
-        mapView.getMapAsync(this)
     }
 
     private fun init(){
@@ -79,13 +76,14 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
 
         updateUI()
     }
+
     private fun event(){
-        Camera_btn.setOnClickListener {
+        cameraRL.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
             startActivityForResult(intent, CAMERA_IMAGE)
         }
 
-        Gallary_Btn.setOnClickListener {
+        galleryRL.setOnClickListener {
             checkPermissionGallery()
         }
 
@@ -99,9 +97,14 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
 
         Post_btn.setOnClickListener {
 
-            val imagePath = arrayListOf<String>()
-            for (i in imageList) {
-                imagePath.add("$filesDir$i")
+            val imagePath = ArrayList<String>()
+            for (nameFile in imageList) {
+                imagePath.add("$filesDir/$nameFile")
+            }
+
+            if(imagePath.size > 5){
+                Toast.makeText(this, "เพิ่มรูปภาพได้สูงสุด 5รูป", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
             model.category = dropdown.text.toString()
@@ -115,12 +118,14 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
             if (model.latitude == null && model.longitude == null){
-                Toast.makeText(this, "โปรดเลือกพิกัดหรือถ่ายรูปจากในแอพ...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "โปรดเลือกพิกัด", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else if (model.images.isEmpty()){
                 Toast.makeText(this, "โปรดเลือกรูปก่อน...", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            dialog_load!!.show()
 
             val geocodingApi = GeocodingApi(this)
             geocodingApi.getAddressByLatLng(model.latitude!!.toDouble(), model.longitude!!.toDouble()){ address ->
@@ -143,6 +148,7 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
                     when (result) {
                         RepositoryPost.RESULT_SUCCESS -> {
                             Toast.makeText(this, "โพสต์เรียบร้อย", Toast.LENGTH_SHORT).show()
+                            dialog_load!!.dismiss()
                             finish()
                         }
                         RepositoryPost.RESULT_FAIL -> {
@@ -240,12 +246,9 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
                     imageList.add(model.images[0])
                     Log.i(TAG, imageList.toString())
 
-                    this.model.latitude = model.latitude
-                    this.model.longitude = model.longitude
-
                     //set map
                     Log.i(TAG, "Model save latitude, longitude, address successfully")
-                    initRecyclerView()
+                    dataRCV.adapter!!.notifyDataSetChanged()
                 }
             }
         }
@@ -266,7 +269,8 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             imageList.add("$filename.jpg")
             Log.i(TAG, imageList.toString())
-            initRecyclerView()
+
+            dataRCV.adapter!!.notifyDataSetChanged()
             true
         } catch (e: IOException) {
             e.printStackTrace()
@@ -274,13 +278,24 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun initRecyclerView(){
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.visibility = View.VISIBLE
-        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+    private fun setAdap(){
+        val adapter = AdapImagePostActivity(this, imageList)
+        dataRCV.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        dataRCV.adapter = adapter
+    }
 
-        adapImagePostActivity = AdapImagePostActivity(this, imageList)
-        recyclerView.adapter = adapImagePostActivity
+    private var dialog_load: Dialog? = null
+    private fun initDialogLoad() {
+        dialog_load = Dialog(this)
+        dialog_load!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog_load!!.setContentView(R.layout.dialog_loading)
+        dialog_load!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog_load!!.window!!.setLayout(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.WRAP_CONTENT
+        )
+
+        dialog_load!!.create()
     }
 
     private fun deletePhotoFromInternalStorage(filename: String): Boolean{
@@ -301,6 +316,12 @@ class PostActivity : AppCompatActivity(), OnMapReadyCallback {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+    }
+
+    private fun initMap() {
+
+        mapView.onCreate(null)
+        mapView.getMapAsync(this)
     }
 
     private var mTileOverlay: TileOverlay? = null

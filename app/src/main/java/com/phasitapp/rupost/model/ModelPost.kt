@@ -22,6 +22,7 @@ class ModelPost (
     //more
     var countLike: Int = 0,
     var countComment: Int = 0,
+    var popularCount: Int = 0,
     var userLike: Boolean = false,
     var data: Boolean = false
 
